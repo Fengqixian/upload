@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="expression">	
+	<insert id="addExpression" parameterClass="java.util.HashMap">
+	    <!-- <selectKey resultClass="java.lang.Integer" keyProperty="createTimeInfo" >
+			select  id  from [SOLR_WEB].[dbo].[Expression]
+		</selectKey> -->
+		insert into [SOLR_WEB].[dbo].[Expression] (userID,expression,createTime,updateTime,status,Isdeleted)
+		values (#userID#,#expression#,#createTime#,#updateTime#,#status#,0)
+	</insert>
+	<insert id="addKeyword" parameterClass="java.util.HashMap">
+	    <!-- <selectKey resultClass="java.lang.Integer" keyProperty="createTimeInfo" >
+			select  id  from [SOLR_WEB].[dbo].[Expression]
+		</selectKey> -->
+		insert into [SOLR_WEB].[dbo].[KeyWordList] (userID,keyWord,SouceCollection,SouceField,createTime,updateTime,status,Isdeleted)
+		values (#userID#,#keyWord#,#souceCollection#,#souceField#,#createTime#,#updateTime#,#status#,0)
+	</insert>
+</sqlMap>

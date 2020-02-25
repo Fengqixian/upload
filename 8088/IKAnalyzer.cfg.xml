@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>IK Analyzer </comment>
+
+	<entry key="ext_dict">CTBdict.dic;synonyms.dic;snomed.dic;dataBase.dic;LAB_LabReqItem.dic;LAB_ReportBiochemItem.dic;LAB_ReportMicrobionItem.dic;
+		MDM_ChargeItemCatalog.dic;MDM_Dept.dic;MDM_DrugItems.dic;MDM_SingleDisease.dic;MDM_Staff.dic;
+		MDM_Ward.dic;MDM_YBCode.dic;MR_Diagnosis.dic;MR_MedicalRecord.dic;OBS_OBSReq.dic;
+		OPERATION_DICT.dic;PA_Diag.dic;PA_IP_AdmissionDischarge.dic;OBS_Report.dic;Orders_IP_Drug.dic;Orders_IP_Nursing.dic;
+		Orders_OP_DrugRecipeItems.dic;SP_ScheuledProcedure.dic;SP_ProcedureSteps.dic;SP_ProcedureDiagnosis.dic;SP_ProcedureAnesthesia.dic;
+		Phar_DispensingItems.dic;PATHO_ReportPathologyItem.dic;PA_OP_Registration.dic;</entry>
+
+
+	<entry key="ext_stopwords">stop.dic;</entry>
+
+</properties>

@@ -1,0 +1,79 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.clinbrain.bd.core.route.type.broadcast;
+
+import lombok.RequiredArgsConstructor;
+import com.clinbrain.bd.core.parse.sql.statement.SQLStatement;
+import com.clinbrain.bd.core.parse.sql.statement.ddl.DDLStatement;
+import com.clinbrain.bd.core.route.type.RoutingEngine;
+import com.clinbrain.bd.core.route.type.RoutingResult;
+import com.clinbrain.bd.core.route.type.RoutingUnit;
+import com.clinbrain.bd.core.route.type.TableUnit;
+import com.clinbrain.bd.core.rule.DataNode;
+import com.clinbrain.bd.core.rule.ShardingRule;
+import com.clinbrain.bd.core.rule.TableRule;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+
+/**
+ * Broadcast routing engine for tables.
+ * 
+ * @author zhangliang
+ * @author maxiaoguang
+ * @author panjuan
+ */
+@RequiredArgsConstructor
+public final class TableBroadcastRoutingEngine implements RoutingEngine {
+    
+    private final ShardingRule shardingRule;
+    
+    private final SQLStatement sqlStatement;
+    
+    @Override
+    public RoutingResult route() {
+        RoutingResult result = new RoutingResult();
+        for (String each : getLogicTableNames()) {
+            result.getRoutingUnits().addAll(getAllRoutingUnits(each));
+        }
+        return result;
+    }
+    
+    private Collection<String> getLogicTableNames() {
+        if (isOperateIndexWithoutTable()) {
+            return Collections.singletonList(shardingRule.getLogicTableName(((DDLStatement) sqlStatement).getIndexName()));
+        }
+        return sqlStatement.getTables().getTableNames();
+    }
+    
+    private boolean isOperateIndexWithoutTable() {
+        return sqlStatement instanceof DDLStatement && sqlStatement.getTables().isEmpty();
+    }
+    
+    private Collection<RoutingUnit> getAllRoutingUnits(final String logicTableName) {
+        Collection<RoutingUnit> result = new LinkedList<>();
+        TableRule tableRule = shardingRule.getTableRule(logicTableName);
+        for (DataNode each : tableRule.getActualDataNodes()) {
+            RoutingUnit routingUnit = new RoutingUnit(each.getDataSourceName());
+            routingUnit.getTableUnits().add(new TableUnit(logicTableName, each.getTableName()));
+            result.add(routingUnit);
+        }
+        return result;
+    }
+}

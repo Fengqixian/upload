@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.projectManage.mapper.ProjectDataMapper">
+  <insert id ="saveProjectDataSetRef">
+    INSERT INTO mdm_project_category_ref(category_id,dataset_id)
+    VALUES
+    <foreach collection="projectDataSetRefList" item="category" separator=",">
+      (#{category.categoryId},#{category.datasetId})
+    </foreach>
+  </insert>
+
+  <insert id = "saveProjectElementRef">
+    INSERT INTO mdm_project_element_ref(dataset_id,element_id)
+    VALUES
+    <foreach collection="projectElementRefList" item="dataset" separator=",">
+      (#{dataset.datasetId},#{dataset.elementId})
+    </foreach>
+  </insert>
+
+  <insert id = "saveProjectElementColumnRef">
+    INSERT INTO mdm_project_element_column_condition(dataset_id,ref_id,`condition`,is_key_value)
+    VALUES
+    <foreach collection="projectElementColumnRefList" item="dataset" separator=",">
+      (#{dataset.datasetId},#{dataset.refId},#{dataset.condition},#{dataset.isKeyValue})
+    </foreach>
+  </insert>
+
+  <delete id = "deleteCategoryProjectRef">
+    delete from mdm_project_category_ref where category_id = ${id}
+  </delete>
+
+  <delete id="deleteElementRef">
+        delete from mdm_project_element_ref where dataset_id = ${datasetId}
+   </delete>
+
+  <delete id="deleteProjectElementColumnRef">
+     delete from mdm_project_element_column_condition where dataset_id = ${datasetId}
+  </delete>
+
+  <select id="getElementColumnRefInfo" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectElementColumnRef">
+    select t.id table_id,IFNULL(t.name_cn,t.name_en) table_name_cn,t.name_en table_name_en,cr.ref_id,cr.column_name_cn,cr.column_name_en,cr.element_id,cr.column_id
+    from mdm_technology_table t join (
+	 select columnT.id,IFNULL(name_cn,name_en) as column_name_cn,name_en column_name_en,table_id,elementRef.ref_id,elementRef.element_id,
+	  elementRef.column_id from mdm_technology_column columnT
+   join (SELECT column_id,element_id,id as ref_id FROM mdm_element_column_ref where element_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")" >
+          #{item}
+      </foreach>
+     ) elementRef
+	 on columnT.id = elementRef.column_id) cr on t.id = cr.table_id
+  </select>
+
+  <select id="getProjectElementList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+    select * from mdm_data_element where id in (SELECT element_id FROM mdm_project_element_ref where dataset_id =${id})
+  </select>
+
+  <select id = "getElementColumnList" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectElementColumnRef">
+    select t.id table_id,IFNULL(t.name_cn,t.name_en) table_name_cn,t.name_en table_name_en,cr.ref_id,cr.column_name_cn,cr.column_name_en,cr.element_id,cr.column_id
+    from mdm_technology_table t join (
+    select columnT.id,IFNULL(name_cn,name_en) as column_name_cn,name_en column_name_en,table_id,elementRef.ref_id,elementRef.element_id,
+    elementRef.column_id from mdm_technology_column columnT
+    join (SELECT column_id,element_id,id as ref_id FROM mdm_element_column_ref where element_id in(
+    SELECT element_id FROM mdm_project_element_ref where dataset_id =${id})
+    ) elementRef
+    on columnT.id = elementRef.column_id) cr on t.id = cr.table_id
+  </select>
+
+  <select id = "getProjectElementColumnDetail" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectElementColumnRef">
+        SELECT t.id table_id,	IFNULL( t.name_cn, t.name_en ) table_name_cn,	t.name_en table_name_en,
+	cr.ref_id,	cr.column_name_cn,	cr.column_name_en,	cr.element_id,	cr.column_id FROM
+	mdm_technology_table t	JOIN (
+      select table_id,IFNULL(name_cn,name_en) column_name_cn,name_en column_name_en,
+      element_id,column_id,ref_id from mdm_technology_column cT join (
+      select * from mdm_element_column_ref columnRef join (select ref_id from mdm_project_element_column_condition
+      where dataset_id = ${id}) con on columnRef.id = con.ref_id) r on cT.id = r.column_id
+	) cr ON t.id = cr.table_id
+  </select>
+
+  <!--模糊查询数据元 -->
+  <select id="getElementList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+    select * from mdm_data_element where 1=1
+    <if test="queryString != null and queryString.trim() != ''">
+      and (name_cn like CONCAT('%',#{queryString},'%')
+      or name_en like CONCAT('%',#{queryString},'%'))
+    </if>
+    <if test="elementId != null">
+      and id = ${elementId}
+    </if>
+    order by id
+  </select>
+
+  <select id = "getElementListByDataSet" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+    select DISTINCT(id),resource_id,resource_code,source_id,category,name_en,name_cn,definition,data_type,
+    show_format,allowable_value,allowable_type,allowable_code	from mdm_data_element ele join (
+    select element_id from mdm_dataset_element_ref ref join (
+    select id from mdm_dataset_category where category = 2
+    <if test="queryString != null and queryString.trim() != ''">
+      and (name_cn like CONCAT('%',#{queryString},'%')
+      or name_en like CONCAT('%',#{queryString},'%'))
+    </if>
+    ) cate on ref.dataset_id = cate.id) dataset on ele.id=dataset.element_id order by ele.id asc
+  </select>
+</mapper>

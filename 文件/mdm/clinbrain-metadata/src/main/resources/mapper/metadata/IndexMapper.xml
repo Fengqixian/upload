@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.IndexMapper">
+    <select id="getKeyValueData" resultType="java.util.Map">
+        select id, category,`key`,`value` from mdm_index_data order by `category`,`key`
+    </select>
+    <select id="getPieDataMap" resultType="java.util.Map">
+        select source_id name,total_value as value from mdm_index_standar where category = 1
+    </select>
+    <select id="getTreeMapDataMap" resultType="java.util.Map">
+        select type as name,total as value,name_cn as ch_name,total_value as ch_value from  mdm_index_standar where category = 2 order by type ,name_cn
+    </select>
+
+    <select id="getIndexTableList" resultType="java.util.Map">
+        SELECT id,index_data_id,index_table_name,table_data_count FROM mdm_index_table
+        <trim prefix="where" prefixOverrides="and">
+
+            <if test="dataId!= null and dataId!= ''">
+                and index_data_id = #{dataId}
+            </if>
+        </trim>
+    </select>
+
+    <update id="updateTableIdByCount">
+        update mdm_index_table set table_data_count = ${tableCount} WHERE id = #{id}
+    </update>
+
+    <update id="updateKeyValueData">
+        update mdm_index_data set value = ${dataCount} WHERE id = #{id}
+    </update>
+</mapper>

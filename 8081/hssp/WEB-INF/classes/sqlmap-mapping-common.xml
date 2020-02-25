@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="common">	
+	<!-- 公共 -->
+	<sql id="iteratorBindPrefixSql">
+		<dynamic>
+            <![CDATA[
+        with COL_STR as 
+        (select distinct replace(value, '''', '') val
+          from (select TRIM(REGEXP_SUBSTR(#listStr#, '[^,]+', 1, level)) value
+                  from dual
+                connect by level <= length(regexp_replace(#listStr#, '[^,]*')) + 1))
+                    ]]>
+		</dynamic>
+	</sql>	
+	<sql id="paginationCountPrefixSql">
+		select count(*) from (
+	</sql>	
+	<sql id="paginationCountSuffixSql">
+		)
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="paginationMaxAllowCount">
+		        <![CDATA[rownum <= #paginationMaxAllowCount#]]>
+			</isNotNull>
+		</dynamic>
+	</sql>
+	<sql id="paginationQueryPrefixSql">
+		select * from(select a.*, rownum rn from(
+	</sql>
+	<sql id="paginationQuerySuffixSql">
+		) a	
+		<isNotNull prepend="where" property="paginationEndIndex">
+			<![CDATA[rownum <= #paginationEndIndex#)]]>
+		</isNotNull>
+		<isNotNull prepend="where" property="paginationStartIndex">
+			<![CDATA[rn > #paginationStartIndex#]]>
+		</isNotNull>
+	</sql>
+	<select id="test1Count" resultClass="int">
+		SELECT count(1) FROM CDR_CDA.dbo.CDA_MAIN_CNAME
+	</select>
+	<select id="getStyle_DocXml" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select  m.DocXml DocXml,s.StyleText DocStyle from 
+		[CDR_CDA].[dbo].CDA_MAIN m with (nolock),[CDR_CDA].[dbo].[CDA_STYLE] s with (nolock)
+		where m.StyleforShowID = s.StyleID and m.DocID = #value#
+	</select>
+	<select id="getStyle_Doctext" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select  m.Doctext DocXml,m.DoctypeName StyleText  from 
+		 [RDR_CDA].[dbo].CDA_MAIN m with (nolock) where m.DocID =#value#
+	</select>
+</sqlMap>

@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="webOperate">
+	<!-- *****************************************************************历史表达式**************************************************************** -->
+	<!-- 从历史表达式表中读取所有数据 
+	<select id="getAllHistoryExpression" resultClass="java.util.HashMap">
+		select expression  from SOLR_WEB.dbo.HISTORY_EXPRESSION with (nolock)
+		order by id desc
+	</select>-->
+	<select id="getAllHistoryExpression" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		  SELECT TOP 12
+            expression
+		  FROM      ( SELECT    ROW_NUMBER() OVER ( PARTITION BY expression.Expression ORDER BY expression.CreateTime DESC ) num ,
+		                        Expression ,
+		                        expression.Id ,
+		                        expression.CreateTime
+		              FROM      [SOLR_WEB].[dbo].[Expression] expression
+		              WHERE     expression.UserId = #value#
+		            ) a
+		  WHERE     a.num = 1
+		  ORDER BY  a.CreateTime DESC;
+	</select>
+	<!-- 从历史表达式表中读取所有数据并清空 -->
+	<select id="getAllHistoryExpressionAndTruncate" resultClass="java.util.HashMap" >
+		select expression  from SOLR_WEB.dbo.HISTORY_EXPRESSION with (nolock)
+		order by id desc
+		truncate table SOLR_WEB.dbo.HISTORY_EXPRESSION
+	</select>
+	<!-- 获取用户行级权限信息 -->
+	<select id="getUserPrivilegeFirst" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT [Id]
+		      ,[USERID]
+		      ,[USERNAME]
+		      ,[CreateTime]
+		      ,[UpdateTime]
+		FROM [SOLR_Date].[dbo].[Privilege_User] WITH ( NOLOCK )
+		where userID=#userID#
+	</select>
+	<select id="getUserPrivilegeSecond" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT  Privilege_Field.[Id] ,
+		        Privilege_Field.[Privilege_User_Id] ,
+		        Privilege_Field.[Dic_Field_Id] ,
+		        Dic_Field.FieldName ,
+		        Dic_Field.FieldType ,
+		        Privilege_Field_Value.Id AS Privilege_Field_Value_Id ,
+		        Privilege_Field_Value.[Description] AS Privilege_Field_Value_Description ,
+		        Privilege_Field_Value.[Field_value] ,
+		        Privilege_Field_Value.[CreateTime]  as Privilege_Field_Value_CreateTime,
+		        Privilege_Field_Value.[UpdateTime] as  Privilege_Field_Value_UpdateTime,
+		        Privilege_Field.[Description] ,
+		        Privilege_Field.[CreateTime] ,
+		        Privilege_Field.[UpdateTime]
+		FROM    [SOLR_Date].[dbo].[Privilege_Field] Privilege_Field WITH ( NOLOCK )
+		        INNER JOIN SOLR_Date.dbo.Dic_Field ON Dic_Field.Id = Privilege_Field.[Dic_Field_Id]
+		        INNER JOIN SOLR_Date.dbo.Privilege_Field_Value Privilege_Field_Value ON Privilege_Field_Value.Privilege_Field_Id = Privilege_Field.Id
+		WHERE   Privilege_User_Id = #Privilege_User_Id#
+	</select>
+	<!-- 获取用户信息 -->
+	<select id="getUserMessage" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT DISTINCT  m.[userName] ,
+		        m.[userID] ,
+		        m.[userRoleID] ,
+		        m.[userRole] ,
+		        m.[department] ,
+		        m.[departmentID] ,
+		        m.[doctorsID] ,
+		        m.[doctorsName]
+		FROM    [172.16.32.104\CDRDB].[CDR_MDM].[dbo].[VW_GetUserMessage] m WITH ( NOLOCK )
+		WHERE  m.userID=#value# AND m.userRoleID IN ( 1, 2, 3, 4 )
+		ORDER BY userRoleID ASC
+		<!--  FROM    [172.16.32.104\CDRDB].CDR_MDM.[dbo].UserMessage m WITH ( NOLOCK )-->
+	</select>
+	
+	<!-- 往历史表达式表中插入数据 -->
+	<insert id="addAllHistoryExpression" parameterClass="java.lang.String">
+		insert into SOLR_WEB.dbo.HISTORY_EXPRESSION (expression)
+		values (#value#)
+	</insert>	
+	
+	<!-- 删除指定历史表达式 -->
+	<delete id="removeHistoryExpression" parameterClass="java.lang.String">
+		delete
+		from [SOLR_WEB].[dbo].HISTORY_EXPRESSION
+		where expression=#value#
+	</delete>
+	<!-- *************************************************************病种库管理******************************************************************** -->
+	<!-- 获取病种库所有分类信息 -->
+	<select id="getAllDiseaseClassify" resultClass="java.util.HashMap">
+		SELECT  CLASSIFY.[Id] ,
+				CLASSIFY.[Classify] ,
+				CLASSIFY.[Classify_old] ,
+				CLASSIFY.[CreateTime] ,
+				CLASSIFY.[UpdateTime] ,
+				CLASSIFY.[Status] ,
+				CLASSIFY_CHILD.[Id] CHILD_Id ,
+				CLASSIFY_CHILD.[Classify_ID] ,
+				CLASSIFY_CHILD.[CLASSIFY_CHILD] ,
+				CLASSIFY_CHILD.[CLASSIFY_CHILD_Old] ,
+				CLASSIFY_CHILD.[CreateTime] CHILD_CreateTime ,
+				CLASSIFY_CHILD.[UpdateTime] CHILD_UpdateTime ,
+				CLASSIFY_CHILD.[Status] CHILD_Status
+		FROM [SOLR_WEB].[dbo].[DISEASE_CLASSIFY] CLASSIFY WITH ( NOLOCK )
+		LEFT JOIN [SOLR_WEB].[dbo].[DISEASE_CLASSIFY_CHILD] CLASSIFY_CHILD
+		WITH ( NOLOCK ) ON CLASSIFY_CHILD.Classify_ID = CLASSIFY.id AND CLASSIFY_CHILD.IsDeleted =0
+		WHERE CLASSIFY.IsDeleted =0 ORDER BY CLASSIFY.UpdateTime DESC ,CLASSIFY_CHILD.Id  DESC
+	</select>
+	<!-- 权限获取 -->
+	<select id="getAllJurisdiction" resultClass="java.util.HashMap">
+		  SELECT   [Id]
+			      ,[name]
+			      ,[Description]
+			      ,[CreatUserID]
+			      ,[UpdateUserID]
+			      ,[CreateTime]
+			      ,[UpdateTime]
+			      ,[Status]
+			      ,[IsDeleted]
+			  FROM [SOLR_WEB].[dbo].[DISEASE_Jurisdiction]
+			  WHERE IsDeleted = 0
+			  ORDER BY UpdateTime DESC
+	</select>
+	
+	<!-- 获取病种库指定分类信息 -->
+	<select id="getDiseaseClassify" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select classify
+		from [SOLR_WEB].[dbo].[DISEASE_CLASSIFY] with (nolock)
+		where classify=#value#
+	</select>
+	
+	<!-- 往病种库分类信息表中插入数据 -->
+	<insert id="addDiseaseClassify" parameterClass="java.util.HashMap">
+		insert into [SOLR_WEB].[dbo].[DISEASE_CLASSIFY] (classify,Classify_old,CreateTime,UpdateTime,STATUS,IsDeleted)
+		values (#classify#,#ClassifyOld#,#CreateTime#,#UpdateTime#,0,0)
+	</insert>
+	<!-- 创建数据导出信息 -->
+	<insert id="addExportMessage" parameterClass="java.util.HashMap">
+		INSERT INTO [ICD].[dbo].[exportMessage]
+           ([DiseaseID]
+           ,[exportField]
+           ,[exportCount]
+           ,[exportDate])
+     VALUES
+           (#DiseaseID#
+           ,#exportField#
+           ,#exportCount#
+           ,GETDATE())
+	</insert>
+	<!-- 创建数据下载信息 -->
+	<insert id="DownLoadMessage" parameterClass="java.util.HashMap">
+		INSERT INTO [ICD].[dbo].[DownLoadMessage]
+           ([DiseaseID]
+           ,[downloadDate],[exportMessageID])
+	     VALUES
+	           (#DiseaseID#
+	           ,GETDATE(),#exportMessageID#)
+	</insert>
+	<!-- 创建文件上传信息 -->
+	<insert id="AddUpLoadMessage" parameterClass="java.util.HashMap">
+		INSERT INTO [ICD].[dbo].[upLoadMessage]
+           ([DiseaseID]
+           ,[upLoadDate])
+	     VALUES
+	           (#DiseaseID#
+	           ,#upLoadDate#)
+	</insert>
+	<!-- 创建文件上传信息 -->
+	<insert id="AddUpLoadFileMessage" parameterClass="java.util.HashMap">
+		INSERT INTO [ICD].[dbo].[upLoadFileMessage]
+           ([USERID],[FileName]
+           ,[upLoadDate],[exportMessageID],[status],fileSize)
+	     VALUES
+	           (#USERID#,#fileName#
+	           ,#upLoadDate#,#exportMessageID#,#status#,#fileSize#)
+	</insert>
+	<update id="updateUpLoadFileMessage" parameterClass="java.util.HashMap">
+		UPDATE [ICD].[dbo].[upLoadFileMessage] SET status=#status# WHERE FileName =#fileName#
+	</update>
+	<select id="getUpLoadFileMessageByID" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	       SELECT   u.[ID] ,
+			        u.[USERID] ,
+			        u.[FileName] ,
+			        u.[upLoadDate] ,
+			        u.[exportMessageID] ,
+			        u.[status] ,
+			        u.[fileSize] ,
+			        e.[DiseaseID] ,
+			        e.[exportField] ,
+			        e.[exportCount] ,
+			        e.[exportDate]
+			FROM    [ICD].[dbo].[upLoadFileMessage] u WITH ( NOLOCK )
+            INNER JOIN [ICD].[dbo].[exportMessage] e ON e.id = u.[exportMessageID]
+			WHERE   u.USERID = #USERID#
+			        AND  u.[ID]=#id#
+	</select>
+	<!-- 获取病种库信息 -->
+	<select id="getUpLoadFileMessage" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+		SELECT TOP $pageCount$
+			        u.[ID] ,
+			        u.[USERID] ,
+			        u.[FileName] ,
+			        u.[upLoadDate] ,
+			        u.[exportMessageID] ,
+			        u.[status] ,
+			        e.[DiseaseID] ,
+			        e.[exportField] ,
+			        e.[exportCount] ,
+			        e.[exportDate]
+			FROM    [ICD].[dbo].[upLoadFileMessage] u WITH ( NOLOCK )
+            INNER JOIN [ICD].[dbo].[exportMessage] e ON e.id = u.[exportMessageID]
+			WHERE   u.USERID = #USERID#
+			        AND  u.[ID] <= ( SELECT MIN(ID)
+			                             FROM   ( SELECT TOP $previousPageCountTotal$
+			                                                 u.[ID]
+			                                      FROM    [ICD].[dbo].[upLoadFileMessage] u WITH ( NOLOCK )
+									              INNER JOIN [ICD].[dbo].[exportMessage] e ON e.id = u.[exportMessageID]
+												  WHERE   u.USERID = #USERID#
+			                                      ORDER BY  u.[ID] DESC
+			                                    ) AS temp
+			                           )
+			ORDER BY u.[ID] DESC
+		]]>
+		</dynamic>
+	</select>
+	<select id="getUpLoadFileMessageCount" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		FROM    [ICD].[dbo].[upLoadFileMessage] u WITH ( NOLOCK )
+        INNER JOIN [ICD].[dbo].[exportMessage] e ON e.id = u.[exportMessageID]
+        WHERE   u.USERID = #USERID#
+	</select>
+	<select id="getDiseaseExportMessage" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT TOP 1 [ID]
+		      ,[DiseaseID]
+		      ,[exportField]
+		      ,[exportCount]
+		      ,[exportDate]
+		  FROM [ICD].[dbo].[exportMessage] WITH (NOLOCK)
+		  where DiseaseID=#DiseaseID#
+		  order by  ID DESC
+	</select>
+	
+	
+	
+	<update id="updateDiseaseClassify" parameterClass="java.util.HashMap">
+		UPDATE [SOLR_WEB].[dbo].[DISEASE_CLASSIFY] SET UpdateTime=#UpdateTime# WHERE Id=#Classify_ID#
+	</update>
+	<!-- 获取病种库指定分类信息 -->
+	<select id="getDiseaseClassifyChild" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select CLASSIFY_CHILD
+		from [SOLR_WEB].[dbo].[DISEASE_CLASSIFY_CHILD] with (nolock)
+		where CLASSIFY_CHILD=#CLASSIFY_CHILD# and Classify_ID =#Classify_ID#
+	</select>
+	<!-- 往病种库分类信息表中插入数据 -->
+	<insert id="addDiseaseClassifyChild" parameterClass="java.util.HashMap">
+		insert into [SOLR_WEB].[dbo].[DISEASE_CLASSIFY_CHILD] (Classify_ID,CLASSIFY_CHILD,CLASSIFY_CHILD_Old,CreateTime,UpdateTime,STATUS,IsDeleted)
+		values (#Classify_ID#,#CLASSIFY_CHILD#,#CLASSIFYCHILDOld#,#CreateTime#,#UpdateTime#,0,0)
+	</insert>
+	
+	<!-- 科研数据统计保存-->
+	<insert id="saveStatisticsDBFirst" parameterClass="java.util.HashMap">
+		insert into [ICD].[dbo].[Statistics_Disease] (USERID,DISEASEID,DISEASEIDNAME,StatisticsNAME,FiledNAME,DEPTNAME,Description,Expression,Status,CreateTime,UpdateTime,DataType)
+		values (#USERID#,#DISEASEID#,#DISEASEIDNAME#,#StatisticsNAME#,#FiledNAME#,#DEPTNAME#,#Description#,#Expression#,#Status#,#CreateTime#,#UpdateTime#,#DataType#)
+	</insert>
+	<select id="saveStatisticsDBSecond" parameterClass="java.util.HashMap" resultClass="int">
+		SELECT id
+            FROM [ICD].[dbo].[Statistics_Disease] with (nolock) WHERE USERID = #USERID# and DISEASEID =#DISEASEID# AND CreateTime =#CreateTime#
+	</select>
+	  <parameterMap id="hasAuthParam_Statistics" class="java.util.HashMap" >  
+	    <parameter property="id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	    <parameter property="DISEASEID" jdbcType="INTEGER" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="USERID" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="VKey_List" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="ReturnValue" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>  
+	  </parameterMap>  
+	  <procedure id="saveStatisticsDBThird" parameterMap="hasAuthParam_Statistics"  >  
+	     {call [ICD].[dbo].CLB_Add_Search_Statistics_VisitNumberID(?,?,?,?,?)} 
+	  </procedure>
+	  <update id="saveStatisticsDBFour" parameterClass="java.util.HashMap">
+		update [ICD].[dbo].[Statistics_Disease]
+		set Status = #Status# 
+		where ID = #id# 
+	</update>
+	  <parameterMap id="hasAuthParam_Statistics_table" class="java.util.HashMap" >  
+	    <parameter property="id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	  </parameterMap>  
+	  <procedure id="saveStatisticsDBFive" parameterMap="hasAuthParam_Statistics_table"  > 
+	     {call [192.168.0.169].[ResearchManagement(HFZ)].[dbo].DF_StatisticsDataset(?)}
+	  </procedure>
+	   <!--  {call [172.16.32.109\CDRAPPDB].[ResearchManagement].[dbo].DF_StatisticsDataset(?)}
+	 新版保存病种库 -->
+	<insert id="saveDiseaseDBFirst" parameterClass="java.util.HashMap">
+		insert into [ICD].[dbo].[CDR_Disease] (USERID,DISEASEID,DISEASEIDNAME,DEPTNAME,[DataType],Description,Expression,Status,CreateTime,UpdateTime)
+		values (#USERID#,#DISEASEID#,#DISEASEIDNAME#,#DEPTNAME#,#DataType#,#Description#,#Expression#,#Status#,#CreateTime#,#UpdateTime#)
+	</insert>
+	<select id="saveDiseaseDBSecond" parameterClass="java.util.HashMap" resultClass="int">
+		SELECT id
+            FROM [ICD].[dbo].[CDR_Disease] with (nolock) WHERE USERID = #USERID# and DISEASEID =#DISEASEID# AND CreateTime =#CreateTime#
+	</select>
+	<!-- xinBan保存病种库  调用存储过程-->
+	  <parameterMap id="hasAuthParam" class="java.util.HashMap" >  
+	    <parameter property="id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	    <parameter property="DISEASEID" jdbcType="INTEGER" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="USERID" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="VKey_List" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="ReturnValue" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>  
+	  </parameterMap>  
+  
+	  <procedure id="saveDiseaseDBThird" parameterMap="hasAuthParam"  >  
+	     {call [ICD].[dbo].CLB_Add_Search_Disease_VisitNumberID(?,?,?,?,?)} 
+	  </procedure>
+	  
+	  <update id="saveDiseaseDBFour" parameterClass="java.util.HashMap">
+		update [ICD].[dbo].[CDR_Disease]
+		set Status = 3
+		where ID = #id# 
+	</update>
+	  <parameterMap id="hasAuthParam" class="java.util.HashMap" >  
+	    <parameter property="id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	    <parameter property="ReturnValue" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>  
+	  </parameterMap>  
+	  <procedure id="saveDiseaseDBFive" parameterMap="hasAuthParam"  >  
+	     {call [ICD].[dbo].CLB_Add_Search_For_CRFPen(?,?)} 
+	  </procedure>
+	  <update id="saveDiseaseDBSucceed" parameterClass="java.util.HashMap">
+		update [ICD].[dbo].[Disease]
+		set Status = 5
+		where DiseaseID = #DiseaseID# 
+	</update>
+	  <update id="saveDiseaseDBSucceedForMysql" parameterClass="java.util.HashMap">
+		update ICD.Disease
+		set Status = 5
+		where DiseaseID = #DiseaseID# 
+	</update>
+	  
+	  
+	<!-- 保存病种库 -->
+	<insert id="saveDiseaseDB" parameterClass="java.util.HashMap">
+		insert into [ICD].[dbo].[Disease] (USERID,DISEASECLASSIFYID,DISEASECLASSIFYCHIIDID,SubCategoryName,Description,Expression,Status,FileStatus ,CreateTime,UpdateTime,jurisdictionID,recordTotalCount,maleCount,femaleCount)
+		values (#USERID#,#DISEASECLASSIFYID#,#DISEASECLASSIFYCHIIDID#,#SubCategoryName#,#Description#,#Expression#,#Status#,#FileStatus#,#CreateTime#,#UpdateTime#,#jurisdiction#,0,0,0)
+	</insert>
+	<insert id="saveDiseaseDBForMysql" parameterClass="java.util.HashMap">
+		insert into ICD.Disease (USERID,DISEASECLASSIFYID,DISEASECLASSIFYCHIIDID,SubCategoryName,Description,Expression,Status,FileStatus ,CreateTime,UpdateTime,jurisdictionID,recordTotalCount,maleCount,femaleCount)
+		values (#USERID#,#DISEASECLASSIFYID#,#DISEASECLASSIFYCHIIDID#,#SubCategoryName#,#Description#,#Expression#,#Status#,#FileStatus#,NOW(),NOW(),#jurisdiction#,0,0,0)
+	</insert>
+	<update id="updateDiseaseDBLocal" parameterClass="java.util.HashMap">
+		update  [ICD].[dbo].[Disease] set DataType=#DataType#,Expression=#Expression#,Description=#Description#,Status=#Status#,FileStatus=#FileStatus# ,UpdateTime=#UpdateTime#,jurisdictionID=0
+		where diseaseID = #SubCategoryName#
+	</update>
+	<update id="updateDiseaseDBLocalForMysql" parameterClass="java.util.HashMap">
+		update  ICD.Disease set DataType=#DataType#,Expression=#Expression#,Description=#Description#,Status=#Status#,FileStatus=#FileStatus# ,UpdateTime=NOW(),jurisdictionID=0
+		where diseaseID = #SubCategoryName#
+	</update>
+	<!-- 保存病种库 -->
+	<select id="getDiseaseDBID" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT  DiseaseID
+    		FROM   [ICD].dbo.Disease with (nolock)
+    	WHERE   USERID = #USERID# AND DISEASECLASSIFYID =#DISEASECLASSIFYID# AND DISEASECLASSIFYCHIIDID =#DISEASECLASSIFYCHIIDID# AND SubCategoryName = #SubCategoryName# AND CreateTime = #CreateTime#
+	</select>
+	<select id="getDiseaseDBDataType" parameterClass="java.util.HashMap" resultClass="java.lang.Long">
+		SELECT  count(1)
+    		FROM   [ICD].dbo.Disease with (nolock)
+    	WHERE   [DiseaseID] = #diseaseID# AND ([DataType] is  null OR  [DataType] = #DataType#) 
+	</select>
+	<select id="getDiseaseDBDataTypeForMysql" parameterClass="java.util.HashMap" resultClass="java.lang.Long">
+		SELECT  count(1)
+    		FROM   ICD.Disease 
+    	WHERE   DiseaseID = #diseaseID# AND (DataType is  null OR  DataType = #DataType# )
+	</select>
+	<!--<select id="getDiseaseDBNameList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT  DiseaseID ,
+		        SubCategoryName,
+		        jurisdictionID
+		FROM    [ICD].dbo.Disease d WITH ( NOLOCK )
+		        LEFT JOIN SOLR_WEB.dbo.SSOUserInfo s WITH ( NOLOCK ) ON d.USERID = s.userIdentity
+		WHERE   ( ( s.department = ( SELECT ( ss.department )
+		                             FROM   SOLR_WEB.dbo.SSOUserInfo ss WITH ( NOLOCK )
+		                             WHERE  ss.userIdentity = #USERID#
+		                           )
+		            AND d.jurisdictionID = 2
+		          )
+		          OR ( d.USERID = #USERID# )
+		          OR d.jurisdictionID = 3
+		        )
+		        AND DISEASECLASSIFYID = #DISEASECLASSIFYID#
+		        AND DISEASECLASSIFYCHIIDID = #DISEASECLASSIFYCHIIDID#
+		ORDER BY d.DiseaseID DESC 
+	</select>-->
+	<select id="getDiseaseDBNameList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT  DiseaseID ,
+		        SubCategoryName,
+		        jurisdictionID
+		FROM    [ICD].dbo.Disease d WITH ( NOLOCK )
+		WHERE d.USERID = #USERID# AND DISEASECLASSIFYID = #DISEASECLASSIFYID#
+		        AND DISEASECLASSIFYCHIIDID = #DISEASECLASSIFYCHIIDID#
+		ORDER BY d.DiseaseID DESC 
+	</select>
+	<select id="getDiseaseDBNameListLocal" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT  DiseaseID ,
+		        SubCategoryName
+		FROM    [ICD].dbo.Disease d WITH ( NOLOCK )
+		WHERE d.USERID = #USERID# AND isdeleted = 0
+		ORDER BY d.DiseaseID DESC 
+	</select>
+	<select id="getDiseaseDBNameListLocalForMysql" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	SELECT  DiseaseID ,
+		        SubCategoryName
+		FROM    ICD.Disease d 
+		WHERE d.USERID = #USERID# AND isdeleted = 0
+		ORDER BY d.DiseaseID DESC 
+	</select>
+	
+	<!-- 获取病种库信息 -->
+	<select id="getCurrentPageDiseaseDB" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+		select top $pageCount$ DiseaseID,[SubCategoryName],[Status],[FileStatus],[Expression],[Description],[recordTotalCount],[maleCount],[femaleCount],[CreateTime]
+		from [ICD].[dbo].[Disease] d with (nolock)
+		left JOIN SOLR_WEB.dbo.SSOUserInfo s with (nolock)
+        ON d.USERID = s.userIdentity
+		where  d.DISEASECLASSIFYID = #DISEASECLASSIFYID# and d.DISEASECLASSIFYCHIIDID = #DISEASECLASSIFYCHIIDID# 
+		and ((s.department = (select(ss.department)from SOLR_WEB.dbo.SSOUserInfo ss with (nolock) where ss.userIdentity =#USERID#) AND d.jurisdictionID=2) OR ( d.USERID = #USERID#) OR d.jurisdictionID=3)
+		and d.DiseaseID <= (select min(DiseaseID) from (select top $previousPageCountTotal$ DiseaseID from [ICD].[dbo].[Disease] dd with (nolock) left JOIN SOLR_WEB.dbo.SSOUserInfo ss with (nolock) ON dd.USERID = ss.userIdentity where  DISEASECLASSIFYID = #DISEASECLASSIFYID# and DISEASECLASSIFYCHIIDID = #DISEASECLASSIFYCHIIDID# and ((ss.department = (select(ss.department)from SOLR_WEB.dbo.SSOUserInfo ss with (nolock) where ss.userIdentity =#USERID#) AND dd.jurisdictionID=2) OR ( dd.USERID = #USERID#) OR dd.jurisdictionID=3) order by DiseaseID desc) as temp)
+		order by d.DiseaseID desc
+		]]>
+		</dynamic>
+	</select>
+	<!-- 获取病种库信息 -->
+	<select id="getCurrentPageDiseaseDBLocal" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+		SELECT TOP $pageCount$
+			        DiseaseID ,
+			        [SubCategoryName] ,
+			        [Status] ,
+			        [FileStatus] ,
+			        [Expression] ,
+			        [Description] ,
+			        [recordTotalCount] ,
+			        [maleCount] ,
+			        [femaleCount] ,
+			        [CreateTime]
+			FROM    [ICD].[dbo].[Disease] d WITH ( NOLOCK )
+			WHERE   d.USERID = #USERID#
+			        AND d.DiseaseID <= ( SELECT MIN(DiseaseID)
+			                             FROM   ( SELECT TOP $previousPageCountTotal$
+			                                                DiseaseID
+			                                      FROM      [ICD].[dbo].[Disease] dd WITH ( NOLOCK )
+			                                      WHERE     d.USERID = #USERID#
+			                                      ORDER BY  DiseaseID DESC
+			                                    ) AS temp
+			                           )
+			ORDER BY d.DiseaseID DESC
+		]]>
+		</dynamic>
+	</select>
+	<!-- 获取病种库信息 -->
+	<select id="getShowDiseaseStatu" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+		select top $pageCount$ [ID]
+						      ,[USERID]
+						      ,[DISEASEID]
+						      ,[DISEASEIDNAME]
+						      ,[DEPTNAME]
+						      ,[Description]
+						      ,[Expression]
+						      ,[Status]
+						      ,[CreateTime]
+						      ,[UpdateTime]
+		from [ICD].[dbo].[CDR_Disease] d with (nolock)
+		where  USERID= #USERID# 
+		and d.id <= (select min(id) from (select top $previousPageCountTotal$ id from [ICD].[dbo].[CDR_Disease] dd with (nolock) where USERID = #USERID#  order by id desc) as temp)
+		order by d.id desc
+		]]>
+		</dynamic>
+	</select>
+	<!-- 获取病种库信息 -->
+	<select id="getShowStatisticsStatu" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+		select top $pageCount$ [ID]
+						      ,[USERID]
+						      ,[DISEASEID]
+						      ,[DISEASEIDNAME]
+						      ,[StatisticsNAME]
+						      ,[DEPTNAME]
+						      ,[Description]
+						      ,[Expression]
+						      ,[Status]
+						      ,[CreateTime]
+						      ,[UpdateTime]
+						      ,DataType
+		from [ICD].[dbo].[Statistics_Disease] d with (nolock)
+		where  USERID= #USERID# 
+		and d.id <= (select min(id) from (select top $previousPageCountTotal$ id from [ICD].[dbo].[Statistics_Disease] dd with (nolock) where USERID = #USERID#  order by id desc) as temp)
+		order by d.id desc
+		]]>
+		</dynamic>
+	</select>
+	
+	<!-- 获取某种分类下病种库总数 -->
+	<select id="getShowDiseaseStatuCount" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		from [ICD].[dbo].[CDR_Disease] d with (nolock)
+		where  USERID= #USERID#  
+	</select>
+	
+	
+	<!-- 获取某种分类下病种库总数 -->
+	<select id="getDiseaseDBCount" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		from [ICD].[dbo].[Disease] d with (nolock)
+		left JOIN SOLR_WEB.dbo.SSOUserInfo s with (nolock)
+        ON d.USERID = s.userIdentity
+		where  d.DISEASECLASSIFYID = #DISEASECLASSIFYID# and d.DISEASECLASSIFYCHIIDID = #DISEASECLASSIFYCHIIDID# 
+		and ((s.department = #department# AND d.jurisdictionID=2) OR ( d.USERID = #USERID#) OR d.jurisdictionID=3)
+	</select>
+	<select id="getDiseaseDBCountLocal" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		from [ICD].[dbo].[Disease] d with (nolock)
+		where d.USERID = #USERID#
+	</select>
+	
+	<select id="getDiseaseDBFieldInfo" resultClass="java.util.HashMap">
+		SELECT  c.[FieldName] ,
+		        c.[FieldNameCN] ,
+		        s.TableName ,
+		        s.TableNameCN ,
+		        s.databaseName
+		FROM    [BigSetSearch_CDK].[dbo].[DISEASE_Field] c WITH ( NOLOCK )
+		        INNER JOIN BigSetSearch_CDK.dbo.DISEASE_SourceCollection s WITH ( NOLOCK ) ON c.SourceCollection_ID = s.Id
+		                                                              AND ( s.Status = 1OR s.Status = 0)
+		WHERE   c.Status = 1 OR c.Status = 0ORDER BY s.OrderBy ASC ,c.OrderBy DESC       
+		<!--  WHERE   c.Status = 1 OR c.Status = 0  ORDER BY s.GroupBy ASC--> 
+	</select>
+	
+	<select id="getDiseaseDBFieldInfoDefaut" resultClass="java.util.HashMap">
+		SELECT  c.[FieldName] ,
+		        c.[FieldNameCN] ,
+		        s.TableName ,
+		        s.TableNameCN ,
+		        s.databaseName
+		FROM    [BigSetSearch_CDK].[dbo].[DISEASE_Field] c WITH ( NOLOCK )
+		        INNER JOIN BigSetSearch_CDK.dbo.DISEASE_SourceCollection s WITH ( NOLOCK ) ON c.SourceCollection_ID = s.Id
+		                                                              AND s.Status = 1
+		WHERE   c.Status = 1 ORDER BY s.OrderBy ASC ,c.OrderBy DESC
+	</select>
+	
+	<!--<update id="updateDiseaseFileStatus" parameterClass="java.util.HashMap">
+		update [ICD].[dbo].[Disease]
+		set FileStatus = #FileStatus#
+		where USERID = #USERID# and DISEASECLASSIFYID = #DISEASECLASSIFYID# and DISEASECLASSIFYCHIIDID = #DISEASECLASSIFYCHIIDID# and SubCategoryName = #SubCategoryName#
+	</update>-->
+	<update id="updateDiseaseFileStatus" parameterClass="java.util.HashMap">
+		update [ICD].[dbo].[Disease]
+		set FileStatus = #FileStatus#
+		where DiseaseID = #subCategoryNameID#
+	</update>
+	
+	<!-- 创建病种库临时表 -->
+	<!--
+		create procedure [dbo].[createDiseaseDBView]
+		as
+		begin
+			declare @sqlStr_delete varchar(Max);
+			declare @sqlStr_create varchar(max);
+			set @sqlStr_delete = 'if exists (select * from sys.views where name=''view_diseaseDB'')
+					drop view view_diseaseDB'
+			set @sqlStr_create = '
+					create view view_diseaseDB
+					as
+					select Disease.*,Disease_Vkey_Mapping.VKey
+					from icd.dbo.Disease
+					left join icd.dbo.Disease_Vkey_Mapping with (nolock)
+					on Disease.DiseaseID = Disease_Vkey_Mapping.DiseaseID
+			'
+			exec (@sqlStr_delete)
+			exec (@sqlStr_create)
+		end
+	-->
+	
+	<procedure id="createDiseaseDBView">
+		{call [ICD].[dbo].createDiseaseDBView}
+	</procedure>
+	
+	<!-- 拿到当前页病种库vkey -->
+	<select id="checkDiseaseDBIsExist_old" parameterClass="java.util.HashMap" resultClass="int">
+		<dynamic><![CDATA[
+			select count(*)
+			from [ICD].[dbo].[view_diseaseDB]
+			where CategoryName=#CategoryName# and SubCategoryName=#SubCategoryName#
+		]]>
+		</dynamic>
+	</select>
+	<select id="checkDiseaseDBIsExist" parameterClass="java.util.HashMap" resultClass="int">
+		SELECT DiseaseID
+            FROM [ICD].[dbo].[Disease] with (nolock) WHERE USERID = #USERID# and DISEASECLASSIFYID =#DISEASECLASSIFYID# AND DISEASECLASSIFYCHIIDID =#DISEASECLASSIFYCHIIDID# AND SubCategoryName = #SubCategoryName#
+	</select>
+	<select id="checkDiseaseDBIsExistForMysql" parameterClass="java.util.HashMap" resultClass="int">
+		SELECT DiseaseID
+            FROM ICD.Disease  WHERE USERID = #USERID# and DISEASECLASSIFYID =#DISEASECLASSIFYID# AND DISEASECLASSIFYCHIIDID =#DISEASECLASSIFYCHIIDID# AND SubCategoryName = #SubCategoryName#
+	</select>
+	<!-- 获取具体病种库记录条数
+	<select id="getDiseaseDBRecordCount" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		from [ICD].[dbo].[view_diseaseDB] with (nolock)
+		where USERID = #USERID# and DISEASECLASSIFYID =#DISEASECLASSIFYID# AND DISEASECLASSIFYCHIIDID =#DISEASECLASSIFYCHIIDID# and SubCategoryName=#SubCategoryName#
+	</select>
+	 -->
+	<select id="getDiseaseDBRecordCount" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		from [ICD].[dbo].[Disease_Vkey_Mapping] with (nolock)
+		where DiseaseID = #DISEASEID# 
+	</select>
+	<select id="getDiseaseDBMessage" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select *
+		from [ICD].[dbo].[Disease] with (nolock)
+		where DiseaseID = #DISEASEID# 
+	</select>
+	<select id="getDiseaseList" resultClass="java.util.HashMap">
+		SELECT  [Name] ,
+		        [DiseaseID]
+		FROM    [ObsessiveCompulsiveDisorder].[dbo].[Disease] with (nolock)
+	</select>
+	<select id="getDiseaseListNew" resultClass="java.util.HashMap">
+		SELECT  [iguid] ,
+		        [ipid] ,
+		        [iname] ,
+		        [icreateon] ,
+		        [iupdateon]
+		FROM    [192.168.0.169].[CRFPen].[dbo].[SYS_DISEASELIB] WITH ( NOLOCK )
+		WHERE   ipid IS NULL 
+	</select>
+	
+	<!-- 拿到当前页病种库vkey-->
+	<select id="getDiseaseDBCurrentVKey" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+			select top $pageCount$ DiseaseID,VKey
+			from [ICD].[dbo].[Disease_Vkey_Mapping] with (nolock)
+			where DiseaseID = #DISEASEID# and VKey <=
+			(select min(VKey) from (select top $previousPageCountTotal$ VKey from [ICD].[dbo].[Disease_Vkey_Mapping] with (nolock) where DiseaseID = #DISEASEID# order by VKey desc) as temp)
+			order by VKey desc
+		]]>
+		</dynamic>
+	</select>
+	<!-- <select id="getDiseaseDBCurrentVKey" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+			select top $pageCount$ DiseaseID,VKey
+			from [ICD].[dbo].[Disease_Vkey_Mapping] with (nolock)
+			where DiseaseID = #DISEASEID# AND VKey <=(select min(VKey) from (select top $previousPageCountTotal$ VKey from [ICD].[dbo].[Disease_Vkey_Mapping] with (nolock) where DiseaseID = #DISEASEID# order by VKey desc) as temp)
+			order by VKey desc
+	</select>-->
+	<statement id="insertOrUpdateUserInfo" parameterClass="java.util.HashMap">
+		if not exists (select userIdentity from solr_web.dbo.SSOUserInfo with (nolock) where userIdentity = #userIdentity#)
+		begin
+			insert into solr_web.dbo.SSOUserInfo ([userIdentity],[userName],[department],[insertTime],[updateTime]) values (#userIdentity#,#userName#,#department#,#insertTime#,#insertTime#)
+		end
+		else
+		begin
+			update solr_web.dbo.SSOUserInfo
+			set userName = #userName#,department = #department#,updateTime = #updateTime#
+			where userIdentity = #userIdentity#
+		end
+	</statement>
+	<!-- ********************************************************************表达式管理************************************************************* -->
+	<!-- 从表达式表中读取数据 -->
+	<select id="getCurrentPageExpression" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+		select top $pageCount$ Expression,UserId,CreateTime,UpdateTime,id
+		from [SOLR_WEB].[dbo].[EXPRESSION_MANAGE] with (nolock)
+		where  IsDeleted = 0 and UserId = '$UserId$' and id <= (select min(id) from (select top $previousPageCountTotal$ id from [SOLR_WEB].[dbo].[EXPRESSION_MANAGE] with (nolock) where IsDeleted = 0 and UserId = '$UserId$' order by id desc) as temp)
+		order by id desc
+		]]>
+		</dynamic>
+	</select>
+	
+	<!-- 获取表达式总数 -->
+	<select id="getExpressionCount" resultClass="int" parameterClass="java.util.HashMap">
+		select count(*)
+		from SOLR_WEB.dbo.EXPRESSION_MANAGE  with (nolock) where IsDeleted = 0 and UserId = #UserId#
+	</select>
+	<!-- 获取所有表达式 -->
+	<select id="getExpressionALL" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		select Expression,UserId,CreateTime,UpdateTime,id
+		from SOLR_WEB.dbo.EXPRESSION_MANAGE with (nolock) where IsDeleted = 0 and UserId = #UserId#  order by id ASC
+	</select>
+	<!-- 更新表达式 （数据量超过1000更新旧输就为2）-->
+	<delete id="updateExpression" parameterClass="java.util.HashMap">
+		update
+		 [SOLR_WEB].[dbo].EXPRESSION_MANAGE set isDeleted = 2
+		where id=#id# and UserId=#UserId#
+	</delete>
+	<!-- 从表达式表中读取数据并清空 -->
+	<select id="getAllExpressionAndTruncate" resultClass="java.util.HashMap">
+		select expression
+		from SOLR_WEB.dbo.EXPRESSION_MANAGE with (nolock)
+		where IsDeleted = 0
+		order by UpdateTime desc
+		truncate table SOLR_WEB.dbo.EXPRESSION_MANAGE
+	</select>
+	
+	<!-- 往表达式表中插入数据 -->
+	<insert id="addAllExpression" parameterClass="java.util.HashMap">
+		insert into SOLR_WEB.dbo.EXPRESSION_MANAGE (Expression,UserId,CreateTime,UpdateTime,Status,IsDeleted)
+		values (#Expression#,#UserId#,#CreateTime#,#UpdateTime#,0,0)
+	</insert>	
+	
+	<!-- 删除指定表达式 -->
+	<delete id="removeExpression" parameterClass="java.util.HashMap">
+		update
+		 [SOLR_WEB].[dbo].EXPRESSION_MANAGE set isDeleted = 1
+		where id=#id# and UserId=#UserId#
+	</delete>
+	<!-- 删除指定表达式 -->
+	<delete id="deleteExpression" parameterClass="java.util.HashMap">
+		delete
+				[SOLR_WEB].[dbo].EXPRESSION_MANAGE 
+				where id=#id# and UserId=#UserId# 
+	</delete>
+	
+	<!-- 保存病种库  调用存储过程-->
+	  <parameterMap id="hasAuthParam_local" class="java.util.HashMap" >  
+	    <parameter property="DISEASECLASSIFYID" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	    <parameter property="DISEASECLASSIFYCHIIDID" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	    <parameter property="USERID" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="SubCategoryName" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="VKey_List" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="ReturnValue" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>  
+	  </parameterMap>  
+  
+	  <procedure id="insertVKeyList" parameterMap="hasAuthParam_local"  >  
+	     {call [ICD].[dbo].CLB_Add_Search_Disease_VKey(?,?,?,?,?,?)} 
+	  </procedure>	
+	  <procedure id="insertVKeyListForMysql" parameterMap="hasAuthParam_local"  >  
+	     {call ICD.CLB_Add_Search_Disease_VKey(?,?,?,?,?,?)} 
+	  </procedure>	
+	    <!-- 往反馈表中插入数据 -->
+	<insert id="addFeedback" parameterClass="java.util.HashMap">
+		INSERT INTO SOLR_WEB.dbo.Feedback (UserId,Types,ContactPhone,FeedbackContent,Annex,CreateTime,Status,UpdateTime)
+        VALUES (#UserId#,#Types#,#ContactPhone#,#FeedbackContent#,#Annex#,#CreateTime#,0,#UpdateTime#)
+	</insert>
+	
+	<!-- 往数据导出备案表中插入数据 -->
+	<insert id="addSmartFileMap" parameterClass="java.util.HashMap">
+		INSERT INTO ICD.dbo.SmartFile
+           (id,upLoadFileMessageID,DiseaseID,USERID
+           ,departMentName
+           ,isOneselfDepart
+           ,person
+           ,phoneNumber
+           ,description
+           ,studyType
+           ,ResearchResultsPaper
+           ,ResearchResultsQuestion
+           ,ResearchResultsAward
+           ,ResearchResultsOther
+           ,UserName
+           ,UploadDate
+           ,FileName
+           ,FileSize
+           ,ExportCount
+           ,ExportTable
+           ,ExportFieldCount
+           ,CreateTime,dataTime,uploadDescription)
+     VALUES
+           (#timestamp#,#upLoadFileMessageID#,#DiseaseID#,#USERID#,#departMentName#,#isOneselfDepart#,#person#,#phoneNumber#,#description#,
+           #studyType#,#ResearchResultsPaper#,#ResearchResultsQuestion#,#ResearchResultsAward#,
+           #ResearchResultsOther#,#UserName#,#UploadDate#,#FileName#,#FileSize#,#ExportCount#,
+           #ExportTable#,#ExportFieldCount#,#CreateTime#,#dataTime#,#uploadDescription#)
+	</insert>
+	
+</sqlMap>

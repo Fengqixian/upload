@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.projectManage.mapper.ProjectViewMapper">
+    <!--连接查询数据库  表 列 供组装成树-->
+    <select id="getProjectViewTreeList"
+            resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectViewTree">
+    select ty.id,ty.parent_id,ty.name_en,ty.name_cn,
+     ds.id project_id,ds.name_en project_name_en,ds.name_cn project_name_cn,
+     ty.resource_id
+    from mdm_project_category ty left join mdm_project_category_ref  ref on ty.id = ref.category_id left join mdm_project_category ds on ds.id = ref.dataset_id and ds.category = 2
+     where ty.category = 1 order by ty.id,ds.id
+  </select>
+    <select id="getProjectViewTreeListByRoleId"
+            resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectViewTree">
+    select ty.id,ty.parent_id,ty.name_en,ty.name_cn,
+     ds.id project_id,ds.name_en project_name_en,ds.name_cn project_name_cn,
+     ty.resource_id
+    from mdm_project_category ty left join mdm_project_category_ref  ref on ty.id = ref.category_id left join mdm_project_category ds on ds.id = ref.dataset_id and ds.category = 2 and ds.resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId})
+     where ty.category = 1 and ty.resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId}) order by ty.id,ds.id
+  </select>
+
+    <!--根据数据元查询对应表 列信息-->
+    <select id="selectRelationView" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.RelationView">
+        SELECT
+        t.id tableId,
+        t.resource_id
+        t.name_en tableNameEn,
+        t.name_cn tableNameCn,
+        c.id columnId,
+        c.name_en columnNameEn,
+        c.name_cn columnNameCn
+    FROM
+	mdm_technology_table t LEFT JOIN mdm_technology_column c ON t.id = c.table_id
+	WHERE c.id in(select column_id FROM mdm_element_column_ref where element_id = #{elementId})
+    </select>
+
+    <!--根据项目id和数据元id查询-->
+    <select id="selectProjectColumn" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.RelationView">
+        SELECT
+        col.id columnId,col.resource_id columnResourceId,col.name_en columnNameEn,col.name_cn columnNameCn,tab.resource_id,
+        tab.name_en tableNameEn, tab.name_cn tableNameCn,tab.id tableId
+        FROM
+        mdm_technology_column col
+        LEFT JOIN mdm_technology_table tab on col.table_id = tab.id left join
+        mdm_element_column_ref rcol ON col.id = rcol.column_id
+        LEFT JOIN mdm_project_element_column_condition con on con.ref_id = rcol.id
+        where con.ref_id in(
+        select id from mdm_element_column_ref el where el.element_id in(
+        select element_id from mdm_project_element_ref
+        <trim prefix="where" prefixOverrides="and|or">
+
+            <if test="datasetId != null">
+                and dataset_id = #{datasetId}
+            </if>
+            <if test="elementId != null">
+                and element_id = #{elementId}
+            </if>
+        </trim>
+        )
+        )
+
+    </select>
+    <!--根据项目id和数据元id查询-->
+    <select id="selectProjectColumnByRoleId" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.RelationView">
+        SELECT
+        col.id columnId,col.resource_id columnResourceId,col.name_en columnNameEn,col.name_cn columnNameCn,tab.resource_id,
+        tab.name_en tableNameEn, tab.name_cn tableNameCn,tab.id tableId
+        FROM
+        mdm_technology_column col
+        LEFT JOIN mdm_technology_table tab on col.table_id = tab.id
+        left join mdm_element_column_ref rcol ON col.id = rcol.column_id
+        LEFT JOIN mdm_project_element_column_condition con on con.ref_id = rcol.id
+        where con.ref_id in(
+        select id from mdm_element_column_ref el where el.element_id in(
+        select element_id from mdm_project_element_ref
+        <trim prefix="where" prefixOverrides="and|or">
+
+            <if test="datasetId != null">
+                and dataset_id = #{datasetId}
+            </if>
+            <if test="elementId != null">
+                and element_id = #{elementId}
+            </if>
+        </trim>
+        )
+        )
+        and col.resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId})
+        and tab.resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId})
+
+    </select>
+
+    <select id="selectProjectCategory" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectDataSetCategory">
+       SELECT * FROM mdm_project_category
+        <trim prefix="where" prefixOverrides="and|or">
+
+            <if test="resourceId != null">
+                and resource_id = #{resourceId}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

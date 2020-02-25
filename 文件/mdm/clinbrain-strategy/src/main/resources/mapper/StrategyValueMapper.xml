@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~  Copyright (c) 2019-2020, 冷冷 (wangiegie@gmail.com).
+  ~  <p>
+  ~  Licensed under the GNU Lesser General Public License 3.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~  <p>
+  ~ https://www.gnu.org/licenses/lgpl.html
+  ~  <p>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.strategy.mapper.StrategyValueMapper">
+
+	<resultMap id="BaseResultMap" type="com.clinbrain.bd.mdm.strategy.entity.StrategyValue">
+		<id property="id" column="id"/>
+		<result property="tableNameCn" column="table_name_cn"/>
+		<result property="columnNameEn" column="column_name_en"/>
+		<result property="columnNameCn" column="column_name_cn"/>
+		<result property="tableNameEn" column="table_name_en"/>
+		<result property="strategicCond" column="strategic_cond"/>
+		<result property="strategicValue" column="strategic_value"/>
+		<result property="nodeType" column="node_type"/>
+		<result property="sourceId" column="source_id"/>
+	</resultMap>
+
+	<!--根据规则查询对应值-->
+	<select id="listRuleByValue" resultMap="BaseResultMap">
+		select * FROM strategy_value where id in(select str_value_id FROM strategy_or_rule WHERE rule_id = #{ruleId} and strategy_id = #{strategyId})
+	</select>
+
+
+	<!--根据策略id删除策略对应值-->
+	<delete id="deleteStrategyValueByStrategyId">
+		DELETE FROM strategy_value WHERE id in(select str_value_id FROM strategy_or_rule WHERE strategy_id = #{strategyId})
+	</delete>
+
+
+	<!--根据规则查询对应值分页-->
+	<select id="listRuleByValuePage" resultMap="BaseResultMap">
+		select * FROM strategy_value where id in(select str_value_id FROM strategy_or_rule WHERE rule_id = #{ruleId} and strategy_id = #{strategyId})
+	</select>
+
+</mapper>

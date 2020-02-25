@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.MetadataModelMapper">
+
+  <resultMap id="metadataModelMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataModel">
+                  <id property="id" column="id"/>
+                        <result property="resourceId" column="resource_id"/>
+                        <result property="parentResourceId" column="parent_resource_id"/>
+                        <result property="nameEn" column="name_en"/>
+                        <result property="nameCn" column="name_cn"/>
+                        <result property="description" column="description"/>
+                        <result property="status" column="status"/>
+                        <result property="createTime" column="create_time"/>
+                        <result property="updateTime" column="update_time"/>
+                        <result property="isRange" column = "is_range"/>
+                        <result property="isStandard" column = "is_standard"/>
+                        <result property="rangeId" column = "range_id"/>
+                        <result property="modelType" column = "model_type"/>
+            </resultMap>
+
+  <!--metadataModel简单分页查询-->
+  <select id="getMetadataModelPage" resultMap="metadataModelMap">
+      select * from
+      (SELECT
+                id,
+                resource_id,
+                parent_resource_id,
+                name_en,
+                name_cn,
+                description,
+                status,
+                create_time,
+                update_time,
+                is_range,
+                is_standard,
+                range_id,
+                model_type
+      FROM mdm_metadata_model m
+      union all
+      SELECT
+          id,
+          resource_id,
+          '' parent_resource_id,
+          name_en,
+          name_cn,
+          description,
+          status,
+          create_time,
+          update_time,
+          is_range,
+          is_standard,
+          range_id,
+          model_type
+      FROM mdm_metadata_model m where is_standard = 1) t
+      <where>
+          <if test="roleIds.size() > 0">
+              m.resource_id in( select resource_id  from mdm_role_resource_permission
+                    <where> role_id in
+                      <foreach collection="roleIds" item="item" open="(" separator="," close=")" >
+                            #{item}
+                        </foreach>
+                    </where>
+                  )
+          </if>
+        <if test="metadataModel.id != null and metadataModel.id.trim() != ''">
+          AND id = #{metadataModel.id}
+        </if>
+        <if test="metadataModel.resourceId != null and metadataModel.resourceId.trim() != ''">
+          AND resource_id = #{metadataModel.resourceId}
+        </if>
+        <if test="metadataModel.parentResourceId != null and metadataModel.parentResourceId.trim() != ''">
+          AND parent_resource_id = #{metadataModel.parentResourceId}
+        </if>
+        <if test="metadataModel.nameEn != null and metadataModel.nameEn.trim() != ''">
+          AND name_en = #{metadataModel.nameEn}
+        </if>
+        <if test="metadataModel.nameCn != null and metadataModel.nameCn.trim() != ''">
+          AND name_cn = #{metadataModel.nameCn}
+        </if>
+        <if test="metadataModel.description != null and metadataModel.description.trim() != ''">
+          AND description = #{metadataModel.description}
+        </if>
+        <if test="metadataModel.status != null and metadataModel.status.trim() != ''">
+          AND status = #{metadataModel.status}
+        </if>
+        <if test="metadataModel.createTime != null and metadataModel.createTime.trim() != ''">
+          AND create_time = #{metadataModel.createTime}
+        </if>
+        <if test="metadataModel.updateTime != null and metadataModel.updateTime.trim() != ''">
+          AND update_time = #{metadataModel.updateTime}
+        </if>
+          <if test="metadataModel.modelType != null and metadataModel.modelType.trim() != ''">
+              AND model_type = #{metadataModel.modelType}
+          </if>
+          <if test="metadataModel.isStandard != null">
+              AND is_standard = #{metadataModel.isStandard}
+          </if>
+           order by id
+     </where>
+  </select>
+    <select id="listModelByRoleIds" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelTree">
+        select * from
+        (SELECT
+            resource_id as uuid,
+            parent_resource_id as parent_uuid,
+            id,
+            resource_id,
+            parent_resource_id,
+            name_en,
+            name_cn,
+            description,
+            status,
+            create_time,
+            update_time,
+            is_range,
+            is_standard,
+            range_id,
+            model_type
+        FROM mdm_metadata_model m
+        union all
+        SELECT
+            concat_ws('-', 'root',resource_id) as uuid,
+            '' as parent_uuid,
+            id,
+            resource_id,
+            '' parent_resource_id,
+            name_en,
+            name_cn,
+            description,
+            status,
+            create_time,
+            update_time,
+            is_range,
+            is_standard,
+            range_id,
+            model_type
+        FROM mdm_metadata_model m where is_standard = 1) m
+        <where>
+            <if test="roleIds.size() > 0">
+                m.resource_id in( select resource_id  from mdm_role_resource_permission
+                        <where>
+                            role_id in
+                            <foreach collection="roleIds" item="item" open="(" separator="," close=")" >
+                                #{item}
+                            </foreach>
+                        </where>
+                )
+            </if>
+            <if test="filter!=null and filter.trim()!='' ">
+                and (name_cn like CONCAT('%',#{filter},'%')
+                or name_en like CONCAT('%',#{filter},'%')
+            )
+            </if>
+        </where>
+    </select>
+    <!--metadataModel简单分页查询,不用union-->
+    <select id="getMetadataModelInfoPage" resultMap="metadataModelMap">
+        select * from mdm_metadata_model m
+        <where>
+            <if test="roleIds.size() > 0">
+                m.resource_id in( select resource_id  from mdm_role_resource_permission
+                <where> role_id in
+                    <foreach collection="roleIds" item="item" open="(" separator="," close=")" >
+                        #{item}
+                    </foreach>
+                </where>
+                )
+            </if>
+            <if test="metadataModel.id != null and metadataModel.id.trim() != ''">
+                AND id = #{metadataModel.id}
+            </if>
+            <if test="metadataModel.resourceId != null and metadataModel.resourceId.trim() != ''">
+                AND resource_id = #{metadataModel.resourceId}
+            </if>
+            <if test="metadataModel.parentResourceId != null and metadataModel.parentResourceId.trim() != ''">
+                AND parent_resource_id = #{metadataModel.parentResourceId}
+            </if>
+            <if test="metadataModel.nameEn != null and metadataModel.nameEn.trim() != ''">
+                AND name_en = #{metadataModel.nameEn}
+            </if>
+            <if test="metadataModel.nameCn != null and metadataModel.nameCn.trim() != ''">
+                AND name_cn = #{metadataModel.nameCn}
+            </if>
+            <if test="metadataModel.description != null and metadataModel.description.trim() != ''">
+                AND description = #{metadataModel.description}
+            </if>
+            <if test="metadataModel.status != null and metadataModel.status.trim() != ''">
+                AND status = #{metadataModel.status}
+            </if>
+            <if test="metadataModel.createTime != null and metadataModel.createTime.trim() != ''">
+                AND create_time = #{metadataModel.createTime}
+            </if>
+            <if test="metadataModel.updateTime != null and metadataModel.updateTime.trim() != ''">
+                AND update_time = #{metadataModel.updateTime}
+            </if>
+            <if test="metadataModel.modelType != null and metadataModel.modelType.trim() != ''">
+                AND model_type = #{metadataModel.modelType}
+            </if>
+            <if test="metadataModel.isStandard != null">
+                AND is_standard = #{metadataModel.isStandard}
+            </if>
+        </where>
+    </select>
+</mapper>

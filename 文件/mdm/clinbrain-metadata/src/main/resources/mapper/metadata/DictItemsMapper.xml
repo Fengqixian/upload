@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.DictItemsMapper">
+
+
+  <select id="selectDictItemList" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.DictItems">
+    select * FROM  dict_items 
+    <trim prefix="where" prefixOverrides="and">
+      <if test="itemsInfo.itemsName != null">
+        and items_name like concat('%',#{itemsInfo.itemsName},'%')
+      </if>
+
+      <if test="itemsInfo.itemsCode != null">
+        and items_code like concat('%',#{itemsInfo.itemsCode},'%')
+      </if>
+      <if test="itemsInfo.showOrder != null">
+        AND show_order = #{itemsInfo.showOrder}
+      </if>
+
+      <if test="itemsInfo.dictId != null">
+        AND dict_id = #{itemsInfo.dictId}
+      </if>
+    </trim>
+
+     order by show_order
+  </select>
+
+  <select id="selectDictItemsByDictId" resultType="java.util.Map">
+    select * FROM  dict_items where dict_id = #{dictId}  order by show_order
+  </select>
+  <select id="selectDictItemListByDictId" resultType="java.util.Map">
+    select items_code as code,items_name as name FROM  dict_items where dict_id = #{dictId} order by show_order
+  </select>
+
+
+  <select id="selectDictItemCount"  resultType="java.lang.Integer">
+    select count(1) FROM  dict_items where dict_id = #{dictId}
+  </select>
+  <delete id="deleteDictItemsByDictInfo">
+    delete from dict_items where dict_id=#{id}
+  </delete>
+  <!-- 获取指定字段常量值 -->
+  <select id="getSelectItemsValues"   resultType="com.clinbrain.bd.mdm.MetadataManage.entity.DictItems">
+    SELECT * FROM dict_items i where dict_id = (select items_code FROM dict_items WHERE dict_id = #{dictId} and  items_name = #{itemName})
+  </select>
+
+
+</mapper>

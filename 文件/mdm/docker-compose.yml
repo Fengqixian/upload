@@ -1,0 +1,100 @@
+version: '2'
+services:
+  clinbrain-mysql:
+    build:
+      context: ./
+      dockerfile: ./db/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+    container_name: clinbrain-mysql
+    image: clinbrain-mysql
+    ports:
+      - 3306:3306
+
+  clinbrain-redis:
+    image: redis:5.0
+    ports:
+      - 6379:6379
+    restart: always
+    container_name: clinbrain-redis
+    hostname: clinbrain-redis
+
+  clinbrain-eureka:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-eureka/Dockerfile
+    restart: always
+    ports:
+      - 8761:8761
+    container_name: clinbrain-eureka
+    hostname: clinbrain-eureka
+    image: clinbrain-eureka
+
+  clinbrain-config:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-config/Dockerfile
+    restart: always
+    container_name: clinbrain-config
+    hostname: clinbrain-config
+    image: clinbrain-config
+
+  clinbrain-gateway:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-gateway/Dockerfile
+    restart: always
+    ports:
+      - 9999:9999
+    container_name: clinbrain-gateway
+    hostname: clinbrain-gateway
+    image: clinbrain-gateway
+
+  clinbrain-auth:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-auth/Dockerfile
+    restart: always
+    container_name: clinbrain-auth
+    hostname: clinbrain-auth
+    image: clinbrain-auth
+
+  clinbrain-upms:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-upms/clinbrain-upms-biz/Dockerfile
+    restart: always
+    container_name: clinbrain-upms
+    hostname: clinbrain-upms
+    image: clinbrain-upms
+
+  clinbrain-monitor:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-visual/clinbrain-monitor/Dockerfile
+    restart: always
+    ports:
+      - 5001:5001
+    container_name: clinbrain-monitor
+    hostname: clinbrain-monitor
+    image: clinbrain-monitor
+
+  clinbrain-codegen:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-visual/clinbrain-codegen/Dockerfile
+    restart: always
+    container_name: clinbrain-codegen
+    hostname: clinbrain-codegen
+    image: clinbrain-codegen
+
+  clinbrain-zipkin:
+    build:
+      context: ./
+      dockerfile: ./clinbrain-visual/clinbrain-zipkin/Dockerfile
+    restart: always
+    image: clinbrain-zipkin
+    container_name: clinbrain-zipkin
+    ports:
+      - 5002:5002

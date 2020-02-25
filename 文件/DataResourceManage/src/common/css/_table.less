@@ -1,0 +1,40 @@
+@import "_variables";
+
+.el-table {
+  font-size: 12px;
+
+  tr {
+    // 鼠标滑过的背景颜色
+    &.hover-row {
+      td {
+        background-color: var(--TABLE-HOVER-ROW-BG-COLOR);
+      }
+    }
+
+    // 单选高亮
+    &.current-row {
+      td {
+        background-color: var(--TABLE-ACTIVE-ROW-BG-COLOR);
+      }
+    }
+
+    // 修改table的字体和row的高度
+    th, td {
+      .cell {
+        line-height: 14px;
+      }
+    }
+
+    th {
+      padding: 10px 0;
+      font-weight: 700;
+      font-size: 14px;
+      color: #595959;
+    }
+
+    td {
+      padding: 8px 0;
+      color: #818181;
+    }
+  }
+}

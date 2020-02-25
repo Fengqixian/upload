@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~  Copyright (c) 2019-2020, 冷冷 (wangiegie@gmail.com).
+  ~  <p>
+  ~  Licensed under the GNU Lesser General Public License 3.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~  <p>
+  ~ https://www.gnu.org/licenses/lgpl.html
+  ~  <p>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.strategy.mapper.RuleInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.clinbrain.bd.mdm.strategy.entity.RuleInfo">
+        <id property="id" column="id"/>
+        <result property="ruleName" column="rule_name"/>
+        <result property="ruleType" column="rule_type"/>
+        <result property="ruleId" column="rule_id"/>
+        <result property="remarks" column="remarks"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="encryptionType" column="encryption_type"/>
+        <result property="sourceId" column="source_id"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapVo" type="com.clinbrain.bd.mdm.strategy.vo.AllergyRuleVo">
+        <id property="id" column="id"/>
+        <result property="ruleName" column="rule_name"/>
+        <result property="ruleType" column="rule_type"/>
+        <result property="ruleId" column="rule_id"/>
+        <result property="remarks" column="remarks"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="ruleExpression" column="rule_expression"/>
+        <result property="sign" column="sign"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="strategyId" column="strategy_id"/>
+        <result property="encryptionType" column="encryption_type"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="secretKey" column="secret_key"/>
+    </resultMap>
+    <!--根据策略用户查询策略对应规则-->
+    <select id="listStrategyUserByRule" resultMap="BaseResultMap">
+		select * FROM rule_info where id in(select rule_id FROM strategy_or_rule WHERE user_id = #{userId})
+	</select>
+
+    <!--根据策略用户查询策略对应规则-->
+    <select id="listStrategyByRule" resultMap="BaseResultMap">
+		select * FROM rule_info where id in(select rule_id FROM strategy_or_rule WHERE strategy_id = #{strategyId})
+	</select>
+
+
+    <!--根据角色标识，应用标识查询规则-->
+   <!--select r.*,a.rule_expression,a.sign,s.strategy_id from rule_info r left JOIN strategy_or_rule s on r.id= s.rule_id left JOIN-->
+    <!--allergy_rule a on r.rule_id = a.id-->
+    <!--where s.strategy_id in(-->
+    <!--select s.id FROM strategy_info s LEFT JOIN strategy_or_rule r on s.id = r.strategy_id left join strategy_user u on u.id = r.user_id-->
+    <!--where u.user_id = #{roleId} and u.system_id =#{systemId} and s.type = 1 and s.status =1 GROUP BY s.id-->
+    <!--) and r.rule_type =0  GROUP BY r.id,s.strategy_id ORDER BY r.id-->
+    <select id="listRuleBySystemRule" resultMap="BaseResultMapVo">
+        SELECT
+            i.*,
+            a.rule_expression,
+            a.sign,
+            s.id strategy_id,
+            u.secret_key
+        FROM rule_info i LEFT JOIN strategy_or_rule r ON i.id = r.rule_id LEFT JOIN strategy_user u ON u.id = r.user_id
+            LEFT JOIN allergy_rule a ON i.rule_id = a.id LEFT JOIN strategy_info s ON s.id = r.strategy_id
+        WHERE u.user_id = #{roleId} AND u.system_id = #{systemId}  AND i.rule_type = 0  and s.type = 1 and s.status =1
+        GROUP BY s.id,i.id,u.secret_key
+	</select>
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.MetadataMappingMapper">
+
+    <insert id="saveMetaDataMappingInfo">
+      insert into metadatamaping(
+      id,
+      sourcemoduleid,
+      sourcemetadataid,
+      sourcemetadataname,
+      sourcemetadataname_cn,
+      targetmoduleid,
+      targetmetadataid,
+      targetmetadataname,
+      targetmetadataname_cn,
+      maptype,
+      status,
+      createuser,
+      createdatetime,
+      audituser,
+      auditdatetime)
+       values (
+      #{metaDataMapInfo.id},
+      #{metaDataMapInfo.sourcemoduleid},
+      #{metaDataMapInfo.sourcemetadataid},
+      #{metaDataMapInfo.sourcemetadataname},
+      #{metaDataMapInfo.sourcemetadataname_cn},
+      #{metaDataMapInfo.targetmoduleid},
+      #{metaDataMapInfo.targetmetadataid},
+      #{metaDataMapInfo.targetmetadataname},
+      #{metaDataMapInfo.targetmetadataname_cn},
+      #{metaDataMapInfo.maptype},
+      #{metaDataMapInfo.status},
+      #{metaDataMapInfo.createuser},
+      #{metaDataMapInfo.createdatetime},
+      #{metaDataMapInfo.audituser},
+      #{metaDataMapInfo.auditdatetime}
+      )
+    </insert>
+
+    <select id="selectMappingInfoList" resultType="java.util.Map">
+        select * from metadatamaping where 1=1
+        <if test="metaDataMapInfo.sourcemoduleid !=null and metaDataMapInfo.sourcemoduleid !=''">
+            and sourcemoduleid = metaDataMapInfo.sourcemoduleid
+        </if>
+        <if test="metaDataMapInfo.sourcemetadataid !=null and metaDataMapInfo.sourcemetadataid !=''">
+            and sourcemetadataid = metaDataMapInfo.sourcemetadataid
+        </if>
+        <if test="metaDataMapInfo.targetmoduleid !=null and metaDataMapInfo.targetmoduleid !=''">
+            and targetmoduleid = metaDataMapInfo.targetmoduleid
+        </if>
+        <if test="metaDataMapInfo.targetmetadataid !=null and metaDataMapInfo.targetmetadataid !=''">
+            and targetmetadataid = metaDataMapInfo.targetmetadataid
+        </if>
+        <if test="metaDataMapInfo.status !=null and metaDataMapInfo.status !=''">
+            and status = #{metaDataMapInfo.status}
+        </if>
+        <if test="metaDataMapInfo.maptype !=null and metaDataMapInfo.maptype !=''">
+            and maptype = #{metaDataMapInfo.maptype}
+        </if>
+        <if test="metaDataMapInfo.createuser !=null and metaDataMapInfo.createuser !=''">
+            and createuser = #{metaDataMapInfo.createuser}
+        </if>
+        <if test="metaDataMapInfo.audituser !=null and metaDataMapInfo.audituser !=''">
+            and audituser = #{metaDataMapInfo.audituser}
+        </if>
+    </select>
+
+    <delete id="deleteMetaDataMappingInfo">
+      delete from metadatamaping where 1=1
+        <if test="metaDataMapInfo.sourcemoduleid !=null and metaDataMapInfo.sourcemoduleid !=''">
+            and sourcemoduleid = metaDataMapInfo.sourcemoduleid
+        </if>
+        <if test="metaDataMapInfo.sourcemetadataid !=null and metaDataMapInfo.sourcemetadataid !=''">
+            and sourcemetadataid = metaDataMapInfo.sourcemetadataid
+        </if>
+        <if test="metaDataMapInfo.targetmoduleid !=null and metaDataMapInfo.targetmoduleid !=''">
+            and targetmoduleid = metaDataMapInfo.targetmoduleid
+        </if>
+        <if test="metaDataMapInfo.targetmetadataid !=null and metaDataMapInfo.targetmetadataid !=''">
+            and targetmetadataid = metaDataMapInfo.targetmetadataid
+        </if>
+        <if test="metaDataMapInfo.status !=null and metaDataMapInfo.status !=''">
+            and status = #{metaDataMapInfo.status}
+        </if>
+        <if test="metaDataMapInfo.maptype !=null and metaDataMapInfo.maptype !=''">
+            and maptype = #{metaDataMapInfo.maptype}
+        </if>
+        <if test="metaDataMapInfo.createuser !=null and metaDataMapInfo.createuser !=''">
+            and createuser = #{metaDataMapInfo.createuser}
+        </if>
+        <if test="metaDataMapInfo.audituser !=null and metaDataMapInfo.audituser !=''">
+            and audituser = #{metaDataMapInfo.audituser}
+        </if>
+    </delete>
+
+    <update id="auditMetaDataMappingInfo">
+      update metadatamaping set status = #{status},audituser = #{metaDataMapInfo.audituser},auditdatetime = #{metaDataMapInfo.auditdatetTime} where 1=1
+        <if test="metaDataMapInfo.sourcemoduleid !=null and metaDataMapInfo.sourcemoduleid !=''">
+            and sourcemoduleid = metaDataMapInfo.sourcemoduleid
+        </if>
+        <if test="metaDataMapInfo.sourcemetadataid !=null and metaDataMapInfo.sourcemetadataid !=''">
+            and sourcemetadataid = metaDataMapInfo.sourcemetadataid
+        </if>
+        <if test="metaDataMapInfo.targetmoduleid !=null and metaDataMapInfo.targetmoduleid !=''">
+            and targetmoduleid = metaDataMapInfo.targetmoduleid
+        </if>
+        and targetmetadataid in (${targetDataList}))
+    </update>
+
+    <select id="getMappingSourceDataList" resultType="java.util.Map">
+        select mdm_metadata_value.* from metadatamaping left join mdm_metadata_value
+        on mdm_metadata_value.resource_id = metadatamaping.sourcemetadataid
+        where metadatamaping.sourcemoduleid = #{sourceModuleID}
+        <if test="status !=null and status !=''">
+            and  metadatamaping.status = #{status}
+        </if>
+        <if test="searchValue !=null and searchValue !=''">
+          and (mdm_metadata_value.name_en = #{searchValue} or mdm_metadata_value.name_en = #{searchValue})
+        </if>
+        group by mdm_metadata_value.resource_id
+    </select>
+
+    <select id ="selectMappingTargetModuleList" resultType="java.util.Map">
+      select targetmoduleid from metadatamaping where sourcemoduleid = #{sourceModuleID}
+        <if test="status !=null and status !=''">
+            and  status = #{status}
+        </if>
+        group by targetmoduleid
+    </select>
+
+    <select id="selectMappingTargetDataList" resultType="java.util.Map">
+        select mdm_metadata_value.* from metadatamaping left join mdm_metadata_value
+        on mdm_metadata_value.resource_id = metadatamaping.targetmetadataid
+        where metadatamaping.sourcemoduleid = #{sourceModuleID} and metadatamaping.targetmoduleid = #{targetModuleID}
+        and metadatamaping.metadatamaping.sourcemetadataid = #{sourceDataID}
+        <if test="status !=null and status !=''">
+            and  metadatamaping.status = #{status}
+        </if>
+    </select>
+</mapper>

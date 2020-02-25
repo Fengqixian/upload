@@ -1,0 +1,131 @@
+@import "_variables";
+
+// 下拉选择框
+.el-select-dropdown {
+  /*max-width: 300px !important;*/
+
+  .el-select-dropdown__item {
+    font-size: 12px;
+    line-height: 26px;
+    height: 26px;
+  }
+}
+
+
+// 输入框
+.el-input, .el-select {
+  //max-width: 300px;
+
+  .el-input__inner {
+    font-size: 12px;
+    border-radius: 0;
+    height: 24px;
+    line-height: 24px;
+  }
+
+  .el-input__prefix, .el-input__suffix {
+    top: 1px;
+  }
+}
+
+.el-form {
+  // form 表单的label样式
+  .el-form-item__label {
+    font-size: 12px;
+  }
+
+  .el-form-item {
+    margin-bottom: 0;
+
+    .el-form-item__content {
+      .el-textarea {
+        margin-bottom: 6px;
+      }
+
+      .el-input, .el-select {
+        .el-input__prefix, .el-input__suffix {
+          top: -1px;
+        }
+      }
+    }
+  }
+}
+
+// textarea输入框
+.el-textarea {
+  //max-width: 300px;
+
+  .el-textarea__inner {
+    font-size: 12px;
+    border-radius: 0;
+  }
+}
+
+// checkbox 和 radio
+.el-checkbox, .el-radio {
+  &, .el-checkbox__label, .el-radio__label {
+    font-size: 12px;
+  }
+}
+
+// 选择框
+.el-select {
+  display: block;
+}
+
+// form 表单 btn向右靠
+.btn-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+}
+
+.el-input--medium,.el-input--small{
+  .el-input__icon {
+    line-height: 24px;
+  }
+}
+
+// 对话框
+.el-dialog {
+  .el-dialog__body {
+    padding-top: 0;
+    font-size: 12px;
+  }
+}
+
+// input 输入框 前缀和后缀边框radius
+.el-input-group__prepend, .el-textarea__inner {
+  border-radius: 0;
+}
+
+.el-input-group__append, .el-input-group__prepend {
+  border-radius: 0;
+}
+
+// tag 样式
+.el-tag {
+  height: 24px;
+  line-height: 24px;
+  padding: 0 4px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+// popover
+.el-popover {
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+// tooltip
+.el-tooltip__popper {
+  max-width: 200px;
+}
+
+// checkbox
+.el-checkbox {
+  .el-checkbox__label {
+    padding-left: 5px;
+  }
+}

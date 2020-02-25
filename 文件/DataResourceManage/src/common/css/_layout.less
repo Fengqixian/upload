@@ -1,0 +1,95 @@
+@import "_variables";
+// 主体样式
+.layout {
+  overflow: hidden;
+
+  .menu-content {
+    position: relative;
+
+    // 主体部分
+    .content {
+      transition: all 0.35s;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+
+      .container {
+        position: relative;
+        background-color: var(--WEB-CONTAINER-BG-COLOR);
+      }
+
+      & > div {
+        flex: 1;
+      }
+
+      .sheets-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background-color: #e5e5e5; // 主体区域背景颜色
+
+        &:after {
+          content: "";
+          display: block;
+          clear: both;
+        }
+
+        .father {
+          margin-bottom: 50px;
+        }
+      }
+
+      // 底部样式
+      .layout-footer {
+        background-color: var(--WEB-FOOTER-BG-COLOR); // 头部底部背景颜色
+        z-index: 100;
+        line-height: 3rem;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--FOOTER-FONT-COLOR); // 底部公司信息字体颜色
+        font-size: 1.2rem;
+        box-shadow: 0 0 6px var(--FOOTER-SHADOW-COLOR);
+
+        img {
+          width: 7.6rem;
+        }
+      }
+    }
+  }
+
+  // 头部样式
+  .layout-header {
+    height: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--WEB-HEADER-BG-COLOR);
+    padding: 0 1rem 0 1.8rem;
+    overflow: hidden;
+    // 左侧公司以及平台字体样式
+    .logo {
+      font-size: 2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      color: rgb(251, 253, 253); // 头部平台标题字体颜色
+
+      .company {
+        margin-right: 2rem;
+      }
+    }
+
+    .user {
+      span {
+        color: rgba(255, 255, 255, .85); // 头部用户名称字体颜色
+      }
+    }
+  }
+}
+

@@ -1,0 +1,116 @@
+@import "_variables";
+
+.btn-bg(@color) {
+  color: #fff;
+  &.el-button {
+    background-color: @color;
+    border-color: @color;
+    color: #fff;
+  }
+
+  &:focus, &:hover {
+    opacity: 0.7;
+  }
+
+  &.is-active, &:active {
+    opacity: 1;
+  }
+}
+
+.btn-nobg(@color) {
+  color: #606266;
+  &.el-button {
+    background-color: #fff;
+  }
+
+  &:focus, &:hover {
+    opacity: 0.7;
+    color: #fff;
+    border-color: @color;
+    background-color: @color;
+  }
+
+  &.is-active, &:active {
+    opacity: 1;
+    color: #fff;
+    border-color: @color;
+  }
+}
+
+.btn-text(@color) {
+  color: @color;
+  &:focus, &:hover {
+    opacity: 0.7;
+    color: @color;
+  }
+
+  &.is-active, &:active {
+    opacity: 1;
+    color: @color;
+  }
+}
+
+// 含有背景的
+.add-bg {
+  .btn-bg(var(--BTN-ADD-COLOR));
+}
+
+.edit-bg {
+  .btn-bg(var(--BTN-EDIT-COLOR));
+}
+
+.del-bg {
+  .btn-bg(var(--BTN-DEL-COLOR));
+}
+
+.confirm-bg {
+  .btn-bg(var(--BTN-CONFIRM-COLOR));
+}
+
+.add-nobg {
+  .btn-nobg(var(--BTN-ADD-COLOR));
+}
+
+.del-nobg {
+  .btn-nobg(var(--BTN-DEL-COLOR));
+}
+
+.edit-nobg {
+  .btn-nobg(var(--BTN-EDIT-COLOR));
+}
+
+.confirm-nobg {
+  .btn-nobg(var(--BTN-CONFIRM-COLOR));
+}
+
+.add-text {
+  .btn-text(var(--BTN-ADD-COLOR));
+}
+
+.del-text {
+  .btn-text(var(--BTN-DEL-COLOR));
+}
+
+.edit-text {
+  .btn-text(var(--BTN-EDIT-COLOR));
+}
+
+.confirm-text {
+  .btn-text(var(--BTN-CONFIRM-COLOR));
+}
+
+/**
+修改btn整体像素
+ */
+
+.el-button {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 0;
+}
+
+// 文字btn
+.el-button--text {
+  padding: 0;
+  margin-left: 0;
+}

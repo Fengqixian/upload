@@ -1,0 +1,1632 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="webConfigData">
+	
+	
+	
+		<!--查询配置信息表数据信息   -->
+	<select id="getConfigInfo"  parameterClass="String"  resultClass="java.util.HashMap" >
+		select Id,ConfigKey,ifnull(ConfigValue,'') as ConfigValue,ConfigDescribe,type  from SOLR_Date.config_info
+	</select>
+	
+	<!--查询配置信息表数据信息   -->
+	<select id="getConfigInfotype"  parameterClass="String"  resultClass="java.util.HashMap" >
+		select Id,ConfigKey,ifnull(ConfigValue,'') as ConfigValue,ConfigDescribe,type  from SOLR_Date.config_info
+			where 1=1  and type=#configType#
+	</select>
+	
+	<!--修改配置文件信息  -->
+	<update id="updateConfig" parameterClass="java.util.HashMap">
+		update SOLR_Date.config_info set ConfigValue=#ConfigValue#,ConfigDescribe=#ConfigDescribe#,update_time=now()  where Id=#Id#
+	</update>
+	<!-- 获取coreListMap 的对应的数据库数据信息 -->
+	<select id="getDataBase"  resultClass="String">
+	SELECT  CollectionName_old CollectionName from SOLR_Date.Dic_dataBase where Stauts = 0 ORDER BY Order_field ASC
+	</select>
+	
+	<!-- 获取 查询  对应的表的数据 -->
+	<select  id="getconfigcoreList"  resultClass="java.util.HashMap" >
+	SELECT id,catalogName,
+	collectionName,d.stauts AS stauts,
+	description,CollectionName_Old AS 
+	collectionNameOld,order_field AS orderField 
+	FROM SOLR_Date.Dic_dataBase d ORDER BY Order_field ASC
+	</select>
+	
+	<!-- Dic_Field 表数据 -->
+	<select id="getfieldList"  parameterClass="int"  resultClass="java.util.HashMap" >
+	SELECT d.`Id` as id,d.`FieldName`,
+	ifnull(d.`groupField`,'') as groupField,d.`DataType`  as DataType,
+	d.`FieldType` as FieldType ,ifnull(d.`DisplayFormat`,'') as DisplayFormat ,
+	ifnull(d.`DisplayName`,'') as DisplayName,d.`Collection_Id` as collectionId,
+	d.`Stauts` as stauts, d.`Order_field` as orderField,
+	f.CatalogName as CatalogName
+	 FROM SOLR_Date.Dic_Field d 
+	 INNER JOIN SOLR_Date.Dic_dataBase f  ON f.Id = d.Collection_Id
+	 where d.Collection_Id=#baseId#
+	</select>
+	<!--  获取dicbase 表的下拉选框-->
+	<select id="getselectbaseList"  resultClass="java.util.HashMap" >
+	SELECT id,catalogName
+	FROM SOLR_Date.Dic_dataBase <!-- where stauts=0 -->
+	</select>
+	<!-- 添加dicfield 表数据 -->
+	<insert id="adddicfield" parameterClass="java.util.HashMap">
+		insert into SOLR_Date.`Dic_Field` (`FieldName`, `groupField`, `DataType`,
+		 `FieldType`, `DisplayFormat`, `DisplayName`, `Collection_Id`,
+		  `Stauts`, `Order_field`) 
+		  values(#FieldName#,#groupField#,#DataType#,#FieldType#,#DisplayFormat#
+		  ,#DisplayName#,#Collection_Id#
+		  ,#Stauts#,#Order_field#);
+	</insert>
+	<!-- 修改dicfield 表数据 -->
+	<update id="updatedicfield"  parameterClass="java.util.HashMap">
+	update SOLR_Date.Dic_Field set FieldName=#FieldName#,groupField=#groupField#,
+	DataType=#DataType#,FieldType=#FieldType#,DisplayFormat=#DisplayFormat#,
+	DisplayName=#DisplayName#,Collection_Id=#Collection_Id#,Stauts=#Stauts#,
+	Order_field=#Order_field#,update_time=now() where Id=#id#
+	</update>
+	<!-- 删除dicfield 表数据 -->
+	<update id="deldicfield"  parameterClass="java.util.HashMap">
+	 update SOLR_Date.Dic_Field set Stauts=#Stauts#, update_time=now() where Id=#id#
+	</update>
+
+	<!--  添加database 表数据-->
+	<insert id="adddataBase"  parameterClass="java.util.HashMap">
+	insert into SOLR_Date.`Dic_dataBase` ( `CatalogName`, `CollectionName`, `Stauts`, `Description`, `CollectionName_Old`, `Order_field`) 
+	values(#CatalogName#,#CollectionName#,#Stauts#,#Description#,#CollectionName_Old#,#Order_field#);
+	
+	</insert>
+	<!--  修改database 表数据-->
+	<update id="updatedataBase"  parameterClass="java.util.HashMap">
+	update SOLR_Date.Dic_dataBase set Stauts=#Stauts#,CatalogName=#CatalogName#,CollectionName=#CollectionName#,Description=#Description#,
+	CollectionName_Old=#CollectionName_Old#,Order_field=#Order_field#,update_time=now()
+	 where Id=#id#
+	</update>
+	
+	<!--  逻辑删除或者启用database 表数据-->
+	<update id="deldataBase"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_dataBase set Stauts=#Stauts#, update_time=now() where Id=#id#
+	</update>
+	
+	
+	<!-- 获取forMatCode 表数据  -->
+	<select id="getforMatCodeList" resultClass="java.util.HashMap" >
+		SELECT c.id AS Id,c.`Dic_dataBase_ID` AS baseId,c.`Dic_Field_ID` AS fieldId,
+		c.`Code`,IFNULL(c.`Description`,'') AS Description,c.`IsDeleted`,
+		d.`CatalogName`,f.`FieldName` FROM SOLR_Date.formatcode c  
+		INNER JOIN SOLR_Date.Dic_dataBase d ON d.id=c.`Dic_dataBase_ID` 
+		INNER JOIN SOLR_Date.Dic_Field f ON f.`Id`=c.`Dic_Field_ID`
+		ORDER BY c.IsDeleted ASC
+	</select>
+	<!-- 添加forMatCode 表 数据 -->
+	<insert id="addforMatCode"  parameterClass="java.util.HashMap">
+		INSERT INTO SOLR_Date.formatcode (Dic_dataBase_ID,Dic_Field_ID,CODE,Description,IsDeleted)
+		VALUES(#Dic_dataBase_ID#,#Dic_Field_ID#,#Code#,#Description#,#IsDeleted#)
+	</insert>
+	
+	<!--  修改forMatCode 表 数据-->
+	<update id="updateforMatCode"  parameterClass="java.util.HashMap">
+	update SOLR_Date.formatcode set Dic_dataBase_ID=#Dic_dataBase_ID#,Dic_Field_ID=#Dic_Field_ID#,
+	CODE=#Code#,Description=#Description#,IsDeleted=#IsDeleted#,update_time=now() where Id=#id#
+	</update>
+	
+	<!--  删除forMatCode 表 数据-->
+	<update id="delforMatCode"  parameterClass="java.util.HashMap">
+	update SOLR_Date.formatcode set IsDeleted=#IsDeleted#,update_time=now() where Id=#id#
+	</update>
+	
+	<!--  获取dicfield 表的下拉选框-->
+	<select id="getselectfieldList"  resultClass="java.util.HashMap" >
+	SELECT id,f.`FieldName`
+	FROM SOLR_Date.Dic_Field f <!-- where  f.`Collection_Id`=#Dic_dataBase_ID# -->
+	</select>
+	
+	
+	<!--获取更新数据 -->
+	<select id="getCoreList" resultClass="java.util.HashMap">
+	SELECT  CollectionName_old CollectionName , 
+							CollectionName_old 
+							FROM    SOLR_Date.Dic_dataBase
+							WHERE   Stauts = 0 
+	</select>
+	
+	<!-- 更新getonlyCheckTableMap 数据 -->
+	<select id="getonlyCheckTableMap" resultClass="java.util.HashMap">
+	SELECT  d.CollectionName_old CollectionName ,d.CollectionName_old,
+	f.FieldName,FROM    SOLR_Date.Dic_Field f 
+	INNER JOIN SOLR_Date.Dic_dataBase d  ON d.Id = f.Collection_Id 
+	AND d.Stauts = 0 AND f.Stauts = 0 
+	ORDER BY d.Order_field ASC,f.Order_field ASC
+	</select>
+	
+	<!--  更新orMatCodeMap数据 -->
+	<select id="getforMatCodeMap" resultClass="java.util.HashMap">
+	SELECT  forMatCode.Id ,
+        						        forMatCode.Dic_dataBase_ID ,
+        						        forMatCode.Dic_Field_ID ,
+        						        Dic_Field.FieldName ,
+        						        Dic_dataBase.CollectionName,
+        						        forMatCode.Code ,
+        						        forMatCode.Description 
+        						FROM    SOLR_Date.forMatCode 
+        						        INNER JOIN SOLR_Date.Dic_dataBase ON Dic_dataBase.Id
+        						         = forMatCode.Dic_dataBase_ID  
+        						        INNER JOIN SOLR_Date.Dic_Field ON Dic_Field.Id = forMatCode.Dic_Field_ID  
+        						WHERE   forMatCode.IsDeleted = 0
+	</select>
+	
+	<!-- 获取更新hLightTableMap 的数据 --> 
+	<select id="hLightTableMap" resultClass="java.util.HashMap">
+		SELECT f.FieldName,f.fieldtype ,d.CollectionName_old CollectionName 
+        	FROM    SOLR_Date.Dic_Field f  
+        	 INNER JOIN SOLR_Date.Dic_dataBase d  ON d.Id = f.Collection_Id 
+        	AND d.Stauts = 0 AND f.Stauts = 0 
+            AND f.fieldtype =2 
+        	ORDER BY d.CollectionName DESC
+	</select>
+	
+	<!--  获取更新absoluteMatchingQureMap 数据 --> 
+	<select id="getabsoluteMatchingQureMap"  resultClass="java.util.HashMap" >
+	SELECT  d.CollectionName_old CollectionName , 
+        		       d.CollectionName_old, 
+        			f.FieldName 
+        	FROM    SOLR_Date.Dic_Field f  
+        	  INNER JOIN SOLR_Date.Dic_dataBase d  ON d.Id = f.Collection_Id 
+         AND d.Stauts = 0 AND f.Stauts = 0  AND f.FieldType = 2 
+       ORDER BY d.CollectionName DESC
+	</select>
+	
+	<!--查询表配置信息表数据信息   -->
+	<select id="getConfigTableInfo" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT Id,CatalogName,CollectionName,Description,Stauts,Order_field,IsDeleted FROM SOLR_Date.Dic_dataBase where  IsDeleted=0 
+		order by Order_field ASC ,id ASC
+	</select>
+		
+	<!--查询表配置信息表详细信息   -->
+	<select id="getDicFileds" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select Id, FieldName, groupField, DataType, FieldType, DisplayFormat, DisplayName, Collection_Id,Order_field,SensitiveFilterStart,SensitiveFilterEnd, Stauts,IsDeleted
+		 from SOLR_Date.Dic_Field
+		 where Collection_Id =#orderField# and IsDeleted=0
+		 ORDER BY Order_field ASC ,id asc 
+	</select>
+	
+	
+	<insert id="saveDicFiled"  parameterClass="java.util.HashMap">
+		insert into SOLR_Date.Dic_Field 
+		(FieldName, groupField, DataType, FieldType, DisplayFormat, DisplayName, Collection_Id, Stauts, Order_field, update_time) 
+		values(#FieldName#, #groupField#, #DataType#, #FieldType#, #DisplayFormat#, #DisplayName#, #Collection_Id#, #Stauts#, Order_field, NOW());
+	</insert>
+	
+	<update id="updateDicFiled"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_Field
+		set FieldName =#fieldName#,
+		DisplayName =#displayName#,
+		update_time = NOW()
+		where Id =#id#
+	</update>
+
+	
+	
+	
+	<!--查询userField表 -->
+	<select id="getPrivilegeField" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select   Id,Privilege_User_Id,Dic_Field_Id ,Description,IsDeleted  from SOLR_Date.Privilege_Field
+		where Privilege_User_Id =#Privilege_User_Id# and IsDeleted=0 
+	</select>
+	<!-- Privilege_User_Role插入数据 -->
+	<insert id="addRoleuser" parameterClass="java.util.HashMap">
+			 INSERT INTO SOLR_Date.Privilege_User_Role 
+	   ( Privilege_Role_Id, Privilege_User_Id, Privilege_Type, Privilege_Status, valid_startTime,
+	    valid_EndTime, CreateTime, UpdateTime, IsDeleted )
+		VALUES
+			( #role_id#, #user_id#, 0, 0, NOW( ), NOW( ), NOW( ), NOW( ), 0 )
+			<selectKey resultClass="int" keyProperty="id">
+				SELECT @@IDENTITY AS id
+			</selectKey>
+	</insert>
+	<!-- Privilege_User_Role插入申请 权限 数据  -->
+	<insert id="addRoleuserForApproval" parameterClass="java.util.HashMap">
+			 INSERT INTO SOLR_Date.Privilege_User_Role 
+	   ( Privilege_Role_Id, Privilege_User_Id, Privilege_Type, Privilege_Status,Approval_OK, valid_startTime,
+	    valid_EndTime, CreateTime, UpdateTime, IsDeleted,Description )
+		VALUES
+			( #role_id#, #user_id#, #Privilege_Type#, 2,0, #valid_startTime#, #valid_EndTime#, NOW( ), NOW( ), 0 ,#Description#)
+			<selectKey resultClass="int" keyProperty="id">
+				SELECT @@IDENTITY AS id
+			</selectKey>
+	</insert>
+	<!-- Privilege_User_Role 删除数据 -->
+	<update id="deleteRoleuser" parameterClass="int">
+	   UPDATE SOLR_Date.Privilege_User_Role set IsDeleted = 1 ,UpdateTime=NOW() where id=#role_user_id# 
+	</update>
+	<!-- Privilege_User_Role 更新数据的手否可做审批 -->
+	<update id="updateApproval" parameterClass="java.util.HashMap">
+	   UPDATE SOLR_Date.Privilege_User_Role set Approval_OK = #Approval_OK# ,ApprovalUSERID=#ApprovalUSERID#,UpdateTime=NOW() where id=#id#
+	</update>
+	<!-- Privilege_User_Role 更新数据状态-->
+	<update id="updatePrivilege_Status" parameterClass="java.util.HashMap">
+	   UPDATE SOLR_Date.Privilege_User_Role set Privilege_Status = #Privilege_Status# ,UpdateTime=NOW() where id=#id#
+	</update>
+	<!-- Privilege_User_Role 更新数据的手否可做审批 -->
+	<update id="updatePrivilege_Type" parameterClass="java.util.HashMap">
+	   UPDATE SOLR_Date.Privilege_User_Role set Privilege_Type = #Privilege_Type# ,ApprovalUSERID=#ApprovalUSERID#,UpdateTime=NOW() where id=#id#
+	</update>
+	<!-- Privilege_User_Role 更新数据权限开始 时间  -->
+	<update id="updatevalid_startTime" parameterClass="java.util.HashMap">
+	   UPDATE SOLR_Date.Privilege_User_Role set valid_startTime = #valid_startTime# ,ApprovalUSERID=#ApprovalUSERID#,UpdateTime=NOW() where id=#id#
+	</update>
+	<!-- Privilege_User_Role 更新数据权限结束  时间  -->
+	<update id="updatevalid_EndTime" parameterClass="java.util.HashMap">
+	   UPDATE SOLR_Date.Privilege_User_Role set valid_EndTime = #valid_EndTime# ,ApprovalUSERID=#ApprovalUSERID#,UpdateTime=NOW() where id=#id#
+	</update>
+	<!--查询Privilege_Role表 -->
+	<select id="getPrivilegeRole" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_Role.Id,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_Role.Privilege_Type,
+			Privilege_Role.Privilege_Status,
+			DATE_FORMAT(Privilege_Role.valid_startTime,'%Y=%m=%d') AS valid_startTime,
+			DATE_FORMAT(Privilege_Role.valid_EndTime,'%Y=%m=%d') AS valid_EndTime,
+			DATE_FORMAT(Privilege_Role.UpdateTime,'%Y=%m=%d %T') AS UpdateTime,
+			Privilege_Role.IsDeleted 
+		FROM
+			SOLR_Date.Privilege_Role
+		where Privilege_Role.isdeleted =#isDeleted# 
+		<isNotEqual property="ID" compareValue="">
+		  and Privilege_Role.Id = #ID#
+		</isNotEqual>
+		<isNotEqual property="roleName" compareValue="">
+		  and Privilege_Role.roleName like #roleName#
+		</isNotEqual>
+		<isNotEqual property="Description" compareValue="">
+		  and Privilege_Role.Description like #Description#
+		</isNotEqual>
+	</select>
+	<!--查询Privilege_Role表 -->
+	<select id="getPrivilegeUserRoleByUserRoleid" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		 SELECT
+		    Privilege_User.USERID,
+			Privilege_User.USERNAME,
+			Privilege_User.Value_DeptName,
+			Privilege_Role.Id,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_User_Role.id  as Privilege_User_Role_id,
+			Privilege_User_Role.Privilege_Type,
+			Privilege_User_Role.Approval_OK,
+			Privilege_User_Role.Privilege_Status,
+			Privilege_User_Role.Description AS Privilege_User_Role_Description,
+			(select userName from SOLR_Date.Privilege_User where userID  =  Privilege_User_Role.ApprovalUSERID) as ApprovalUSERID ,
+			DATE_FORMAT(Privilege_User_Role.valid_startTime,'%Y-%m-%d') AS valid_startTime,
+			DATE_FORMAT(Privilege_User_Role.valid_EndTime,'%Y-%m-%d') AS valid_EndTime,
+			DATE_FORMAT(Privilege_User_Role.UpdateTime,'%Y-%m-%d %T') AS UpdateTime,
+			Privilege_Role.IsDeleted 
+		FROM
+			SOLR_Date. Privilege_Role
+			inner join SOLR_Date.Privilege_User_Role  on Privilege_Role.id = Privilege_User_Role.Privilege_Role_Id and Privilege_User_Role.isdeleted =0 
+			inner join SOLR_Date.Privilege_User on Privilege_User_Role.Privilege_User_Id = Privilege_User.id and Privilege_User.isdeleted =0 
+		 where Privilege_Role.isdeleted =0  
+		<!-- <isNotEqual property="USERID" compareValue="">
+		 and Privilege_User.USERID = #USERID#
+		</isNotEqual>
+		<isNotEqual property="ID" compareValue="">
+		  and Privilege_Role.Id = #ID#
+		</isNotEqual> -->
+		<isNotEqual property="Privilege_User_Role_id" compareValue="">
+		 and Privilege_User_Role.id = #Privilege_User_Role_id#
+		</isNotEqual>
+		<!-- <isNotEqual property="roleName" compareValue="">
+		  and Privilege_Role.roleName like #roleName#
+		</isNotEqual>
+		<isNotEqual property="Description" compareValue="">
+		  and Privilege_Role.Description like #Description#
+		</isNotEqual>
+		<isNotEqual property="privilege_Status" compareValue="">
+		  and Privilege_User_Role.Privilege_Status in (<![CDATA[$privilege_Status$]]>)
+		</isNotEqual> -->
+		order by Privilege_User_Role.UpdateTime DESC
+	</select>
+	<!--查询Privilege_Role表 -->
+	<select id="getPrivilegeRoleByUser" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		 SELECT
+			Privilege_Role.Id,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_User_Role.id  as Privilege_User_Role_id,
+			Privilege_User_Role.Privilege_Type,
+			Privilege_User_Role.Approval_OK,
+			Privilege_User_Role.Privilege_Status,
+			Privilege_User_Role.Description Privilege_User_Role_Description,
+			DATE_FORMAT(Privilege_User_Role.valid_startTime,'%Y-%m-%d') AS valid_startTime,
+			DATE_FORMAT(Privilege_User_Role.valid_EndTime,'%Y-%m-%d') AS valid_EndTime,
+			DATE_FORMAT(Privilege_User_Role.UpdateTime,'%Y-%m-%d %T') AS UpdateTime,
+			Privilege_Role.IsDeleted 
+		FROM
+			SOLR_Date. Privilege_Role
+			inner join SOLR_Date.Privilege_User_Role  on Privilege_Role.id = Privilege_User_Role.Privilege_Role_Id and Privilege_User_Role.isdeleted =0 
+			inner join SOLR_Date.Privilege_User on Privilege_User_Role.Privilege_User_Id = Privilege_User.id and Privilege_User.isdeleted =0 
+		 where Privilege_Role.isdeleted =0  and Privilege_User.USERID = #USERID#
+		<isNotEqual property="ID" compareValue="">
+		  and Privilege_Role.Id = #ID#
+		</isNotEqual>
+		<isNotEqual property="ID" compareValue="">
+		  Privilege_User_Role.id = #Privilege_User_Role_id#
+		</isNotEqual>
+		<isNotEqual property="roleName" compareValue="">
+		  and Privilege_Role.roleName like #roleName#
+		</isNotEqual>
+		<isNotEqual property="Description" compareValue="">
+		  and Privilege_Role.Description like #Description#
+		</isNotEqual>
+		<isNotEqual property="privilege_Status" compareValue="">
+		  and Privilege_User_Role.Privilege_Status in (<![CDATA[$privilege_Status$]]>)
+		</isNotEqual>
+		order by Privilege_User_Role.UpdateTime DESC
+	</select>
+	<!--查询Privilege_Role表 -->
+	<select id="getPrivilegeRoleWithoutUser" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_Role.Id,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_Role.Privilege_Type,
+			Privilege_Role.Privilege_Status,
+			DATE_FORMAT(Privilege_Role.valid_startTime,'%Y-%m-%d') AS valid_startTime,
+			DATE_FORMAT(Privilege_Role.valid_EndTime,'%Y-%m-%d') AS valid_EndTime,
+			DATE_FORMAT(Privilege_Role.UpdateTime,'%Y-%m-%d %T') AS UpdateTime,
+			Privilege_Role.IsDeleted 
+		FROM
+			SOLR_Date. Privilege_Role
+			inner join SOLR_Date.Privilege_User_Role  on Privilege_Role.id != Privilege_User_Role.Privilege_Role_Id and Privilege_User_Role.isdeleted =0 
+			inner join SOLR_Date.Privilege_User on Privilege_User_Role.Privilege_User_Id = Privilege_User.id and Privilege_User.isdeleted =0 
+		 where Privilege_Role.isdeleted =0  and Privilege_User.USERID = #USERID#
+		<isNotEqual property="Privilege_Status" compareValue="">
+		  and Privilege_User_Role.Privilege_Status= #Privilege_Status#
+		</isNotEqual>
+		<isNotEqual property="ID" compareValue="">
+		  and Privilege_Role.Id = #ID#
+		</isNotEqual>
+		<isNotEqual property="roleName" compareValue="">
+		  and Privilege_Role.roleName like #roleName#
+		</isNotEqual>
+		<isNotEqual property="Description" compareValue="">
+		  and Privilege_Role.Description like #Description#
+		</isNotEqual>
+	</select>
+	<!--查询用户可申请Privilege_Role表 -->
+	<select id="getPrivilegeRoleForApply" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_Role.Id,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_Role.Privilege_Type,
+			Privilege_Role.Privilege_Status,
+			DATE_FORMAT( Privilege_Role.valid_startTime, '%Y-%m-%d' ) AS valid_startTime,
+			DATE_FORMAT( Privilege_Role.valid_EndTime, '%Y-%m-%d' ) AS valid_EndTime,
+			DATE_FORMAT( Privilege_Role.UpdateTime, '%Y-%m-%d %T' ) AS UpdateTime,
+			Privilege_Role.IsDeleted 
+		FROM
+			SOLR_Date.Privilege_Role 
+		WHERE
+			Privilege_Role.isdeleted = 0 
+			AND Privilege_Role.id NOT IN (
+		SELECT
+			Privilege_User_Role.Privilege_Role_Id 
+		FROM
+			SOLR_Date.Privilege_User_Role
+			INNER JOIN SOLR_Date.Privilege_User ON Privilege_User_Role.Privilege_User_Id = Privilege_User.id 
+			AND Privilege_User.isdeleted = 0 
+		WHERE
+			Privilege_User_Role.isdeleted = 0 
+			AND Privilege_User.USERID = #USERID# 
+			AND Privilege_User_Role.Privilege_Status IN ( 0, 1, 2 ) 
+			)
+	</select>
+	
+	<!--查询用户可审批 Privilege_Role表 -->
+	<select id="ApplyForPrivilegeCount" parameterClass="java.util.HashMap" resultClass="long" >
+		<dynamic>
+            <![CDATA[SELECT
+						count(1) 
+					FROM
+						(
+					SELECT
+						Privilege_Role.Id,
+						Privilege_Role.RoleName,
+						Privilege_Role.Description,
+						ApplyUser.USERID,
+						ApplyUser.USERNAME,
+						Privilege_User.USERID AS ApprovalUSERID,
+						Privilege_User.USERNAME AS ApprovalUSERNAME,
+						Privilege_User_Role.id AS Privilege_User_Role_id,
+						Privilege_User_Role.Privilege_Type,
+						Privilege_User_Role.Privilege_Status,
+						DATE_FORMAT( Privilege_User_Role.valid_startTime, '%Y-%m-%d' ) AS valid_startTime,
+						DATE_FORMAT( Privilege_User_Role.valid_EndTime, '%Y-%m-%d' ) AS valid_EndTime,
+						DATE_FORMAT( Privilege_User_Role.UpdateTime, '%Y-%m-%d %T' ) AS UpdateTime,
+						Process_Group.id AS Process_Group_ID,
+						Process_Group.Approval_Order AS Process_Group_Approval_Order,
+						Process_Group.Process_Title AS Process_Group_Process_Title,
+						Process_Group.Process_Description AS Process_Group_Process_Description,
+						(
+					CASE
+						
+						WHEN (
+					SELECT
+					Message.Approval_Status 
+					FROM
+					SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+					WHERE
+					Message.IsDeleted = 0 
+					AND Message.Approval_Process_Group_Id = Process_Group.id 
+					AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+					AND Message.Approval_Status = 0 
+					LIMIT 1 
+					) = 0 THEN
+							0 
+							WHEN (
+							SELECT
+								count( 1 ) 
+							FROM
+								SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+							WHERE
+								Message.IsDeleted = 0 
+								AND Message.Approval_Process_Group_Id = Process_Group.id 
+								AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+								AND Message.Approval_Status = 1 
+							) = ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) 
+							AND ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) > 0 THEN
+								1 ELSE - 1 
+							END 
+							) AS Approval_Status,
+							(
+							SELECT
+								Process_Group2.id 
+							FROM
+								SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+							WHERE
+								Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+								AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+							ORDER BY
+								Process_Group2.Approval_Order DESC 
+								LIMIT 1 
+							) AS Last_Process_Group_ID,
+							(
+							CASE
+									
+									WHEN (
+									SELECT
+										Message.Approval_Status 
+									FROM
+										SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+									WHERE
+										Message.IsDeleted = 0 
+										AND Message.Approval_Process_Group_Id = (
+										SELECT
+											Process_Group2.id 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+										WHERE
+											Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+											AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+										ORDER BY
+											Process_Group2.Approval_Order DESC 
+											LIMIT 1 
+										) 
+										AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+										AND Message.Approval_Status = 0 
+										LIMIT 1 
+										) = 0 THEN
+										0 
+										WHEN (
+										SELECT
+											count( 1 ) 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+										WHERE
+											Message.IsDeleted = 0 
+											AND Message.Approval_Process_Group_Id = (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+												AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+											ORDER BY
+												Process_Group2.Approval_Order DESC 
+												LIMIT 1 
+											) 
+											AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+											AND Message.Approval_Status = 1 
+											) = (
+										SELECT
+											count( 1 ) 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process Process 
+										WHERE
+											Process.IsDeleted = 0 
+											AND Process.Approval_Process_Group_Id = (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+												AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+											ORDER BY
+												Process_Group2.Approval_Order DESC 
+												LIMIT 1 
+											) 
+										) 
+										AND (
+										SELECT
+											count( 1 ) 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process Process 
+										WHERE
+											Process.IsDeleted = 0 
+											AND Process.Approval_Process_Group_Id = (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+											AND Process_Group2.Approval_Order < Process_Group.Approval_Order ORDER BY Process_Group2.Approval_Order DESC LIMIT 1 ) ) > 0 THEN
+											1 
+											WHEN (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+												AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+											ORDER BY
+												Process_Group2.Approval_Order DESC 
+												LIMIT 1 
+												) IS NULL THEN
+												0 ELSE - 1 
+											END 
+											) AS Last_Approval_Status 
+										FROM
+											SOLR_Date.Privilege_User_Role Privilege_User_Role
+											INNER JOIN SOLR_Date.Privilege_User ApplyUser ON ApplyUser.id = Privilege_User_Role.Privilege_User_Id 
+											AND ApplyUser.IsDeleted = 0 
+											INNER JOIN SOLR_Date.Privilege_Role Privilege_Role ON Privilege_Role.id = Privilege_User_Role.Privilege_Role_Id 
+											AND Privilege_User_Role.IsDeleted = 0
+											INNER JOIN SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group ON Process_Group.Privilege_Role_Id = Privilege_Role.id 
+											AND Privilege_Role.IsDeleted = 0
+											INNER JOIN SOLR_Date.Privilege_Role_Approval_Process Process ON Process.Approval_Process_Group_Id = Process_Group.id 
+											AND Process_Group.isDeleted = 0
+											INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.id = Process.Privilege_User_Id 
+											AND Privilege_User.IsDeleted = 0 
+										WHERE
+											Process.isDeleted = 0 
+											AND Privilege_User_Role.Privilege_Status = 2 
+											AND Privilege_User_Role.Privilege_User_Id != Privilege_User.id 
+											AND (
+											SELECT
+												count( 1 ) 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+											WHERE
+												Message.IsDeleted = 0 
+												AND Message.Approval_Process_Group_Id = Process_Group.id 
+												AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+												AND Message.Privilege_User_Id = Privilege_User.id 
+											) = 0 
+											AND Privilege_User.USERID = #USERID# 
+										) AS result_table 
+									WHERE
+										Approval_Status != 0 
+									AND Approval_Status != 1 
+					AND Last_Approval_Status = 0
+				]]>
+		</dynamic> 
+		</select>
+	<!--查询用户可审批 Privilege_Role表 -->
+	<select id="ApplyForPrivilege" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		<dynamic>
+            <![CDATA[SELECT
+						* 
+					FROM
+						(
+					SELECT
+						Privilege_Role.Id,
+						Privilege_Role.RoleName,
+						Privilege_Role.Description,
+						ApplyUser.USERID,
+						ApplyUser.USERNAME,
+						Privilege_User.USERID AS ApprovalUSERID,
+						Privilege_User.USERNAME AS ApprovalUSERNAME,
+						Privilege_User_Role.id AS Privilege_User_Role_id,
+						Privilege_User_Role.Privilege_Type,
+						Privilege_User_Role.Privilege_Status,
+						DATE_FORMAT( Privilege_User_Role.valid_startTime, '%Y-%m-%d' ) AS valid_startTime,
+						DATE_FORMAT( Privilege_User_Role.valid_EndTime, '%Y-%m-%d' ) AS valid_EndTime,
+						DATE_FORMAT( Privilege_User_Role.UpdateTime, '%Y-%m-%d %T' ) AS UpdateTime,
+						Process_Group.id AS Process_Group_ID,
+						Process_Group.Approval_Order AS Process_Group_Approval_Order,
+						Process_Group.Process_Title AS Process_Group_Process_Title,
+						Process_Group.Process_Description AS Process_Group_Process_Description,
+						(
+					CASE
+						
+						WHEN (
+					SELECT
+					Message.Approval_Status 
+					FROM
+					SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+					WHERE
+					Message.IsDeleted = 0 
+					AND Message.Approval_Process_Group_Id = Process_Group.id 
+					AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+					AND Message.Approval_Status = 0 
+					LIMIT 1 
+					) = 0 THEN
+							0 
+							WHEN (
+							SELECT
+								count( 1 ) 
+							FROM
+								SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+							WHERE
+								Message.IsDeleted = 0 
+								AND Message.Approval_Process_Group_Id = Process_Group.id 
+								AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+								AND Message.Approval_Status = 1 
+							) = ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) 
+							AND ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) > 0 THEN
+								1 ELSE - 1 
+							END 
+							) AS Approval_Status,
+							(
+							SELECT
+								Process_Group2.id 
+							FROM
+								SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+							WHERE
+								Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+								AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+							ORDER BY
+								Process_Group2.Approval_Order DESC 
+								LIMIT 1 
+							) AS Last_Process_Group_ID,
+							(
+							CASE
+									
+									WHEN (
+									SELECT
+										Message.Approval_Status 
+									FROM
+										SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+									WHERE
+										Message.IsDeleted = 0 
+										AND Message.Approval_Process_Group_Id = (
+										SELECT
+											Process_Group2.id 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+										WHERE
+											Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+											AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+										ORDER BY
+											Process_Group2.Approval_Order DESC 
+											LIMIT 1 
+										) 
+										AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+										AND Message.Approval_Status = 0 
+										LIMIT 1 
+										) = 0 THEN
+										0 
+										WHEN (
+										SELECT
+											count( 1 ) 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+										WHERE
+											Message.IsDeleted = 0 
+											AND Message.Approval_Process_Group_Id = (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+												AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+											ORDER BY
+												Process_Group2.Approval_Order DESC 
+												LIMIT 1 
+											) 
+											AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+											AND Message.Approval_Status = 1 
+											) = (
+										SELECT
+											count( 1 ) 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process Process 
+										WHERE
+											Process.IsDeleted = 0 
+											AND Process.Approval_Process_Group_Id = (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+												AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+											ORDER BY
+												Process_Group2.Approval_Order DESC 
+												LIMIT 1 
+											) 
+										) 
+										AND (
+										SELECT
+											count( 1 ) 
+										FROM
+											SOLR_Date.Privilege_Role_Approval_Process Process 
+										WHERE
+											Process.IsDeleted = 0 
+											AND Process.Approval_Process_Group_Id = (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+											AND Process_Group2.Approval_Order < Process_Group.Approval_Order ORDER BY Process_Group2.Approval_Order DESC LIMIT 1 ) ) > 0 THEN
+											1 
+											WHEN (
+											SELECT
+												Process_Group2.id 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group2 
+											WHERE
+												Process_Group2.Privilege_Role_Id = Process_Group.Privilege_Role_Id 
+												AND Process_Group2.Approval_Order < Process_Group.Approval_Order 
+											ORDER BY
+												Process_Group2.Approval_Order DESC 
+												LIMIT 1 
+												) IS NULL THEN
+												0 ELSE - 1 
+											END 
+											) AS Last_Approval_Status 
+										FROM
+											SOLR_Date.Privilege_User_Role Privilege_User_Role
+											INNER JOIN SOLR_Date.Privilege_User ApplyUser ON ApplyUser.id = Privilege_User_Role.Privilege_User_Id 
+											AND ApplyUser.IsDeleted = 0 
+											INNER JOIN SOLR_Date.Privilege_Role Privilege_Role ON Privilege_Role.id = Privilege_User_Role.Privilege_Role_Id 
+											AND Privilege_User_Role.IsDeleted = 0
+											INNER JOIN SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group ON Process_Group.Privilege_Role_Id = Privilege_Role.id 
+											AND Privilege_Role.IsDeleted = 0
+											INNER JOIN SOLR_Date.Privilege_Role_Approval_Process Process ON Process.Approval_Process_Group_Id = Process_Group.id 
+											AND Process_Group.isDeleted = 0
+											INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.id = Process.Privilege_User_Id 
+											AND Privilege_User.IsDeleted = 0 
+										WHERE
+											Process.isDeleted = 0 
+											AND Privilege_User_Role.Privilege_Status = 2 
+											AND Privilege_User_Role.Privilege_User_Id != Privilege_User.id 
+											AND (
+											SELECT
+												count( 1 ) 
+											FROM
+												SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+											WHERE
+												Message.IsDeleted = 0 
+												AND Message.Approval_Process_Group_Id = Process_Group.id 
+												AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+												AND Message.Privilege_User_Id = Privilege_User.id 
+											) = 0 
+											AND Privilege_User.USERID = #USERID# 
+										) AS result_table 
+									WHERE
+										Approval_Status != 0 
+									AND Approval_Status != 1 
+					AND Last_Approval_Status = 0
+					order by UpdateTime DESC
+				]]>
+		</dynamic> 
+		 <isNotEqual property="ID" compareValue="">
+		  and Privilege_Role.Id = #ID#
+		</isNotEqual>
+		<isNotEqual property="roleName" compareValue="">
+		  and Privilege_Role.roleName like #roleName#
+		</isNotEqual>
+		<isNotEqual property="Description" compareValue="">
+		  and Privilege_Role.Description like #Description#
+		</isNotEqual>
+		<isNotEqual property="SelectUSERNAME" compareValue="">
+		  and Privilege_User.USERNAME like #SelectUSERNAME#
+		</isNotEqual>
+		<isNotEqual property="SelectUSERID" compareValue="">
+		  and Privilege_User.USERID like #SelectUSERID#
+		</isNotEqual>
+	</select>
+	
+	<select id="ApplyForPrivilegeRecordsCount" parameterClass="java.util.HashMap" resultClass="long" >
+		SELECT
+			count(1) 
+		FROM
+			SOLR_Date.Privilege_User_Role Privilege_User_Role
+			INNER JOIN SOLR_Date.Privilege_Role Privilege_Role ON Privilege_User_Role.Privilege_Role_Id = Privilege_Role.id 
+			AND Privilege_Role.isdeleted = 0
+			INNER JOIN SOLR_Date.Privilege_User ON Privilege_User_Role.Privilege_User_Id = Privilege_User.id 
+			AND Privilege_User.isdeleted = 0 
+		WHERE
+			Privilege_User_Role.isdeleted = 0 
+			AND Privilege_User_Role.id IN ( SELECT message.Privilege_User_Role_ID FROM SOLR_Date.Privilege_Role_Approval_Process_Message message WHERE message.Privilege_User_Id = #userID# ) 
+	</select>
+	<select id="ApplyForPrivilegeRecords" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_User_Role.id AS ID,
+			Privilege_Role.Id AS Privilege_Role_ID,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME,
+			Privilege_User_Role.Privilege_Type,
+			DATE_FORMAT( Privilege_User_Role.valid_startTime, '%Y-%m-%d' ) AS valid_startTime,
+			DATE_FORMAT( Privilege_User_Role.valid_EndTime, '%Y-%m-%d' ) AS valid_EndTime,
+			Privilege_User_Role.Privilege_Status 
+		FROM
+			SOLR_Date.Privilege_User_Role Privilege_User_Role
+			INNER JOIN SOLR_Date.Privilege_Role Privilege_Role ON Privilege_User_Role.Privilege_Role_Id = Privilege_Role.id 
+			AND Privilege_Role.isdeleted = 0
+			INNER JOIN SOLR_Date.Privilege_User ON Privilege_User_Role.Privilege_User_Id = Privilege_User.id 
+			AND Privilege_User.isdeleted = 0 
+		WHERE
+			Privilege_User_Role.isdeleted = 0 
+			AND Privilege_User_Role.id IN ( SELECT message.Privilege_User_Role_ID FROM SOLR_Date.Privilege_Role_Approval_Process_Message message WHERE message.Privilege_User_Id = #userID# ) 
+		ORDER BY
+			Privilege_User_Role.updateTime DESC
+			limit #dataStart#,#pageSize#
+	</select>
+	
+	
+	
+	
+	<!--查询user表 -->
+	<select id="getPrivilegeUserByRole" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_User_Role.Id,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME,
+			Privilege_User_Role.Approval_OK,
+			Privilege_User_Role.Privilege_Type,
+			Privilege_User_Role.Privilege_Status,
+			DATE_FORMAT(Privilege_User_Role.valid_startTime,'%Y-%m-%d') AS valid_startTime,
+			DATE_FORMAT(Privilege_User_Role.valid_EndTime,'%Y-%m-%d') AS valid_EndTime,
+			DATE_FORMAT(Privilege_User_Role.UpdateTime,'%Y-%m-%d %T') AS UpdateTime,
+			Privilege_User_Role.IsDeleted 	  
+		FROM
+			SOLR_Date.Privilege_User_Role
+			INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.Id = Privilege_User_Role.Privilege_User_Id 
+			AND Privilege_User.IsDeleted = 0
+			where Privilege_User_Role.Privilege_Role_Id = #role_id# and Privilege_User_Role.IsDeleted = 0
+			<isNotEqual property="userId" compareValue="">
+			AND Privilege_User.USERID like #userId# 
+			</isNotEqual>
+			<isNotEqual property="userName" compareValue="">
+			and Privilege_User.USERNAME like #userName#
+			</isNotEqual>
+			order by Privilege_User_Role.Id ASC 
+	</select>
+	<!--查询user表 -->
+	<select id="getPrivilegeUserwithoutRole" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_User.Id,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME 
+		FROM
+			SOLR_Date.Privilege_User 
+		WHERE
+			Privilege_User.IsDeleted = 0 
+			AND Privilege_User.Id not IN ( SELECT Privilege_User_Id FROM SOLR_Date.Privilege_User_Role WHERE Privilege_User_Role.Privilege_Role_Id = #role_id# and Privilege_User_Role.IsDeleted = 0 )
+			order by Privilege_User.Id ASC
+	</select>
+	<select id="getUser" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_User.Id,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME 
+		FROM
+			SOLR_Date.Privilege_User 
+		WHERE
+			Privilege_User.IsDeleted = 0 
+			<isNotEqual property="USERID" compareValue="">
+			AND Privilege_User.USERID = #USERID# 
+			</isNotEqual>
+	</select>
+	<select id="getPrivilegeUserwithoutRoleSearch" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_User.Id,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME 
+		FROM
+			SOLR_Date.Privilege_User 
+		WHERE
+			Privilege_User.IsDeleted = 0 
+			AND Privilege_User.Id not IN ( SELECT Privilege_User_Id FROM SOLR_Date.Privilege_User_Role WHERE Privilege_User_Role.Privilege_Role_Id = #role_id# and  Privilege_User_Role.IsDeleted = 0 )
+			<isNotEqual property="userId" compareValue="">
+			AND Privilege_User.USERID like #userId# 
+			</isNotEqual>
+			<isNotEqual property="userName" compareValue="">
+			and Privilege_User.USERNAME like #userName#
+			</isNotEqual>
+			order by Privilege_User.Id ASC
+	</select>
+	<select id="getPrivilegeUserRoleSearch" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			Privilege_User.Id,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME 
+		FROM
+			SOLR_Date.Privilege_User 
+		WHERE
+			Privilege_User.IsDeleted = 0 
+			AND Privilege_User.Id not IN ( SELECT Privilege_User_Id FROM SOLR_Date.Privilege_User_Role WHERE Privilege_User_Role.Privilege_Role_Id = #role_id# )
+			AND (Privilege_User.USERID like #userId# OR Privilege_User.USERID like #userId#)
+			order by Privilege_User.Id ASC
+	</select>
+	<!--查询user表 -->
+	<select id="getPrivilegeUser" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select * from SOLR_Date.Privilege_User where IsDeleted =#isDeleted# 
+		<isNotEqual property="userId" compareValue="">
+			AND Privilege_User.USERID like #userId# 
+		</isNotEqual>
+		<isNotEqual property="userName" compareValue="">
+			AND Privilege_User.USERNAME like #userName#
+		</isNotEqual>
+		order by Privilege_User.Id ASC
+	</select>
+	<!--查询user表 -->
+	<select id="getPrivilegeUserById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select * from SOLR_Date.Privilege_User where Id = #Id#
+		order by Privilege_User.Id ASC
+	</select>
+	<!--查询user表 -->
+	<select id="getPrivilegeUserByUSERID" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select * from SOLR_Date.Privilege_User where USERID = #USERID#
+		order by Privilege_User.Id ASC
+	</select>
+	<!--查询user表 -->
+	<select id="getTableField" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT
+			tfd.Id,
+			tfd.tableName,
+			tfd.FieldName,
+			tfd.Description,
+			tfd.CreateTime,
+			tfd.UpdateTime,
+			tfd.IsDeleted ,
+			Data_Type,
+			Data_Update
+		FROM
+			SOLR_Date.Table_Field_Description AS tfd where tableName = #tableName# and IsDeleted=#IsDeleted# order by Order_field asc
+	</select>
+	
+		<!--查询userFieldValue表 -->
+	<select id="getPrivilegeFieldValue" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select   Id,Privilege_Field_Id,Field_value ,Description,IsDeleted  from SOLR_Date.Privilege_Field_Value
+		where Privilege_Field_Id=#Dic_Field_Id# and IsDeleted=0
+	</select>
+	
+	
+	<!--修改PrivilegeFieldValue表 -->
+	<update id="updatePrivilegeFieldValue"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field_Value
+		set Field_value =#fieldValue#,
+		Description =#description#
+		where Id =#id#
+	</update>
+	
+	
+	
+	<!--查询表配置信息表数据信息   -->
+	<select id="getAllSolrConfig" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select Id,
+      dataBaseAddress,
+      instanceName,
+      dataBaseName,
+      userName,
+      passWord,
+      tableName,
+      coreName,
+      importSql,
+      importDateOk,
+      importBatchSize,
+      importdateStartTime,
+      importdateEndTime,
+      importdateStartField,
+      importMaxSize,
+      updateOk,
+      updateStart,
+      updateSpace,
+      updateSql,
+      updateBatchSize,
+      updateMaxSize,
+      updateStartTime,
+      updateSpaceMin,
+      Status,
+      IsDeleted,
+      importdateStartvisitNumberID,
+      batch,
+      importSqlAdd
+       from [SOLR_Date].dbo.solrConfig where IsDeleted =#IsDeleted# ;
+	</select>
+	<!--查询表配置信息表数据信息   -->
+	<select id="getAllSolrConfigNotIN" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select Id,
+      dataBaseAddress,
+      instanceName,
+      dataBaseName,
+      userName,
+      passWord,
+      tableName,
+      coreName,
+      importSql,
+      importDateOk,
+      importBatchSize,
+      importdateStartTime,
+      importdateEndTime,
+      importdateStartField,
+      importMaxSize,
+      updateOk,
+      updateStart,
+      updateSpace,
+      updateSql,
+      updateBatchSize,
+      updateMaxSize,
+      updateStartTime,
+      updateSpaceMin,
+      Status,
+      IsDeleted,
+      importdateStartvisitNumberID,
+      batch,
+      importSqlAdd
+       from [SOLR_Date].dbo.solrConfig where IsDeleted =#IsDeleted# and coreName not in (<![CDATA[$notIN$]]>);
+	</select>
+	
+	<!--查询表配置信息表数据信息(根据id)   -->
+	<select id="getsolrConfigById" resultClass="java.util.HashMap" >
+		select Id,
+      dataBaseAddress,
+      instanceName,
+      dataBaseName,
+      userName,
+      passWord,
+      tableName,
+      coreName,
+      importSql,
+      importDateOk,
+      importBatchSize,
+      importdateStartTime,
+      importdateEndTime,
+      importdateStartField,
+      importMaxSize,
+      updateOk,
+      updateStart,
+      updateSpace,
+      updateSql,
+      updateBatchSize,
+      updateMaxSize,
+      updateStartTime,
+      updateSpaceMin,
+      Status,
+      IsDeleted,
+      importdateStartvisitNumberID,
+      batch,
+      importSqlAdd
+       from [SOLR_Date].dbo.solrConfig where Id =#id,jdbcType=NUMERIC#
+	</select>
+	
+	<!--同步配置表到mysql   -->
+	<insert id="insertTable"  parameterClass="java.util.HashMap">
+		insert into SOLR_Date.Dic_dataBase (CatalogName, CollectionName, Stauts, CollectionName_Old, create_time) 
+	values(#catalogName#,#collectionName#,#stauts#,#collectionName_Old#,NOW());
+	</insert>
+	
+	
+	<!--查询字段coreField表(solrConfig的id)   -->
+	<select id="getFieldById" resultClass="java.util.HashMap" >
+		select Id,
+      solrConfig_ID,
+      fieldNameNew,
+      fieldName,
+      fieldtype,
+      Status,
+      IsDeleted
+       from [SOLR_Date].dbo.coreField where solrConfig_ID =#id,jdbcType=NUMERIC# and IsDeleted=0
+	</select>
+	
+		<!--同步配置表到mysql   Dic_Field -->
+	<insert id="insertField"  parameterClass="java.util.HashMap">
+		insert into SOLR_Date.Dic_Field (FieldName,fieldtype, Collection_Id, Stauts) 
+	values(#fieldName#,#fieldtype#,#collection_Id#,#stauts#)
+	</insert>
+	
+	
+	<!--查询Dic_dataBase表(根据CollectionName)   -->
+	<select id="getDatabaseByName" resultClass="java.util.HashMap" >
+		select Id,
+      CatalogName,
+      CollectionName,
+      Stauts,
+      Description,
+      CollectionName_Old,
+      Order_field
+       from SOLR_Date.Dic_dataBase where CollectionName = #tableName#
+	</select>
+	
+	
+	<!--查询Dic_dataBase表(根据FieldName)   -->
+	<select id="getFieldByName" resultClass="java.util.HashMap" >
+		select Id,
+      FieldName,
+      groupField,
+      DataType,
+      FieldType,
+      DisplayName,
+      Collection_Id
+       from SOLR_Date.Dic_Field where FieldName = #fieldName#
+	</select>
+	
+	<!--添加用户字段 Privilege_Field -->
+	<insert id="insertPrivilegeField"  parameterClass="java.util.HashMap">
+		insert into SOLR_Date.Privilege_Field (Privilege_User_Id,Dic_Field_Id ,Description) 
+	values(#uid#,#tableAndField#,#filedName#)
+	</insert>
+	
+	<!--查询Privilege_Field表(根据FieldName,Privilege_User_Id)   -->
+	<select id="getPriFieldByName" resultClass="java.util.HashMap" >
+		select   Id,Privilege_User_Id,Dic_Field_Id ,Description,IsDeleted  from SOLR_Date.Privilege_Field
+		where Privilege_User_Id =#userId# and Dic_Field_Id =#fieldId# and IsDeleted=0
+	</select>
+	
+		<!--回查Privilege_Field表(根据Dic_Field_Id)   -->
+	<select id="getPrivilegeFieldId" resultClass="java.util.HashMap" >
+		select   Id,Privilege_User_Id,Dic_Field_Id ,Description,IsDeleted  from SOLR_Date.Privilege_Field
+		where Dic_Field_Id =#dicFieldId#  ORDER BY CreateTime DESC
+	</select>
+	
+	<!--回查dic_filed表，根据id   -->
+	<select id="getDicFiledById"  resultClass="java.util.HashMap" >
+		select Id, FieldName, groupField, DataType, FieldType, DisplayFormat, DisplayName, Collection_Id, Stauts,IsDeleted
+		 from SOLR_Date.Dic_Field
+		 where Id =#id#
+	</select>
+	
+	
+	<!--添加用户字段 Privilege_Field_Value_value -->
+	<insert id="insertPrivilegeFieldValue"  parameterClass="java.util.HashMap">
+	
+		insert into SOLR_Date.Privilege_Field_Value (Privilege_Field_Id,Field_value,Description) 
+	values(#fieldId#,#fieldValue#,#filedName#)
+	</insert>
+	
+	
+	
+	<!--修改PrivilegeField表 -->
+	<update id="updatePrivilegeField"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field
+		set  Description =#filedName#
+		where Id =#fieldId#
+	</update>
+	
+	<!--删除PrivilegeFieldValue表(Privilege_Field_Id)  -->
+	<update id="deletePrivilegeFieldValue"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field_Value
+		set IsDeleted =1
+		where Privilege_Field_Id =#fieldId#
+	</update>
+	<!--删除PrivilegeField表(id)  -->
+	<update id="deletePrivilegeField"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field
+		set IsDeleted =1
+		where Id =#fieldId#
+	</update>
+	
+	
+	<!--恢复PrivilegeFieldValue表(Privilege_Field_Id)  -->
+	<update id="deletePrivilegeFieldValueReBack"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field_Value
+		set IsDeleted =0
+		where Privilege_Field_Id =#fieldId#
+	</update>
+	<!--恢复PrivilegeField表(id)  -->
+	<update id="deletePrivilegeFieldReBack"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field
+		set IsDeleted =0
+		where Id =#fieldId#
+	</update>
+	
+	
+
+		<!--回查FieldValue表 -->
+	<select id="isHaveValue" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select   Id,Privilege_Field_Id,Field_value ,Description,IsDeleted  from SOLR_Date.Privilege_Field_Value
+		where Privilege_Field_Id=#fieldId# and Field_value=#fieldValue#  and IsDeleted=0
+	</select>
+
+	<!--删除PrivilegeFieldValue表(Privilege_Field_Id)  -->
+	<update id="deleteFieldValueTable"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field_Value
+		set IsDeleted =1
+		where Id =#Id# 
+	</update>
+	
+	
+	<!--修改PrivilegeFieldValue表 -->
+	<update id="upFieldValue"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field_Value
+		set Field_value =#fieldValue#,
+		Description =#filedName#
+		where Id =#valueId#
+	</update>
+	
+	<update id="deleteDicField"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_Field
+		set IsDeleted=1
+		
+		where Id =#id#
+	</update>
+	
+	
+	<!--查询表配置信息表详细信息   -->
+	<select id="getDicFiledsHs" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select Id, FieldName, groupField, DataType, FieldType, DisplayFormat, DisplayName, Collection_Id, Stauts,IsDeleted
+		 from SOLR_Date.Dic_Field
+		 where Collection_Id =#orderField# and IsDeleted=1
+	</select>
+	
+	
+	<!--恢复reBackDicFieldTable表配置信息表详细信息   -->
+	<update id="reBackDicFieldTable"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_Field
+		set IsDeleted=0
+		
+		where Id =#id#
+	</update>
+	
+	
+	<!--查询showPriFieldHs表 -->
+	<select id="showPriFieldHs" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select   Id,Privilege_User_Id,Dic_Field_Id ,Description,IsDeleted  from SOLR_Date.Privilege_Field
+		where Privilege_User_Id =#Privilege_User_Id# and IsDeleted=1
+	</select>
+	
+	
+	<!--恢复rePriFieldTable表(id)  -->
+	<update id="rePriFieldTable"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field
+		set IsDeleted =0
+		where Id =#fieldId#
+	</update>
+	
+	<!--查询Dic_dataBase总条数  -->
+	<select id="getCountDicDb" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT count(1) as ct FROM SOLR_Date.Dic_dataBase where IsDeleted=0
+	</select>
+	
+	<!--  逻辑删除或者启用database 表数据-->
+	<update id="deleteDicDb"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_dataBase set IsDeleted=1  where Id=#id#
+	</update>
+	
+	<update id="updateDicDb"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_dataBase set CatalogName=#catalogName#,CollectionName=#collectionName#,Description=#description#  where Id=#id#
+	</update>
+	<!--查询表配置信息表数据信息   -->
+	<select id="getConfigTableInfoHs" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		SELECT Id,CatalogName,CollectionName,Description,Stauts,Order_field,IsDeleted FROM SOLR_Date.Dic_dataBase where  IsDeleted=1
+		order by Order_field ASC ,id ASC
+	</select>
+	
+	
+	<!--  逻辑删除或者启用database 表数据-->
+	<update id="reBackDicDb"  parameterClass="java.util.HashMap">
+		update SOLR_Date.Dic_dataBase set IsDeleted=0  where Id=#id#
+	</update>
+	
+	<!--查询失效userField表 -->
+	<select id="getPrivilegeFieldIsDel" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select   Id,Privilege_User_Id,Dic_Field_Id ,Description,IsDeleted  from SOLR_Date.Privilege_Field
+		where Privilege_User_Id =#Privilege_User_Id# and IsDeleted=1 
+	</select>
+	
+	<!--查询失效userFieldValue表 -->
+	<select id="getPrivilegeFieldValueIsDel" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		select   Id,Privilege_Field_Id,Field_value ,Description,IsDeleted  from SOLR_Date.Privilege_Field_Value
+		where Privilege_Field_Id=#Dic_Field_Id# and IsDeleted=1
+	</select>
+	
+		<!--恢复PrivilegeFieldValue表(Privilege_Field_Id)  -->
+	<update id="deleteFieldValueTableIsReback"  parameterClass="java.util.HashMap">
+		update  SOLR_Date.Privilege_Field_Value
+		set IsDeleted =0
+		where Id =#Id# 
+	</update>
+	<insert id="insertUser" parameterClass="java.lang.String"> 
+		      <![CDATA[$sql$]]>
+	</insert>
+	<update id="updateUser" parameterClass="java.lang.String"> 
+		      <![CDATA[$sql$]]>
+	</update>
+	
+	<!-- 删除恢复用户表数据 -->
+	<update id="deleteUser"  parameterClass="java.util.HashMap">
+	 	update SOLR_Date.Privilege_User set IsDeleted=#isDeleted#, UpdateTime=#UpdateTime#
+		where Id=#id#
+	</update>
+	<!--添加角色信息 insertRole -->
+	<insert id="insertRole"  parameterClass="java.util.HashMap" >
+		insert into SOLR_Date.Privilege_Role (RoleName,Description,Privilege_Type,Privilege_Status,CreateTime,UpdateTime,IsDeleted) 
+		values(#roleName#,#description#,0,0,#CreateTime#,#UpdateTime#,0)
+	</insert>
+	<!--**************************角色列级权限**********开始 **************-->
+	<!-- 查询角色列级权限 -->
+	<select id="getPrivilegeColumn" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT Id,Column_Name,Description,Privilege_Type,Privilege_Status
+		FROM SOLR_Date.Privilege_Column r
+		WHERE IsDeleted=0
+		<isNotEmpty property="id">
+			and Id = #id#
+		</isNotEmpty>
+		<isNotEmpty property="columnName">
+			and Column_Name like CONCAT('%', #columnName#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="description">
+			and Description like CONCAT('%', #description#, '%')
+		</isNotEmpty>
+	</select>
+	<!-- 查询角色列级权限是否存在 -->
+	<select id="getIsPrivilegeColumn" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT Id,Column_Name,Description,Privilege_Type,Privilege_Status
+		FROM SOLR_Date.Privilege_Column r
+		WHERE IsDeleted=0
+		<isNotEmpty property="id">
+			and Id != #id#
+		</isNotEmpty>
+		<isNotEmpty property="columnName">
+			and Column_Name = #columnName#
+		</isNotEmpty>
+	</select>
+	<!--添加列级权限 insertPrivilegeColumn -->
+	<insert id="insertPrivilegeColumn"  parameterClass="java.util.HashMap" >
+		insert into SOLR_Date.Privilege_Column (Column_Name,Description,Privilege_Type,Privilege_Status,CreateTime,UpdateTime,IsDeleted) 
+		values(#columnName#,#description#,0,0,#CreateTime#,#UpdateTime#,0)
+	</insert>
+	<!--修改列级权限 updatePrivilegeColumn -->
+	<update id="updatePrivilegeColumn"  parameterClass="java.util.HashMap" >
+		update SOLR_Date.Privilege_Column
+		set Column_Name = #columnName#, Description = #description#, UpdateTime = #UpdateTime#
+		where Id = #id#  
+	</update>
+	<!--删除列级权限 deletePrivilegeColumn -->
+	<update id="deletePrivilegeColumn"  parameterClass="java.util.HashMap" >
+		update  SOLR_Date.Privilege_Column
+		set IsDeleted = 1, UpdateTime = #UpdateTime#
+		where Id = #id# 
+	</update>
+	<!-- 查询列级权限明细 -->
+	<select id="getPrivilegeColumnItem" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT p.Dic_Field_id,f.Collection_Id
+		FROM SOLR_Date.Privilege_Column_item p
+		LEFT JOIN SOLR_Date.Dic_Field f ON f.Id=p.Dic_Field_Id
+		WHERE p.IsDeleted=0 and p.Privilege_column_Id = #privilegeColumnId#
+	</select>
+	<!--添加列级权限明细 insertPrivilegeColumnItem -->
+	<insert id="insertPrivilegeColumnItem"  parameterClass="java.util.HashMap" >
+		insert into SOLR_Date.Privilege_Column_item (Privilege_column_Id,Dic_Field_id,Privilege_Type,Privilege_Status,CreateTime,UpdateTime,IsDeleted) 
+		values(#privilegeColumnId#,#fieldId#,0,0,#CreateTime#,#UpdateTime#,0)
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+	<!--删除列级权限明细 deletePrivilegeColumnItem -->
+	<update id="deletePrivilegeColumnItem"  parameterClass="java.util.HashMap" >
+		update  SOLR_Date.Privilege_Column_item
+		set IsDeleted = 1, UpdateTime = #UpdateTime#
+		where Privilege_column_Id = #privilegeColumnId# 
+	</update>
+	<!--**************************角色列级权限**********结束 **************-->
+	
+	<!--**************************行级权限**********开始 **************-->
+	<!-- 查询行级权限信息 -->
+	<select id="getPrivilegeRow" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT p.Id,p.Row_Name,p.Dic_Field_Value,p.Privilege_Status,p.Description,d.Id AS tableId,d.Description AS tableName,p.Dic_Field_Id,f.DisplayName 
+		FROM SOLR_Date.Privilege_Row p
+		LEFT JOIN SOLR_Date.Dic_Field f ON f.Id=p.Dic_Field_Id AND f.IsDeleted = 0
+		LEFT JOIN SOLR_Date.Dic_dataBase d ON d.Id=f.Collection_Id AND d.IsDeleted = 0
+		WHERE p.IsDeleted=#isDeleted#
+		<isNotEmpty property="rowName">
+			and p.Row_Name like #rowName#
+		</isNotEmpty>
+		<isNotEmpty property="dicFieldValue">
+			and p.Dic_Field_Value like #dicFieldValue#
+		</isNotEmpty>
+		<isNotEmpty property="description">
+			and p.Description like #description#
+		</isNotEmpty>
+		<isNotEmpty property="privilegeStatus">
+			and p.Privilege_Status = #privilegeStatus#
+		</isNotEmpty>
+		order by p.id ASC
+	</select>
+	
+	<!-- 获取角色配置行权限信息 -->
+	<select id="getRoleForPrivilegeRow" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			p.Id,
+			p.Privilege_Role_Id,
+			v.Description,
+			v.Row_Name,
+			d.Id AS tableId,
+			d.Description AS tableName,
+			v.Dic_Field_Id,f.DisplayName,
+			v.Dic_Field_Value,
+			v.Privilege_Status,
+			p.CreateTime,
+			p.UpdateTime 
+		FROM
+			SOLR_Date.Privilege_Role_Row p
+			LEFT JOIN SOLR_Date.Privilege_Role r ON r.Id = p.Privilege_Role_Id
+			and r.IsDeleted=0
+			LEFT JOIN SOLR_Date.Privilege_Row v ON v.Id = p.Privilege_Row_Id
+			and v.IsDeleted=0
+			LEFT JOIN SOLR_Date.Dic_Field f ON f.Id = v.Dic_Field_Id
+			and f.IsDeleted=0
+			LEFT JOIN SOLR_Date.Dic_dataBase d ON d.Id = f.Collection_Id
+		AND d.IsDeleted=0	
+		WHERE
+			p.Privilege_Role_Id = #roleId# AND p.IsDeleted = 0
+			<isNotEqual property="rowName" compareValue="">
+				AND v.Row_Name like #rowName#
+			</isNotEqual>
+	</select>
+	<!-- 获取角色未勾选行级权限列表 -->
+	<select id="getRoleForPrivilegeRowAdd" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	    SELECT p.Id,p.Row_Name,p.Dic_Field_Value,p.Privilege_Status,p.Description,d.Id AS tableId,d.Description AS tableName,p.Dic_Field_Id,f.DisplayName 
+	    FROM SOLR_Date.Privilege_Row p
+		LEFT JOIN SOLR_Date.Dic_Field f ON f.Id=p.Dic_Field_Id AND f.IsDeleted = 0
+		LEFT JOIN SOLR_Date.Dic_dataBase d ON d.Id=f.Collection_Id AND d.IsDeleted = 0
+		WHERE p.IsDeleted=0 
+		<isNotEqual property="rowName" compareValue="">
+			AND p.Row_Name like #rowName#
+		</isNotEqual>
+		and p.Id NOT IN 
+		( SELECT r.Privilege_Row_Id FROM SOLR_Date.Privilege_Role_Row r
+			WHERE r.IsDeleted = 0 
+			<isNotEmpty property="roleId">
+			AND r.Privilege_Role_Id = #roleId# 
+		</isNotEmpty>
+			 )
+	</select>
+	<!-- 获取角色未勾选行级权限列表 -->
+	<select id="getRoleForPrivilegeRowAll" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   SELECT
+			r.Privilege_Row_Id,
+			Privilege_Row.Privilege_Status 
+		FROM
+			SOLR_Date.Privilege_Role_Row r
+			INNER JOIN SOLR_Date.Privilege_Row ON Privilege_Row.id = r.Privilege_Row_Id and Privilege_Row.IsDeleted=0
+		WHERE
+			r.Privilege_Role_Id = #roleId# 
+			AND r.IsDeleted = 0
+	</select>
+	<!--添加角色行级权限 insertPrivilegeRoleRow -->
+	<insert id="insertPrivilegeRoleRow"  parameterClass="java.util.HashMap" >
+		insert into SOLR_Date.Privilege_Role_Row (Privilege_Role_Id,Privilege_Row_Id,Privilege_Status,Privilege_Type,CreateTime,UpdateTime,IsDeleted) 
+		values(#roleId#,#privilegeRowId#,#privilegeStatus#,0,#CreateTime#,#UpdateTime#,0)
+	</insert>
+	<!--删除角色行级权限 deletePrivilegeRoleRow -->
+	<update id="deletePrivilegeRoleRow"  parameterClass="java.util.HashMap" >
+		update  SOLR_Date.Privilege_Role_Row
+		set IsDeleted = 1, UpdateTime = #UpdateTime#
+		where Id =#id# 
+	</update>
+	
+	<!--添加行级权限 insertPrivilegeRow -->
+	<insert id="insertPrivilegeRow"  parameterClass="java.util.HashMap" >
+		insert into SOLR_Date.Privilege_Row (Row_Name,Dic_Field_Id,Dic_Field_Value,Description,Privilege_Status,Privilege_Type,CreateTime,UpdateTime,IsDeleted) 
+		values(#rowName#,#dicFieldId#,#dicFieldValue#,#description#,#privilegeStatus#,0,#CreateTime#,#UpdateTime#,0)
+	</insert>
+	<!--修改行级权限 updatePrivilegeRow -->
+	<update id="updatePrivilegeRow"  parameterClass="java.util.HashMap" >
+		update  SOLR_Date.Privilege_Row
+		set Row_Name = #rowName#,Dic_Field_Id = #dicFieldId#,Privilege_Status = #privilegeStatus#,Dic_Field_Value = #dicFieldValue#, Description = #description#, UpdateTime = #UpdateTime#
+		where Id =#id#  
+	</update>
+	<!--删除行级权限 deletePrivilegeRow -->
+	<update id="deletePrivilegeRow"  parameterClass="java.util.HashMap" >
+		update  SOLR_Date.Privilege_Row
+		set IsDeleted = #isDeleted#, UpdateTime = #UpdateTime#
+		where Id =#id# 
+	</update>
+	<!-- 获取检索表 -->
+	<select id="getTable" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT Id,Description FROM SOLR_Date.Dic_dataBase where IsDeleted = 0 ORDER BY Order_field
+	</select>
+	<!-- 获取检索表字段 -->
+	<select id="getTableColumn" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT Id,DisplayName FROM SOLR_Date.Dic_Field WHERE Collection_Id=#CollectionId# and DisplayName is not NULL AND Stauts = 0 ORDER BY Order_field
+	</select>
+	
+	<!--**************************行级权限**********结束 **************-->
+	
+	<!-- 删除恢复角色表数据 -->
+	<update id="deletePrivilegeRole"  parameterClass="java.util.HashMap">
+	 	update SOLR_Date.Privilege_Role set IsDeleted=#isDeleted#, UpdateTime=#UpdateTime#
+		where Id=#id#
+	</update>
+	<!-- 修改角色表数据 -->
+	<update id="updatePrivilegeRole"  parameterClass="java.util.HashMap">
+	 	update SOLR_Date.Privilege_Role set UpdateTime=#UpdateTime#
+			,RoleName = #roleName#
+			,Description = #description#
+		where Id=#id#
+	</update>
+	
+	<!-- 获取用户表字段 -->
+	<select id="getPrivilegeUserColumn" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT COLUMN_NAME
+			FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE table_name = 'Privilege_User'
+			AND table_schema = 'SOLR_Date'
+			AND column_name = #columnName#
+	</select>
+	<!-- 表列头管理表最大Value字段值 -->
+	<select id="getMaxTableFieldDescription" resultClass="java.util.HashMap">
+		SELECT  FieldName FROM SOLR_Date.Table_Field_Description where FieldName LIKE 'Value_%'
+	</select>
+	
+	<!-- 用户表添加字段 -->
+    <statement id="executsql" parameterClass="java.lang.String" remapResults="true"> 
+		      <![CDATA[$sql$]]>
+	</statement>
+    
+	<!-- 获取表列头管理信息 -->
+	<select id="getTableFieldDescription" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT Id,tableName,FieldName,Data_Type,Description,
+			Data_Update FROM SOLR_Date.Table_Field_Description
+		WHERE 1=1
+		<isNotEmpty property="isDeleted">
+			and IsDeleted=#isDeleted#
+		</isNotEmpty> 
+		<isNotEmpty property="id">
+			and Id != #id#
+		</isNotEmpty> 
+		<isNotEmpty property="tableName">
+			and tableName like #tableName#
+		</isNotEmpty>
+		<isNotEmpty property="fieldName">
+			and FieldName like #fieldName#
+		</isNotEmpty> 
+		<isNotEmpty property="description">
+			and Description like #description#
+		</isNotEmpty> 
+		ORDER BY Order_Field
+	</select>
+	<!-- 删除恢复表列头管理信息 -->
+	<update id="deleteTableFieldDescription"  parameterClass="java.util.HashMap">
+	 	update SOLR_Date.Table_Field_Description set IsDeleted=#isDeleted#, UpdateTime=#UpdateTime#
+		where Id=#id#
+	</update>
+	<!-- 修改表列头信息 -->
+	<update id="updateTableFieldDescription"  parameterClass="java.util.HashMap">
+	 	update SOLR_Date.Table_Field_Description set Description=#description#, UpdateTime=#UpdateTime#
+		where Id=#id#
+	</update>
+	
+	<!--添加表列头信息 insertTableFieldDescription -->
+	<insert id="insertTableFieldDescription"  parameterClass="java.util.HashMap" >
+		insert into SOLR_Date.Table_Field_Description (tableName,FieldName,Description,Data_Type,CreateTime,UpdateTime,IsDeleted) 
+		values(#tableName#,#fieldName#,#description#,0,#CreateTime#,#UpdateTime#,0)
+	</insert>
+ </sqlMap>

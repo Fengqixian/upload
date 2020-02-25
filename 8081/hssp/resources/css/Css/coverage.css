@@ -1,0 +1,91 @@
+/* cover jquery-ui*/
+@CHARSET "UTF-8";
+
+.ui-dialog{
+	box-shadow: 0px 0px 20px #a5a5a5;
+	padding:0px;
+}
+.ui-widget-content{
+	border:1px solid #0268FF;
+}
+.ui-dialog .ui-dialog-titlebar {
+    padding:5px 10px;
+    position: relative;
+	font-size:18px;
+	background: #3385FF;
+    color: #fff;
+    border: 1px solid #7AB0FF;
+}
+.ui-dialog .ui-dialog-buttonpane {
+    text-align: left;
+    border-width: 1px 0 0 0;
+    background-image: none;
+    margin-top: .5em;
+    padding:0px;
+}
+.ui-button-text-only .ui-button-text {
+    padding:5px 10px;
+	font-size:14px;
+}
+.ui-state-default .ui-icon {
+    background-image:url(jquery-ui-1.11.2.custom/images/ui-icons_2e83ff_256x240.png);
+	}
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {
+    background-image:url(jquery-ui-1.11.2.custom/images/ui-icons_2e83ff_256x240.png);
+	}
+	
+.ui-dialog .ui-dialog-buttonpane button{    
+	background: #3385FF !important;
+    color: #fff;
+    border: 1px solid #0268FF;
+    border-radius: 2px !important
+	}
+	
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #0066FF;
+    background: #FFFFFF url("images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+    font-weight: normal;
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    border: 1px solid #0066FF;
+    background: #eeeeee url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
+    font-weight: normal;
+}
+
+
+/* cover boots*/
+.form-horizontal .form-group{
+	margin-right:-13px;
+	}
+.col-sm-2{
+	/*padding-right:0px;*/
+	}
+	.form-group > label{
+		font-size:14px;
+		color:#666;
+		}
+	.form-group > input,
+	.form-group > textarea{
+		font-size:13px;
+		}
+.btn-link{
+	font-size:14px;
+	text-decoration:underline;
+	color:#23527c !important;
+	}
+.btn-primary {
+    color: #fff !important;
+    background-color: #3385FF !important;
+    border-color: #0268FF !important;
+}
+.ui-dialog-content .row {
+margin-right: 0px;
+}
+
+/* cover boots-table */
+.fixed-table-toolbar .columns{ position:absolute !important; top:65px; right:15px;}
+.fixed-table-container{ margin-top:5px;}
+.fixed-table-header{box-shadow: 0px 0px 5px #bbb;}
+
+.ui-dialog .fixed-table-toolbar .columns{ position:static !important; top:0px; right:0px;}
+.ui-dialog .fixed-table-toolbar .columns .btn{ height: 34px; line-height: 23px;}

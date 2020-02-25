@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.technologyView.mapper.TechnologyEtlTargetMapper">
+    <!--连接查询数据库 etl-->
+    <select id="EtlDatabaseList" resultType="com.clinbrain.bd.mdm.MetadataManage.technologyView.entity.vo.EtlDetailVo">
+   SELECT t.id targetId,s.id source_id,s.etl_id,t.target_db,t.target_table_id,t.target_db_id,t.target_table,t.executor_sql,
+        s.source_db,s.source_db_id,source_table,source_table_id
+        FROM mdm_technology_etl t left JOIN `mdm_technology_etl_source` s on t.id = s.etl_id
+  </select>
+</mapper>

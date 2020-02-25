@@ -1,0 +1,131 @@
+@import "_variables";
+
+.cb-tab {
+  .el-tabs__nav-wrap {
+    background-color: var(--TAB-BG-COLOR);
+    border-bottom: 1px solid var(--TAB-BOTTOM-SHADOW-COLOR);
+
+    // 设置主体的时候 这个不要删除样式
+    .el-tabs__item {
+      border: 0 !important;
+      border-radius: 0 !important;
+      color: var(--TAB-FONT-COLOR) !important;
+      background-color: var(--TAB-ITEM-BG-COLOR);
+      font-size: 1.2rem;
+      line-height: 2rem;
+      height: 2rem;
+      min-width: 100px;
+      text-align: center;
+      position: relative;
+
+      &:before, &:after {
+        content: '';
+        display: block !important;
+        position: absolute !important;
+        border-top: 1rem solid;
+        border-bottom: 1rem solid;
+        border-left: 0.6rem solid;
+        border-right: 0.6rem solid;
+        z-index: 1000;
+        bottom: 0;
+      }
+
+      // 未激活的三角形的样式
+      &:before {
+        left: 0;
+        border-top-color: var(--TAB-BG-COLOR);
+        border-right-color: var(--TAB-ITEM-BG-COLOR);
+        border-bottom-color: var(--TAB-ITEM-BG-COLOR);
+        border-left-color: var(--TAB-BG-COLOR);
+      }
+
+      &:after {
+        right: 0;
+        border-top-color: var(--TAB-BG-COLOR);
+        border-right-color: var(--TAB-BG-COLOR);
+        border-bottom-color: var(--TAB-ITEM-BG-COLOR);
+        border-left-color: var(--TAB-ITEM-BG-COLOR);
+      }
+
+      .el-icon-close {
+        color: var(--TAB-FONT-COLOR);
+        //&:hover {
+        //  background-color: var(--WEB-HEADER-BG-COLOR);
+        //}
+      }
+
+      &.is-active {
+        .el-icon-close {
+          color: var(--TAB-ACTIVE-FONT-COLOR);
+        }
+      }
+
+      &.is-active {
+        background-color: var(--TAB-ACTIVE-BG-COLOR) !important;
+        color: var(--TAB-ACTIVE-FONT-COLOR) !important;
+
+        &:before {
+          border-top-color: var(--TAB-BG-COLOR);
+          border-right-color: var(--TAB-ACTIVE-BG-COLOR);
+          border-bottom-color: var(--TAB-ACTIVE-BG-COLOR);
+          border-left-color: var(--TAB-BG-COLOR);
+        }
+
+        &:after {
+          border-top-color: var(--TAB-BG-COLOR);
+          border-right-color: var(--TAB-BG-COLOR);
+          border-bottom-color: var(--TAB-ACTIVE-BG-COLOR);
+          border-left-color: var(--TAB-ACTIVE-BG-COLOR);
+        }
+      }
+    }
+  }
+
+  // 上部信息展示
+  .tabs-top-content {
+    background-color: rgb(255, 255, 255);
+    border-bottom: 0.1rem solid #ccc;
+  }
+
+  .cb-tab-operation {
+    background-color: var(--TAB-BG-COLOR);
+    border-bottom: 1px solid var(--TAB-BOTTOM-SHADOW-COLOR);
+
+    .el-icon-arrow-down {
+      color: var(--TAB-CLOSE-ACTIVE-FONT-COLOR);
+    }
+  }
+}
+
+// tab下拉框 和  头部下拉框
+.cb-tab-dropdown, .layout-header-dropdown {
+  &.el-dropdown-menu .el-dropdown-menu__item {
+    line-height: 24px;
+    font-size: 12px;
+  }
+
+  .el-dropdown {
+    color: var(--TAB-CLOSE-FONT-COLOR);
+  }
+
+  &.el-dropdown-menu {
+    background-color: var(--TAB-CLOSE-BG-COLOR);
+    border-color: var(--TAB-CLOSE-BG-COLOR);
+    color: var(--TAB-CLOSE-FONT-COLOR);
+    font-size: 12px;
+    box-shadow: 0 0 1px var(--TAB-CLOSE-SHADOW-COLOR);
+  }
+
+  .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: var(--TAB-CLOSE-ACTIVE-BG-COLOR);
+    color: var(--TAB-CLOSE-ACTIVE-FONT-COLOR) !important;
+  }
+
+  &.el-dropdown-menu .el-dropdown-menu__item {
+    color: var(--TAB-CLOSE-FONT-COLOR) !important;
+  }
+
+  .popper__arrow::after {
+    border-bottom-color: var(--TAB-CLOSE-BG-COLOR) !important;
+  }
+}

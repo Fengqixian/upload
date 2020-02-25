@@ -1,0 +1,103 @@
+@CHARSET "UTF-8";
+body{
+	padding: 0;
+	margin: 0;
+	background-color: #eee;
+}
+p{
+	margin: 0;
+	padding:6px;
+	color:#666;
+	font-size:13px;
+}
+ul{
+	padding: 0;
+	margin: 0;
+}
+.list li{
+	width: 360px;
+	list-style:none;
+	padding:0;
+	margin:auto;
+}
+.listChange{
+	background-color: #b4fc565e;
+	box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.1);
+	cursor:pointer;
+}
+.list .list1{
+	box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.1);
+	height:100px;
+	border-radius: 10px;
+	border: 3px solid #fff;
+	font-size: 13px
+}
+.list .list1:hover{
+	box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.1);
+	cursor:pointer;
+	
+}
+.list li .titel{
+	background-color: dodgerblue;
+	color: #fff;
+	border-radius:6px 6px 0 0;
+	padding:6px;
+}
+.line{
+	background-color: dodgerblue;
+	height: 80px;
+	width: 2px;
+	margin: auto;
+	position: relative;
+}
+.jia{
+	background-color: #23a7db;
+	border: 2px solid #fff;
+	color: #fff;
+	border-radius: 50%;
+	height: 20px;
+	width: 20px;
+	display: block;
+	text-align: center;
+	line-height: 17px;
+	box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.1);
+	position: absolute;
+	top:30%;
+	right:-10px;
+	font-size: 14px;
+	font-weight: bold;
+	
+}
+.jiaChange{
+	height: 25px;
+	width: 25px;
+	line-height: 21px;
+	font-size: 16px;
+	background-color: #51ac39;
+	cursor:pointer;
+}
+.jia:hover,.jia:active{
+	height: 25px;
+	width: 25px;
+	line-height: 21px;
+	font-size: 16px;
+	background-color: #51ac39;
+	cursor:pointer;
+}
+.right{
+	background-color: #fff;
+	box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.1);
+	position:fixed;
+	right: 0;
+	width:50%;
+	top:0;
+	height: 100%;
+	margin-right: 15px;
+    
+}
+.titel{
+	background-color:dodgerblue;
+	color: #fff;
+	padding:6px;
+	text-align: center;
+}

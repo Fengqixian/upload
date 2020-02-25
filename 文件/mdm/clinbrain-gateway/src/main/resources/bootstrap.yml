@@ -1,0 +1,29 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: clinbrain-gateway-${spring.profiles.active}
+  # 配置中心
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+#      profile: ""
+      discovery:
+        enabled: true
+        service-id: clinbrain-config
+  profiles:
+    active: stg
+  main:
+    allow-bean-definition-overriding: true
+
+# 注册中心
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://pig:pig@localhost:8761/eureka/
+
+

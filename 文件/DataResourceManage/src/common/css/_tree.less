@@ -1,0 +1,56 @@
+@import "_variables";
+
+.cb-tree {
+  background-color: var(--TREE-BG-COLOR);
+  border-right: 1px solid var(--TREE-BORDER-RIGHT-COLOR);
+
+  .search-wrapper {
+    // 输入框
+    .el-input__inner {
+      background-color: var(--TREE-INPUT-BG-COLOR);
+      border-color: var(--TREE-INPUT-BG-COLOR);
+      color: var(--TREE-FONT-COLOR);
+    }
+    // 输入框按钮
+    .el-input-group__append{
+      background-color: var(--TREE-INPUT-BG-COLOR);
+      border-color: var(--TREE-INPUT-BG-COLOR);
+      color: var(--TREE-FONT-COLOR);
+    }
+  }
+
+  .el-tree-container {
+    .el-tree {
+      color: var(--TREE-FONT-COLOR);
+
+      .el-tree-node {
+        &.is-current {
+          & > .el-tree-node__content {
+            background-color: var(--TREE-HOVER-BG-COLOR);
+            color: var(--TREE-ACTIVE-FONT-COLOR);
+          }
+        }
+
+        .el-tree-node__content {
+          &:hover {
+            background-color: var(--TREE-HOVER-BG-COLOR);
+          }
+        }
+      }
+
+      .el-tree-node__expand-icon {
+        color: var(--TREE-FONT-COLOR);
+
+        &.is-leaf {
+          color: transparent;
+          cursor: default;
+        }
+      }
+    }
+  }
+
+
+  .cb-tree-icon {
+    color: var(--TREE-ICON-COLOR);
+  }
+}

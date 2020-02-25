@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.DictInfoMapper">
+  <!--<resultMap id="BaseResultMap" type="com.metadata.entity.DictInfo">-->
+    <!--&lt;!&ndash;-->
+      <!--WARNING - @mbg.generated-->
+    <!--&ndash;&gt;-->
+    <!--<id column="id" jdbcType="INTEGER" property="id" />-->
+    <!--<result column="dict_name" jdbcType="VARCHAR" property="dictName" />-->
+    <!--<result column="SQL_command" jdbcType="VARCHAR" property="sqlCommand" />-->
+    <!--<result column="dict_type" jdbcType="INTEGER" property="dictType" />-->
+    <!--<result column="show_order" jdbcType="INTEGER" property="showOrder" />-->
+    <!--<result column="description" jdbcType="VARCHAR" property="description" />-->
+  <!--</resultMap>-->
+
+  <select id="selectDictInfoList" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.DictInfo">
+      select * FROM  dict_info
+    <trim prefix="where" prefixOverrides="and">
+
+      <if test="dictInfo.dictName != null">
+        and dict_name like concat('%',#{dictInfo.dictName},'%')
+      </if>
+
+      <if test="dictInfo.sqlCommand != null">
+        and SQL_command like concat('%',#{dictInfo.sqlCommand},'%')
+      </if>
+
+      <if test="dictInfo.dictType != null">
+        and dict_type = #{dictInfo.dictType}
+      </if>
+      <if test="dictInfo.id != null">
+        AND id = #{dictInfo.id}
+      </if>
+      <if test="dictInfo.showOrder != null">
+        AND show_order = #{dictInfo.showOrder}
+      </if>
+      <if test="dictInfo.description != null">
+        AND description = like concat('%',#{dictInfo.description},'%')
+      </if>
+    </trim>
+      order by show_order
+  </select>
+
+  <select id="validateCommand" resultType="java.lang.Integer">
+    select max(1) from (${value}) t
+  </select>
+
+  <!--删除常量值 -->
+  <delete id="deleteDictItemsByDictInfo">
+    delete from dict_items where dict_id=#{dictId}
+  </delete>
+</mapper>

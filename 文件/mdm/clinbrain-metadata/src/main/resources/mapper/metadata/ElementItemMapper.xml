@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.ElementItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.ElementItemInfo">
+        <id property="id" column="id"/>
+        <result property="elementName" column="element_name"/>
+        <result property="elementDatatype" column="element_datatype"/>
+        <result property="elementLength" column="element_length"/>
+        <result property="elementRemarks" column="element_remarks"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="parentResourceId" column="parent_resource_id"/>
+    </resultMap>
+
+    <select id="selectPageData" resultMap="BaseResultMap">
+        SELECT
+        id,
+        element_name,
+        element_datatype,
+        element_length,
+        element_remarks,
+        create_time,
+        update_time
+        FROM mdm_element_item m
+        <where>
+            <if test="roleIds.size() > 0">
+                m.resource_id in( select resource_id  from mdm_role_resource_permission
+                <where> role_id in
+                    <foreach collection="roleIds" item="item" open="(" separator="," close=")" >
+                        #{item}
+                    </foreach>
+                </where>
+                )
+            </if>
+            <if test="elementItemInfo.id != null and elementItemInfo.id.trim() != ''">
+                AND id = #{elementItemInfo.id}
+            </if>
+            <if test="elementItemInfo.resourceId != null and elementItemInfo.resourceId.trim() != ''">
+                AND resource_id = #{metadataModel.resourceId}
+            </if>
+            <if test="elementItemInfo.parentResourceId != null and elementItemInfo.parentResourceId.trim() != ''">
+                AND parent_resource_id = #{elementItemInfo.parentResourceId}
+            </if>
+            <if test="elementItemInfo.createTime != null and elementItemInfo.createTime.trim() != ''">
+                AND create_time = #{elementItemInfo.createTime}
+            </if>
+            <if test="elementItemInfo.updateTime != null and elementItemInfo.updateTime.trim() != ''">
+                AND update_time = #{elementItemInfo.updateTime}
+            </if>
+            <if test="elementItemInfo.elementName != null and elementItemInfo.elementName.trim() != ''">
+                AND element_name = #{elementItemInfo.elementName}
+            </if>
+            <if test="elementItemInfo.elementLength != null and elementItemInfo.elementName.trim() != '' ">
+                AND element_length = #{elementItemInfo.elementLength}
+            </if>
+            <if test="elementItemInfo.elementRemarks != null and elementItemInfo.elementRemarks.trim() != '' ">
+                AND element_remarks = #{elementItemInfo.elementRemarks}
+            </if>
+        </where>
+    </select>
+</mapper>

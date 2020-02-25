@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.businessView.mapper.MetadataSetCategoryMapper">
+    <!--<resultMap id="categoryMap" type="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataSetCategory">-->
+        <!--<result property="id" column="id"></result>-->
+        <!--<result property="parentId" column="parent_id"></result>-->
+        <!--<result property="nameEn" column="name_en"></result>-->
+        <!--<result property="resourceId" column="resource_id"></result>-->
+        <!--<result property="resourceCode" column="resource_code"></result>-->
+        <!--<result property="sourceId" column="source_id"></result>-->
+        <!--<result property="nameCn" column="name_cn"></result>-->
+        <!--<result property="category" column="category"></result>-->
+        <!--<result property="description" column="description"></result>-->
+        <!--<result property="createUser" column="create_user"></result>-->
+        <!--<result property="createTime" column="create_time"></result>-->
+    <!--</resultMap>-->
+    <!--<resultMap id ="refType" type="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.CategoryDataSetRef">-->
+        <!--<result property="categoryId" column="category_id"></result>-->
+        <!--<result property="datasetId" column="dataset_id"></result>-->
+    <!--</resultMap>-->
+
+    <select id="selectMetaCategoryList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataSetCategory">
+      select * from mdm_dataset_category where category = 1
+    </select>
+
+    <select id="selectMetaChildCategoryOrDataSetList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataSetCategory">
+        select id,parent_id,name_en,resource_id,resource_code,source_id,name_cn,category,description,create_user,create_time from (
+  select * from mdm_dataset_category cate join
+	(select dataset_id from mdm_dataset_category_ref ref join (select id from mdm_dataset_category where category = 1) cate1 on ref.category_id =  cate1.id) cate2 on cate.id = cate2.dataset_id where cate.category=2) cate3
+    </select>
+
+    <select id="selectCategoryRefList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.CategoryDataSetRef">
+      select * from mdm_dataset_category_ref
+    </select>
+
+    <select id="getChildCategoryList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataSetCategory">
+      select  DISTINCT(id),parent_id,name_en,resource_id,resource_code,source_id,name_cn,category,description,create_user,create_time from (select * from mdm_dataset_category cate join
+      (select * from mdm_dataset_category_ref where category_id = ${categoryId}) ref
+       on cate.id = ref.dataset_id) category
+        where 1=1
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+       order by id
+    </select>
+
+    <select id="getPageMetaDataElement" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+      select DISTINCT(id),resource_id,resource_code,source_id,category,name_cn,name_en,definition,
+        case data_type
+            when 'S1' then 'string'
+            when 'S2' then 'string'
+            when 'S3' then 'string'
+            when 'DT' then 'date'
+            when 'T' then 'date'
+            when 'D' then 'date'
+            when 'L' then 'boolean'
+            when 'BY' then 'image'
+            when 'N' then 'number'
+            else 'other'
+        end as data_type,
+      show_format,allowable_value,allowable_type,allowable_code from (select * from mdm_data_element ele join
+       (select * from mdm_dataset_element_ref where dataset_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+       ) ref on ele.id = ref.element_id) element
+         where 1=1
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+       order by id
+    </select>
+    <select id="getPageMetaDataElementByRoleId" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+        select id,resource_id,resource_code,source_id,category,name_cn,name_en,definition,
+        case data_type
+        when 'S1' then 'string'
+        when 'S2' then 'string'
+        when 'S3' then 'string'
+        when 'DT' then 'date'
+        when 'T' then 'date'
+        when 'D' then 'date'
+        when 'L' then 'boolean'
+        when 'BY' then 'image'
+        when 'N' then 'number'
+        else 'other'
+        end as data_type,
+        show_format,allowable_value,allowable_type,allowable_code from mdm_data_element where
+        id in(
+        select element_id from mdm_dataset_element_ref where dataset_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        ) and resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId})
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+        order by id
+    </select>
+
+    <select id="getCategoryInfo" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataSetCategory">
+      select * from mdm_dataset_category where 1=1
+        <if test="id != null">
+            id = ${categoryId}
+        </if>
+        <if test="resourceId != null and resourceId.trim() != ''">
+            resource_id = #{resourceId}
+        </if>
+    </select>
+    <select id="getBusinessViewTreeList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.BusinessViewTree">
+        select ty.id,ty.parent_id,ty.name_en,ty.name_cn,ty.resource_id,ds.resource_id subResourceId,
+         ds.id dataset_id,ds.name_en dataset_name_en,ds.name_cn dataset_name_cn
+        from mdm_dataset_category ty left join mdm_dataset_category_ref  ref on ty.id = ref.category_id left join mdm_dataset_category ds on ds.id = ref.dataset_id and ds.category = 2
+         where ty.category = 1 order by ty.id,ds.id
+    </select>
+    <select id="getBusinessViewTreeListByRoleId" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.BusinessViewTree">
+        select ty.id,ty.parent_id,ty.name_en,ty.name_cn,ds.resource_id subResourceId,
+         ds.id dataset_id,ds.name_en dataset_name_en,ds.name_cn dataset_name_cn
+        from mdm_dataset_category ty left join mdm_dataset_category_ref  ref on ty.id = ref.category_id left join mdm_dataset_category ds on ds.id = ref.dataset_id and ds.category = 2 and ds.resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId})
+         where ty.category = 1 and ty.resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId}) order by ty.id,ds.id
+    </select>
+
+    <!--模糊查询数据元 -->
+    <select id="getElementList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+      select * from mdm_data_element where 1=1
+        <if test="queryString != null and queryString.trim() != ''">
+          and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+        <if test="elementId != null">
+            and id = ${elementId}
+        </if>
+        order by id
+    </select>
+
+    <select id = "getElementListByDataSet" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.MetadataElement">
+      select DISTINCT(id),resource_id,resource_code,source_id,category,name_en,name_cn,definition,data_type,
+        show_format,allowable_value,allowable_type,allowable_code	from mdm_data_element ele join (
+	    select element_id from mdm_dataset_element_ref ref join (
+	      select id from mdm_dataset_category where category = 2
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+	    ) cate on ref.dataset_id = cate.id) dataset on ele.id=dataset.element_id order by ele.id asc
+    </select>
+
+    <insert id ="saveCatgoryRef">
+        INSERT INTO mdm_dataset_category_ref(category_id,dataset_id)
+        VALUES
+        <foreach collection="categoryDataSetRefList" item="category" separator=",">
+            (#{category.categoryId},#{category.datasetId})
+        </foreach>
+    </insert>
+
+    <insert id = "saveDataSetRef">
+        INSERT INTO mdm_dataset_element_ref(dataset_id,element_id)
+        VALUES
+        <foreach collection="dataSetElementRefList" item="dataset" separator=",">
+            (#{dataset.datasetId},#{dataset.elementId})
+        </foreach>
+    </insert>
+
+    <delete id = "deleteCategoryDataSetRef">
+        delete from mdm_dataset_category_ref where category_id = ${id}
+    </delete>
+
+    <delete id="deleteElementRef">
+        delete from mdm_dataset_element_ref where dataset_id = ${datasetId}
+    </delete>
+
+    <select id ="getCategotyLazzyTree" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.BusinessViewTree">
+        <if test="nodeId == null">
+            select  id,parent_id,name_en,name_cn,case when category = 1 then 'category'
+            when category=2 then 'dataset'else 'other' end as node_type  from mdm_dataset_category
+             where category = 1 and (parent_id is null or parent_id = '') order by id
+        </if>
+        <if test="nodeId != null">
+            select * from (
+            select  id,parent_id,name_en,name_cn,case when category = 1 then 'category'
+            when category=2 then 'dataset'else 'other' end as node_type  from mdm_dataset_category
+            where category = 1 and parent_id = ${nodeId}
+            union all
+            select id,parent_id,name_en,name_cn,case when category = 1 then 'category'
+            when category=2 then 'dataset'else 'other' end as node_type from mdm_dataset_category where category = 2 and id in (select dataset_id from
+            mdm_dataset_category_ref where category_id = ${nodeId})) cate order by id
+        </if>
+    </select>
+    <select id="getElementListLazzyTree" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.BusinessViewTree">
+      select id,'' parent_id,resource_id,name_en,name_cn,'element_item' as node_type from mdm_data_element
+             where id in(select element_id from mdm_dataset_element_ref where dataset_id = ${nodeId})
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+		  order by id
+    </select>
+</mapper>

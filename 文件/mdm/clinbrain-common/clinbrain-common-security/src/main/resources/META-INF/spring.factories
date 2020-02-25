@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.clinbrain.bd.mdm.common.security.service.PigUserDetailsServiceImpl

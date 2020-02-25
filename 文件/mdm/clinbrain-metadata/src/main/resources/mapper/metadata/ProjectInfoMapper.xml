@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.projectManage.mapper.ProjectInfoMapper">
+  <select id="getProjectInfoList" resultType="com.clinbrain.bd.mdm.MetadataManage.projectManage.entity.ProjectInfo">
+    select m.*,t.is_case_when from mdm_project_info_view m
+    left join (select  table_id ,column_id,1 is_case_when from  mdm_project_info_view group by table_id,column_id having count(1) >1) t on t.table_id = m.table_id and t.column_id = m.column_id
+    where m.project_id = ${projectId}
+    and m.element_id in
+    <foreach collection="ids" item="item" open="(" separator="," close=")" >
+      #{item}
+    </foreach>
+    order by m.table_id , m.column_id,m.condition_id
+  </select>
+</mapper>

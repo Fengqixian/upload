@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.businessView.mapper.DataElementMapper">
+    <select id="getProjectElementList" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.DataElement">
+        select * from mdm_data_element where id in (
+        select element_id from mdm_project_element_ref where dataset_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        )
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+    </select>
+    <select id="getProjectElementListByRoleId"
+            resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.DataElement">
+        select * from mdm_data_element where id in (
+        select element_id from mdm_project_element_ref where dataset_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        ) and resource_id in (select resource_id from mdm_role_resource where role_id = #{roleId})
+        <if test="queryString != null and queryString.trim() != ''">
+            and (name_cn like CONCAT('%',#{queryString},'%')
+            or name_en like CONCAT('%',#{queryString},'%'))
+        </if>
+    </select>
+</mapper>

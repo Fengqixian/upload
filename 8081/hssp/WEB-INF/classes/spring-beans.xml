@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+
+	<bean id="dateFormat" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd" />
+	</bean>
+
+	<bean name="defaultUserBean" class="com.clinbrain.hssp.ws.dto.UserInfo">
+		<property name="userName" value="匿名"></property>
+		<property name="salary" value="1000.00"></property>
+		<property name="vip" value="false"></property>
+		<property name="id" value="-1"></property>
+		<property name="birthday">
+			<bean factory-bean="dateFormat" factory-method="parse">
+				<constructor-arg value="1985-06-01" />
+			</bean>
+		</property>
+	</bean>
+
+	<context:component-scan base-package="com.clinbrain.hssp"/>
+	<!--=====================================================================-->
+    <!-- iBATIS 配置文件定义 -->
+    <!--=====================================================================-->
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation">
+            <description>iBATIS SQL Mapping配置文件名，系统要能够在CLASSPATH中找到该文件</description>
+            <value>classpath:sqlmap-config.xml</value>
+        </property>
+        <property name="dataSource">
+          <ref bean="defaultDS"/>
+        </property>
+    </bean>
+     <bean id="sqlMapClientdata" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation">
+            <description>iBATIS SQL Mapping配置文件名，系统要能够在CLASSPATH中找到该文件</description>
+            <value>classpath:sqlmap-configdata.xml</value>
+        </property>
+        <property name="dataSource">
+          <ref bean="defaultDSData"/>
+        </property>
+    </bean> 
+    <!--=====================================================================-->
+	<!-- JDBC数据源配置 -->
+	<!--=====================================================================-->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<description>采用JNDI数据源提供给JDBC使用</description>
+			<ref bean="defaultDS"/>
+		</property>		
+	</bean>
+	<bean id="jdbcTemplateData" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<description>采用JNDI数据源提供给JDBC使用</description>
+			<ref bean="defaultDSData"/>
+		</property>		
+	</bean>
+    <!--=====================================================================-->
+    
+    <!-- 配置multipartResolver -->
+	<!--=====================================================================-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"></property>	
+		<property name="maxInMemorySize" value="10240000"></property>		
+	</bean>
+	
+	<!-- 事务管理器定义 -->
+	<!--=====================================================================-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref local="defaultDS"/>
+		</property>
+	</bean>	
+	<bean id="defaultDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+       <property name="jndiName">
+           <value>jdbc/sqlserver</value>
+       </property>
+       <property name="resourceRef" value="true"/>
+       <property name="jndiTemplate">
+           <ref local="jndiTemplate"/>
+       </property>
+    </bean>
+    <bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
+       <description>定义一个用作模板的JNDI，可以被其它bean引用</description>
+       <property name="environment">
+           <props>
+              <prop key="java.naming.factory.initial">org.apache.naming.java.javaURLContextFactory</prop>
+           </props>
+       </property> 
+    </bean>
+     <!--=====================================================================-->
+	<!-- 事务管理器定义 -->
+	<!--=====================================================================-->
+	<bean id="transactionManagerData" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref local="defaultDSData"/>
+		</property>
+	</bean>	
+	<bean id="defaultDSData" class="org.springframework.jndi.JndiObjectFactoryBean">
+       <property name="jndiName">
+           <value>jdbc/mysql</value>
+       </property>
+       <property name="resourceRef" value="true"/>
+       <property name="jndiTemplate">
+           <ref local="jndiTemplateData"/>
+       </property>
+    </bean>
+    <bean id="jndiTemplateData" class="org.springframework.jndi.JndiTemplate">
+       <description>定义一个用作模板的JNDI，可以被其它bean引用</description>
+       <property name="environment">
+           <props>
+              <prop key="java.naming.factory.initial">org.apache.naming.java.javaURLContextFactory</prop>
+           </props>
+       </property> 
+    </bean>
+    <bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<description>
+				可以引用CLASSPATH中context-cicp.properties中定义的变量
+			</description>
+			<value>classpath:hssp.properties</value>
+		</property>
+	</bean>
+	<bean id="sysResourceUtil" class="com.clinbrain.hssp.common.util.SystemResourceUtil">
+    	<property name="contextSystemProperties">
+    		<value>${contextSystemProperties}</value>
+    	</property>
+    </bean>
+</beans>

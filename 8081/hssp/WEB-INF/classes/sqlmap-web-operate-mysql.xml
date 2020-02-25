@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="webOperateData">
+	<select id="getPath" parameterClass="java.lang.String"
+		resultClass="java.util.HashMap" remapResults="true"> 
+		      <![CDATA[$sql$]]>
+	</select>
+	<update id="getPathForUpdate" parameterClass="java.lang.String">
+		      <![CDATA[$sql$]]>
+	</update>
+	
+	<!-- *****************************************************************科研统计**************************************************************** -->
+<!-- 科研数据统计保存-->
+	<insert id="saveStatisticsDBFirst" parameterClass="java.util.HashMap">
+		insert into ICD.Statistics_Disease (USERID,DISEASEID,DISEASEIDNAME,StatisticsNAME,FiledNAME,DEPTNAME,Description,Expression,Status,CreateTime,UpdateTime,DataType)
+		values (#USERID#,#DISEASEID#,#DISEASEIDNAME#,#StatisticsNAME#,#FiledNAME#,#DEPTNAME#,#Description#,#Expression#,#Status#,#CreateTime#,#UpdateTime#,#DataType#)
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+	<select id="saveStatisticsDBSecond" parameterClass="java.util.HashMap" resultClass="int">
+		SELECT id
+            FROM ICD.Statistics_Disease  WHERE USERID = #USERID# and DISEASEID =#DISEASEID# AND CreateTime =#CreateTime#
+	</select>
+	  <parameterMap id="hasAuthParam_Statistics" class="java.util.HashMap" >  
+	    <parameter property="id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	    <parameter property="DISEASEID" jdbcType="INTEGER" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="USERID" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="VKey_List" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>  
+	    <parameter property="ReturnValue" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>  
+	  </parameterMap>  
+	  <procedure id="saveStatisticsDBThird" parameterMap="hasAuthParam_Statistics"  >  
+	     {call ICD.CLB_Add_Search_Statistics_VisitNumberID(?,?,?,?,?)} 
+	  </procedure>
+	  <update id="saveStatisticsDBFour" parameterClass="java.util.HashMap">
+		update ICD.Statistics_Disease
+		set Status = #Status# 
+		where ID = #id# 
+	</update>
+	  <parameterMap id="hasAuthParam_Statistics_table" class="java.util.HashMap" >  
+	    <parameter property="id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>  
+	  </parameterMap>  
+	  <procedure id="saveStatisticsDBFive" parameterMap="hasAuthParam_Statistics_table"  > 
+	     {call ResearchManagement(HFZ).DF_StatisticsDataset(?)}
+	  </procedure>
+	  <!-- 获取病种库信息 -->
+	<select id="getShowStatisticsStatu" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic><![CDATA[
+			SELECT
+				ID,
+				USERID,
+				DISEASEID,
+				DISEASEIDNAME,
+				StatisticsNAME,
+				DEPTNAME,
+				Description,
+				Expression,
+				`Status`,
+				CreateTime,
+				UpdateTime,
+				DataType 
+			FROM
+				ICD.Statistics_Disease d 
+			WHERE
+				USERID = #USERID#
+			ORDER BY d.id DESC 
+				LIMIT $previousPageCountTotal$,
+				$pageCount$
+		]]>
+		</dynamic>
+	</select>
+	<!-- 获取某种分类下病种库总数 -->
+	<select id="getShowDiseaseStatuCount" parameterClass="java.util.HashMap" resultClass="int">
+		select count(*)
+		from ICD.Statistics_Disease d 
+		where  USERID= #USERID#  
+	</select>
+	<!-- *****************************************************************科研统计**************************************************************** -->
+	<!-- *****************************************************************Omaha术语树**************************************************************** -->
+	<select id="searchFancytreeCount" resultClass="long" parameterClass="java.util.HashMap">
+		SELECT
+			count(1) As total
+		FROM
+			Omaha.description AS descriptionTable
+			where  descriptionTable.term like #keywords#
+	</select>
+	<select id="searchFancytree" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT
+			descriptionTable.id,
+			descriptionTable.releaseDate,
+			descriptionTable.STATUS,
+			descriptionTable.conceptId,
+			descriptionTable.term,
+			descriptionTable.termType,
+			descriptionTable.semanticTag 
+		FROM
+			Omaha.description AS descriptionTable
+			where  descriptionTable.term like #keywords#
+	        limit  #dataStart#,#pageSize#
+	</select>
+	<select id="getOmahaUpOld" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+	  <dynamic>
+            <![CDATA[   SELECT
+							descriptionTable.id,
+							descriptionTable.releaseDate,
+							descriptionTable.STATUS,
+							descriptionTable.conceptId,
+							relationship.conceptId1 AS conceptIdLast ,
+							relationship.conceptId2 AS conceptIdNext,
+							relationship.id As relationship_id,
+							descriptionTable.term,
+							descriptionTable.termType,
+							descriptionTable.semanticTag
+						FROM Omaha.relationship  
+						inner join Omaha.description AS descriptionTable 
+						on relationship.conceptId2 = descriptionTable.conceptId
+						WHERE  relationship.conceptId1 = #conceptId#  and descriptionTable.termType in (1,2)
+						limit 1
+			]]>
+		</dynamic>
+	</select>
+	<select id="getOmahaUp" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+	    SELECT
+							descriptionTable.id,
+							descriptionTable.releaseDate,
+							descriptionTable.STATUS,
+							descriptionTable.conceptId,
+							relationship.conceptId1 AS conceptIdLast ,
+							relationship.conceptId2 AS conceptIdNext,
+							relationship.id As relationship_id,
+							descriptionTable.term,
+							descriptionTable.termType,
+							descriptionTable.semanticTag
+						FROM Omaha.relationship  
+						inner join Omaha.description AS descriptionTable 
+						on relationship.conceptId1 = descriptionTable.conceptId
+						WHERE  relationship.conceptId1 in (<![CDATA[$conceptId$]]>)  and descriptionTable.termType in (1,2)
+						
+	</select>
+	<select id="getOmahaUpOne" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+	    SELECT
+							descriptionTable.id,
+							descriptionTable.releaseDate,
+							descriptionTable.STATUS,
+							descriptionTable.conceptId,
+							relationship.conceptId1 AS conceptIdLast ,
+							relationship.conceptId2 AS conceptIdNext,
+							relationship.id As relationship_id,
+							descriptionTable.term,
+							descriptionTable.termType,
+							descriptionTable.semanticTag
+						FROM Omaha.relationship  
+						inner join Omaha.description AS descriptionTable 
+						on relationship.conceptId1 = descriptionTable.conceptId
+						WHERE  relationship.conceptId1 in (<![CDATA[$conceptId$]]>)  and descriptionTable.termType in (1,2)
+						limit 1
+	</select>
+	<select id="getOmahaFirst" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+	  <dynamic>
+            <![CDATA[   SELECT
+							descriptionTable.id,
+							descriptionTable.releaseDate,
+							descriptionTable.STATUS,
+							descriptionTable.conceptId,
+							relationship.conceptId1 AS conceptIdNext,
+							relationship.conceptId2 AS conceptIdLast,
+							relationship.id As relationship_id,
+							descriptionTable.term,
+							descriptionTable.termType,
+							descriptionTable.semanticTag 
+						FROM
+							Omaha.description AS descriptionTable
+							INNER JOIN Omaha.relationship on descriptionTable.conceptId = relationship.conceptId1 
+						WHERE  relationship.conceptId2 = #conceptId# and descriptionTable.termType in (1,2)
+						ORDER BY term ASC
+			]]>
+		</dynamic>
+	</select>
+	<select id="getOmahaSeconds" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+	    <dynamic>
+            <![CDATA[   SELECT
+							descriptionTable.id,
+							descriptionTable.releaseDate,
+							descriptionTable.STATUS,
+							descriptionTable.conceptId,
+							relationship.conceptId1 AS conceptIdNext,
+							relationship.conceptId2 AS conceptIdLast,
+							descriptionTable.term,
+							descriptionTable.termType,
+							descriptionTable.semanticTag 
+						FROM
+							Omaha.description AS descriptionTable
+							INNER JOIN Omaha.relationship on descriptionTable.conceptId = relationship.conceptId1 
+						WHERE
+							relationship.conceptId2 IN (
+							SELECT
+								descriptionTable.conceptId 
+							FROM
+								Omaha.description AS descriptionTable
+								INNER JOIN Omaha.relationship ON descriptionTable.conceptId = relationship.conceptId1 
+							WHERE
+								relationship.conceptId2 =  #conceptId#   
+								) and descriptionTable.termType in (1,2)
+						ORDER BY term ASC
+		]]>
+		</dynamic>
+	</select>
+	<!-- *****************************************************************权限流程设置**************************************************************** -->
+	<!-- *****************************************************************权限流程设置**************************************************************** -->
+	<!-- 修改内容信息 -->
+	<insert id="AddApprovalProcessMessage" parameterClass="java.util.HashMap">
+		INSERT INTO `SOLR_Date`.`Privilege_Role_Approval_Process_Message` ( `Privilege_User_Role_ID`, `Approval_Process_Group_Id`, 
+		`Approval_Order`, `Process_Title`, `Process_Description`, `Privilege_User_Id`, `Approval_Status`, 
+		`Privilege_Type`, `valid_startTime`, `valid_EndTime`, `CreateTime`, `UpdateTime`, `IsDeleted` )
+			   VALUES
+					( #Privilege_User_Role_ID#, #Approval_Process_Group_Id#, #Approval_Order#, #Process_Title#, #Process_Description#, #Privilege_User_Id#, #Approval_Status#, 1, NOW(), NOW(),NOW(), NOW(), 0 );
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+	<select id="SelectStatusForPrivilegeUserRole" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT
+			Privilege_Role.Id,
+			Privilege_Role.RoleName,
+			Privilege_Role.Description,
+			Privilege_User_Role.id AS Privilege_User_Role_id,
+			Privilege_User_Role.Privilege_Type,
+			Privilege_User_Role.Approval_OK,
+			Privilege_User_Role.Privilege_Status,
+			Privilege_User_Role.ApprovalUSERID,
+			DATE_FORMAT( Privilege_User_Role.valid_startTime, '%Y-%m-%d %T' ) AS valid_startTime,
+			DATE_FORMAT( Privilege_User_Role.valid_EndTime, '%Y-%m-%d %T' ) AS valid_EndTime,
+			DATE_FORMAT( Privilege_User_Role.UpdateTime, '%Y-%m-%d %T' ) AS UpdateTime,
+			Process_Group.id AS Process_Group_ID,
+			Process_Group.Approval_Order AS Process_Group_Approval_Order,
+			Process_Group.Process_Title AS Process_Group_Process_Title,
+			(
+		CASE
+			WHEN (
+				SELECT
+				Message.Approval_Status 
+				FROM
+				SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+				WHERE
+				Message.IsDeleted = 0 
+				AND Message.Approval_Process_Group_Id = Process_Group.id 
+				AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+				AND Message.Approval_Status = 0 
+				LIMIT 1 
+				) = 0 THEN 0
+				 
+		   WHEN (
+				SELECT
+					count( 1 ) 
+				FROM
+					SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+				WHERE
+					Message.IsDeleted = 0 
+					AND Message.Approval_Process_Group_Id = Process_Group.id 
+					AND Message.Privilege_User_Role_ID = Privilege_User_Role.id 
+					AND Message.Approval_Status = 1 
+				) = ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) 
+				AND ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) > 0 
+				THEN 1
+		    ELSE - 1 
+				END 
+				) AS Approval_Status 
+			FROM
+				SOLR_Date.Privilege_User_Role Privilege_User_Role
+				INNER JOIN SOLR_Date.Privilege_Role Privilege_Role ON Privilege_Role.id = Privilege_User_Role.Privilege_Role_Id 
+				AND Privilege_User_Role.IsDeleted = 0
+				INNER JOIN SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group ON Process_Group.Privilege_Role_Id = Privilege_Role.id 
+				AND Privilege_Role.IsDeleted = 0 
+			WHERE
+				Process_Group.isDeleted = 0 
+				AND Privilege_User_Role.id = #Privilege_User_Role_ID# 
+			ORDER BY  Process_Group.Approval_Order
+	</select>
+	<select id="SelectIDForApprovalProcessMessage" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		  <dynamic>
+            <![CDATA[ 
+               SELECT
+					id,
+					Privilege_User_Role_ID,
+					Approval_Process_Group_Id,
+					Approval_Order,
+					Process_Title,
+					Process_Description,
+					Privilege_User_Id,
+					Approval_Status,
+					Privilege_Type,
+					valid_startTime,
+					valid_EndTime,
+					CreateTime,
+					UpdateTime,
+					IsDeleted 
+				FROM
+					SOLR_Date.Privilege_Role_Approval_Process_Message
+					where IsDeleted = 0
+			]]>
+		</dynamic>
+		<isNotEqual property="Privilege_User_Role_ID" compareValue="">
+		  and Privilege_User_Role_ID = #Privilege_User_Role_ID#
+		</isNotEqual>
+		<isNotEqual property="Approval_Order" compareValue="">
+		  and Approval_Order = #Approval_Order#
+		</isNotEqual>
+		<isNotEqual property="Approval_Process_Group_Id" compareValue="">
+		  and Approval_Process_Group_Id = #Approval_Process_Group_Id#
+		</isNotEqual>
+		<isNotEqual property="Privilege_User_Id" compareValue="">
+		  and Privilege_User_Id = #Privilege_User_Id#
+		</isNotEqual>
+		<isNotEqual property="Approval_Status" compareValue="">
+		  and Approval_Status = #Approval_Status#
+		</isNotEqual>
+	</select>
+	<update id="updateStatusForApprovalProcessMessage" parameterClass="java.util.HashMap">
+		UPDATE SOLR_Date.Privilege_Role_Approval_Process_Message 
+			SET Approval_Status = #Approval_Status#,UpdateTime = Now()
+		WHERE
+			id = #ApprovalProcessMessageID#
+	</update>
+	<!-- 修改内容信息 -->
+	<update id="deleteApprovalProcessGroup" parameterClass="java.util.HashMap">
+		UPDATE SOLR_Date.Privilege_Role_Approval_Process_Group 
+			SET IsDeleted = 1,UpdateTime = Now()
+		WHERE
+			id = #approvalProcessGroupID#
+	</update>
+	<update id="UpdateApprovalProcessGroupMess" parameterClass="java.util.HashMap">
+		UPDATE SOLR_Date.Privilege_Role_Approval_Process_Group 
+			SET Process_Title = #title# ,Process_Description =#description# ,UpdateTime = Now()
+		WHERE
+			id = #approvalProcessGroupID#
+	</update>
+	<select id="getLastApprovalOrder" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		  <dynamic>
+            <![CDATA[ SELECT
+				Id,
+			    Approval_Order
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process_Group
+			where IsDeleted = 0 and Privilege_Role_Id = #role_id# AND Approval_Order < #Approval_Order#
+			ORDER BY Privilege_Role_Approval_Process_Group.Approval_Order ASC 
+			limit 1
+			]]>
+		</dynamic>
+	</select>
+	<select id="getNextApprovalOrder" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		   SELECT
+				Id,
+			    Approval_Order
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process_Group
+			where IsDeleted = 0 and Privilege_Role_Id = #role_id# AND Approval_Order > #Approval_Order#
+			ORDER BY Privilege_Role_Approval_Process_Group.Approval_Order ASC 
+			limit 1
+	</select>
+	<update id="updateApprovalOrderById" parameterClass="java.util.HashMap">
+		UPDATE SOLR_Date.Privilege_Role_Approval_Process_Group 
+			SET Approval_Order = #Approval_Order# ,UpdateTime = Now()
+		WHERE
+		    Id = #Id#
+	</update>
+	
+	<!-- 第一步，更新当前角色且 Approval_Order大于传入参数的Approval_Order=Approval_Order+1-->
+	<update id="ADDApprovalProcessGroupFirst" parameterClass="java.util.HashMap">
+		UPDATE SOLR_Date.Privilege_Role_Approval_Process_Group 
+			SET Approval_Order = Approval_Order + 1 ,UpdateTime = Now()
+		WHERE
+			Privilege_Role_Id = #role_id# 
+			AND Approval_Order > #Approval_Order#
+	</update>
+	<!-- 第一步，插入当前角色的Approval_Order = Approval_Order 值的数据-->
+	<insert id="ADDApprovalProcessGroupTwo" parameterClass="java.util.HashMap">
+		INSERT INTO `SOLR_Date`.`Privilege_Role_Approval_Process_Group` ( `Approval_Order`, `Privilege_Role_Id`, `Process_Title`, `Process_Description`, `Privilege_Status`, `valid_startTime`, `valid_EndTime`, `CreateTime`, `UpdateTime`, `IsDeleted` )
+			VALUES
+				(  #Approval_Order_Add#, #role_id# , #title#, #description#, 0, NOW(), NOW(), NOW(), NOW(), 0 );
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+	<insert id="aDDApprovalProcessUser" parameterClass="java.util.HashMap">
+		INSERT INTO SOLR_Date.Privilege_Role_Approval_Process(`Approval_Process_Group_Id`, `Privilege_User_Id`, `Privilege_Type`, `Privilege_Status`, `valid_startTime`, `valid_EndTime`, `CreateTime`, `UpdateTime`, `IsDeleted`) 
+		VALUES (#Approval_Process_Group_Id#, #Privilege_User_Id#, 1, 0,NOW(), NOW(), NOW(), NOW(), 0);
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+	<update id="deleteApprovalProcessUser" parameterClass="int">
+		update SOLR_Date.Privilege_Role_Approval_Process set isdeleted = 1,UpdateTime=NOW() where id = #approvalProcess_id#
+	</update>
+	
+	 <select id="getApprovalProcessGroup" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		   SELECT
+				Id,
+			    Approval_Order,
+				Privilege_Role_Id,
+				Process_Title,
+				Process_Description,
+				Privilege_Status,
+				valid_startTime,
+				valid_EndTime,
+				CreateTime,
+				UpdateTime,
+				IsDeleted 
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process_Group
+			where IsDeleted = 0 and Privilege_Role_Id = #role_id#
+			ORDER BY Privilege_Role_Approval_Process_Group.Approval_Order ASC 
+	</select>
+	 <select id="getApprovalProcessGroupForStatus" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+			SELECT
+				Id,
+				Approval_Order,
+				Privilege_Role_Id,
+				Process_Title,
+				Process_Description,
+				(
+				CASE
+				   WHEN (
+						SELECT
+						Message.Approval_Status 
+						FROM
+						SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+						WHERE
+						Message.IsDeleted = 0 AND Message.Approval_Process_Group_Id = Process_Group.id 
+						AND Message.Privilege_User_Role_ID = #Privilege_User_Role_ID#  
+						AND Message.Approval_Status = 0 
+						LIMIT 1 
+						) = 0 THEN 0 
+					WHEN (
+						SELECT
+							count(1) 
+						FROM
+							SOLR_Date.Privilege_Role_Approval_Process_Message Message 
+						WHERE
+							Message.IsDeleted = 0 AND Message.Approval_Process_Group_Id = Process_Group.id 
+							AND Message.Privilege_User_Role_ID = #Privilege_User_Role_ID#  
+							AND Message.Approval_Status = 1 
+					) = ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) 
+					AND ( SELECT count( 1 ) FROM SOLR_Date.Privilege_Role_Approval_Process Process WHERE Process.IsDeleted = 0 AND Process.Approval_Process_Group_Id = Process_Group.id ) > 0 THEN 1
+					else -1	 
+					END 
+					) AS Approval_Status,
+					valid_startTime,
+					valid_EndTime,
+					CreateTime,
+					UpdateTime,
+					IsDeleted 
+				FROM
+					SOLR_Date.Privilege_Role_Approval_Process_Group Process_Group 
+				WHERE
+					Process_Group.IsDeleted = 0 
+					AND Process_Group.Privilege_Role_Id =#role_id#
+				ORDER BY Process_Group.Approval_Order ASC
+	</select>
+	<!-- Process.Id AS ID,
+				Process.Approval_Order AS Process_Approval_Order,
+				Process.Approval_Process_Group_Id AS Approval_Process_Group_Id,
+				Process.Privilege_User_Id AS Process_Privilege_User_Id,
+				Process.Privilege_Type AS Process_Privilege_Type,
+				Process.Privilege_Status AS Process_Privilege_Status,
+				Process.valid_startTime AS Process_valid_startTime,
+				Process.valid_EndTime AS Process_valid_EndTime,
+				Process.CreateTime AS Process_CreateTime,
+				Process.UpdateTime AS Process_UpdateTime,
+				Process.IsDeleted AS Process_IsDeleted, -->
+	<select id="getApprovalProcessGroupUserCount" resultClass="long" parameterClass="java.util.HashMap">
+		   SELECT
+				count(1) AS total 
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process Process
+				INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.id = Process.Privilege_User_Id 
+				AND Privilege_User.IsDeleted = 0 
+			WHERE
+				Process.isDeleted = 0 
+				AND Process.Approval_Process_Group_Id = #approval_Process_Group_Id#
+				<isNotEqual property="userName" compareValue="">
+		  			Privilege_User.USERID like #userName# OR 
+					Privilege_User.USERNAME  like #userName#
+				</isNotEqual>
+	</select>
+	<select id="getApprovalProcessGroupUserADDCount" resultClass="long" parameterClass="java.util.HashMap">
+		    SELECT
+				count(1) AS total 
+			FROM
+				SOLR_Date.Privilege_User 
+			WHERE
+				Privilege_User.isDeleted = 0 
+				AND Privilege_User.id NOT IN ( 
+				SELECT Process.Privilege_User_Id 
+				FROM SOLR_Date.Privilege_Role_Approval_Process Process 
+				WHERE Process.isDeleted = 0 AND Process.Approval_Process_Group_Id = #approval_Process_Group_Id# ) 
+				<isNotEqual property="userName" compareValue="">
+		  		and(Privilege_User.USERID like #userName# OR 
+					Privilege_User.USERNAME  like #userName#)
+				</isNotEqual>
+	</select>
+	<select id="getApprovalProcessGroupUser" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		   SELECT
+				Process.id,
+				Privilege_User.USERID,
+				Privilege_User.USERNAME 
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process Process
+				INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.id = Process.Privilege_User_Id 
+				AND Privilege_User.IsDeleted = 0 
+			WHERE
+				Process.isDeleted = 0 
+				AND Process.Approval_Process_Group_Id = #approval_Process_Group_Id#
+				<isNotEqual property="userName" compareValue="">
+		  		and(Privilege_User.USERID like #userName# OR 
+					Privilege_User.USERNAME  like #userName#)
+				</isNotEqual>
+				order by Process.id DESC
+				limit #dataStart#,#pageSize#
+				
+	</select>
+	<select id="getApprovalProcessGroupADDUser" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		  SELECT
+			Privilege_User.id,
+			Privilege_User.USERID,
+			Privilege_User.USERNAME 
+		FROM
+			SOLR_Date.Privilege_User 
+		WHERE
+			Privilege_User.isDeleted = 0 
+			AND Privilege_User.id NOT IN ( 
+			SELECT Process.Privilege_User_Id 
+			FROM SOLR_Date.Privilege_Role_Approval_Process Process 
+			WHERE Process.isDeleted = 0 AND Process.Approval_Process_Group_Id = #approval_Process_Group_Id# ) 
+			<isNotEqual property="userName" compareValue="">
+		  		and(Privilege_User.USERID like #userName# OR 
+					Privilege_User.USERNAME  like #userName#)
+				</isNotEqual>
+			order by Privilege_User.id DESC
+			limit #dataStart#,#pageSize#
+	</select>
+	<select id="getApprovalProcessStatusForUserCount" resultClass="long" parameterClass="java.util.HashMap">
+		  SELECT
+				count(1) AS total
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process Process
+				LEFT JOIN SOLR_Date.Privilege_Role_Approval_Process_Message Message ON Message.Privilege_User_Id = Process.Privilege_User_Id 
+				AND Message.Approval_Process_Group_Id = Process.Approval_Process_Group_Id
+				INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.id = Process.Privilege_User_Id 
+				AND Privilege_User.IsDeleted = 0 
+			WHERE
+				Process.isDeleted = 0 
+				AND Process.Approval_Process_Group_Id = #approval_Process_Group_Id# 
+	</select>
+	<select id="getApprovalProcessStatusForUser" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		  SELECT
+				Process.id,
+				Privilege_User.USERID,
+				Privilege_User.USERNAME,
+				Message.Approval_Status 
+			FROM
+				SOLR_Date.Privilege_Role_Approval_Process Process
+				LEFT JOIN SOLR_Date.Privilege_Role_Approval_Process_Message Message ON Message.Privilege_User_Id = Process.Privilege_User_Id 
+				AND Message.Approval_Process_Group_Id = Process.Approval_Process_Group_Id AND Message.Privilege_User_Role_ID = #Privilege_User_Role_ID#
+				INNER JOIN SOLR_Date.Privilege_User ON Privilege_User.id = Process.Privilege_User_Id 
+				AND Privilege_User.IsDeleted = 0 
+			WHERE
+				Process.isDeleted = 0 
+				AND Process.Approval_Process_Group_Id = #approval_Process_Group_Id# 
+				
+			ORDER BY
+				Process.id DESC
+			limit #dataStart#,#pageSize#
+	</select>
+	<!-- *****************************************************************权限流程设置**************************************************************** -->
+	<!-- *****************************************************************历史表达式**************************************************************** -->
+	<!-- 从历史表达式表中读取所有数据 
+	<select id="getAllHistoryExpression" resultClass="java.util.HashMap">
+		select expression  from SOLR_WEB.HISTORY_EXPRESSION 
+		order by id desc
+	</select>-->
+	
+	
+	
+	
+	
+	<!-- 往历史表达式表中插入数据 -->
+	<insert id="insertbySql" parameterClass="java.util.HashMap">
+		INSERT INTO SOLR_WEB.Expression_wordCloud(words,department,CreateTime) 
+		VALUES (#words#,#department#,#CreateTime#)
+	</insert>
+	
+	<!-- <select id="getAllHistoryExpression" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		    SELECT
+				a.expression
+			FROM
+				( SELECT Expression, MAX( expression.id ) id FROM SOLR_WEB.Expression expression where IsDeleted=0 AND UserId = #value# GROUP BY Expression ) a 
+			ORDER BY
+				a.id DESC 
+				LIMIT 12
+	</select> -->
+    <select id="getAllHistoryExpression" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		   SELECT
+				Expression AS expression,
+				MAX( expression.id ) AS id 
+			FROM
+				SOLR_WEB.Expression expression 
+			WHERE
+				IsDeleted = 0 
+				AND UserId = #value# 
+			GROUP BY
+				Expression 
+			ORDER BY
+				MAX( expression.id ) DESC
+					limit 12
+	</select>
+	<!-- 从历史表达式表中读取所有数据并清空 delete table SOLR_WEB.HISTORY_EXPRESSION -->
+	<select id="getAllHistoryExpressionAndTruncate" resultClass="java.util.HashMap" >
+		select expression  from SOLR_WEB.HISTORY_EXPRESSION 
+		order by id desc
+		
+	</select>
+	<!-- 获取用户权限角色信息 -->
+	<select id="getUserPrivilegeFirst" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+			SELECT
+				Privilege_User_Role.Privilege_Role_Id,
+				Privilege_User.* 
+			FROM
+				SOLR_Date.Privilege_User
+				INNER JOIN SOLR_Date.Privilege_User_Role ON Privilege_User_Role.Privilege_User_Id = Privilege_User.Id 
+				AND Privilege_User_Role.IsDeleted = 0 
+			WHERE
+				Privilege_User.IsDeleted = 0 
+				AND Privilege_User.USERID = #userID# 
+				AND (
+				Privilege_User_Role.Privilege_Status = 0 
+				OR (
+				Privilege_User_Role.Privilege_Status = 1 
+				AND ( Privilege_User_Role.Privilege_Type = 0 OR ( Privilege_User_Role.Privilege_Type = 1  AND Privilege_User_Role.valid_EndTime > NOW() ) ) 
+				) 
+				)
+	</select>
+	<!-- 获取用户行级信息 -->
+	<select id="getUserPrivilegeRow" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		   SELECT
+				Privilege_Role_Row.Privilege_Role_Id,
+				Privilege_Role_Row.Privilege_Row_Id,
+				Privilege_Row.Dic_Field_Id,
+				Privilege_Row.Privilege_Status,
+				Privilege_Row.Dic_Field_Value,
+				Privilege_Row.Description,
+				Dic_dataBase.CoreName,
+				Dic_dataBase.CollectionName AS TableName,
+				Dic_Field.FieldName,
+				Dic_Field.FieldType 
+			FROM
+				SOLR_Date.Privilege_Role_Row
+				INNER JOIN SOLR_Date.Privilege_Row ON Privilege_Row.Id = Privilege_Role_Row.Privilege_Row_Id 
+				AND Privilege_Row.IsDeleted = 0
+				left JOIN SOLR_Date.Dic_Field ON Dic_Field.Id = Privilege_Row.Dic_Field_Id 
+				AND Dic_Field.IsDeleted = 0 
+				left join SOLR_Date.Dic_dataBase on Dic_dataBase.id = Dic_Field.Collection_Id 
+				and Dic_dataBase.IsDeleted = 0
+			WHERE
+				Privilege_Role_Row.IsDeleted = 0 and Privilege_Role_Row.Privilege_Role_Id in(<![CDATA[$role_id$]]>)
+				order by Privilege_Row.Privilege_Status ASC
+	</select>
+	<!-- 获取列级权限信息 
+	<select id="getUserPrivilegeColumn" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		    SELECT
+				Privilege_Role_Column.Privilege_Role_Id,
+				Privilege_Role_Column.Privilege_Column_Id,
+				Privilege_Column.Id,
+				Privilege_Column.Column_Name,
+				Dic_Field.FieldName,
+				Dic_dataBase.CollectionName 
+			FROM
+				Privilege_Role_Column
+				INNER JOIN Privilege_Column ON Privilege_Column.Id = Privilege_Role_Column.Privilege_Column_Id 
+				AND Privilege_Column.IsDeleted = 0
+				INNER JOIN Privilege_Column_item ON Privilege_Column_item.Privilege_Column_Id = Privilege_Column.Id 
+				AND Privilege_Column_item.IsDeleted = 0
+				INNER JOIN Dic_Field ON Dic_Field.Id = Privilege_Column_item.Dic_Field_Id 
+				AND Dic_Field.IsDeleted = 0
+				INNER JOIN Dic_dataBase ON Dic_dataBase.Id = Dic_Field.Collection_Id 
+				AND Dic_dataBase.IsDeleted = 0 
+			WHERE
+				Privilege_Role_Column.IsDeleted = 0  and Privilege_Role_Column.Id in(<![CDATA[$role_id$]]>)
+	</select>-->
+	<select id="getUserPrivilegeColumn" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		    SELECT
+				Dic_Field.FieldName,
+				Dic_dataBase.CollectionName 
+			FROM
+				SOLR_Date.Privilege_Column_item
+				INNER JOIN SOLR_Date.Dic_Field ON Dic_Field.Id = Privilege_Column_item.Dic_Field_Id 
+				AND Dic_Field.IsDeleted = 0
+				INNER JOIN SOLR_Date.Dic_dataBase ON Dic_dataBase.Id = Dic_Field.Collection_Id 
+				AND Dic_dataBase.IsDeleted = 0 
+			WHERE
+				Privilege_Column_item.IsDeleted = 0 
+				AND Privilege_Column_item.Privilege_column_Id IN (<![CDATA[$role_id$]]>)
+				order by Dic_dataBase.CollectionName ASC
+	</select>
+	<!-- 获取用户信息 -->
+	<select id="getUserMessage" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT DISTINCT  m.userName ,
+		        m.userID ,
+		        m.userRoleID ,
+		        m.userRole ,
+		        m.department ,
+		        m.departmentID ,
+		        m.doctorsID ,
+		        m.doctorsName
+		FROM    172.16.32.104\CDRDB.CDR_MDM.VW_GetUserMessage m 
+		WHERE  m.userID=#value# AND m.userRoleID IN ( 1, 2, 3, 4 )
+		ORDER BY userRoleID ASC
+		<!--  FROM    172.16.32.104\CDRDB.CDR_MDM.UserMessage m -->
+	</select>
+	
+	<!-- 往历史表达式表中插入数据 -->
+	<insert id="addAllHistoryExpression" parameterClass="java.lang.String">
+		insert into SOLR_WEB.HISTORY_EXPRESSION (expression)
+		values (#value#)
+	</insert>	
+	
+	<!-- 删除指定历史表达式 -->
+	<delete id="removeHistoryExpression" parameterClass="java.lang.String">
+		delete
+		from SOLR_WEB.HISTORY_EXPRESSION
+		where expression=#value#
+	</delete>
+	<!-- *************************************************************病种库管理******************************************************************** -->
+	<!-- 获取病种库所有分类信息 -->
+	<select id="getAllDiseaseClassify" resultClass="java.util.HashMap">
+		SELECT  CLASSIFY.Id ,
+				CLASSIFY.Classify ,
+				CLASSIFY.Classify_old ,
+				CLASSIFY.CreateTime ,
+				CLASSIFY.UpdateTime ,
+				CLASSIFY.Status ,
+				CLASSIFY_CHILD.Id CHILD_Id ,
+				CLASSIFY_CHILD.Classify_ID ,
+				CLASSIFY_CHILD.CLASSIFY_CHILD ,
+				CLASSIFY_CHILD.CLASSIFY_CHILD_Old ,
+				CLASSIFY_CHILD.CreateTime CHILD_CreateTime ,
+				CLASSIFY_CHILD.UpdateTime CHILD_UpdateTime ,
+				CLASSIFY_CHILD.Status CHILD_Status
+		FROM SOLR_WEB.DISEASE_CLASSIFY CLASSIFY 
+		LEFT JOIN SOLR_WEB.DISEASE_CLASSIFY_CHILD CLASSIFY_CHILD
+		 ON CLASSIFY_CHILD.Classify_ID = CLASSIFY.id AND CLASSIFY_CHILD.IsDeleted =0
+		WHERE CLASSIFY.IsDeleted =0 ORDER BY CLASSIFY.UpdateTime DESC ,CLASSIFY_CHILD.Id  DESC
+	</select>
+	<!-- 权限获取 -->
+	<select id="getAllJurisdiction" resultClass="java.util.HashMap">
+		  SELECT   Id
+			      ,name
+			      ,Description
+			      ,CreatUserID
+			      ,UpdateUserID
+			      ,CreateTime
+			      ,UpdateTime
+			      ,Status
+			      ,IsDeleted
+			  FROM SOLR_WEB.DISEASE_Jurisdiction
+			  WHERE IsDeleted = 0
+			  ORDER BY UpdateTime DESC
+	</select>
+	
+	<!-- 获取病种库指定分类信息 -->
+	<select id="getDiseaseClassify" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select classify
+		from SOLR_WEB.DISEASE_CLASSIFY 
+		where classify=#value#
+	</select>
+	
+	<!-- 往病种库分类信息表中插入数据 -->
+	<insert id="addDiseaseClassify" parameterClass="java.util.HashMap">
+		insert into SOLR_WEB.DISEASE_CLASSIFY (classify,Classify_old,CreateTime,UpdateTime,STATUS,IsDeleted)
+		values (#classify#,#ClassifyOld#,#CreateTime#,#UpdateTime#,0,0)
+	</insert>
+	<update id="updateDiseaseClassify" parameterClass="java.util.HashMap">
+		UPDATE SOLR_WEB.DISEASE_CLASSIFY SET UpdateTime=#UpdateTime# WHERE Id=#Classify_ID#
+	</update>
+	<!-- 获取病种库指定分类信息 -->
+	<select id="getDiseaseClassifyChild" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select CLASSIFY_CHILD
+		from SOLR_WEB.DISEASE_CLASSIFY_CHILD 
+		where CLASSIFY_CHILD=#CLASSIFY_CHILD# and Classify_ID =#Classify_ID#
+	</select>
+	<!-- 往病种库分类信息表中插入数据 -->
+	<insert id="addDiseaseClassifyChild" parameterClass="java.util.HashMap">
+		insert into SOLR_WEB.DISEASE_CLASSIFY_CHILD (Classify_ID,CLASSIFY_CHILD,CLASSIFY_CHILD_Old,CreateTime,UpdateTime,STATUS,IsDeleted)
+		values (#Classify_ID#,#CLASSIFY_CHILD#,#CLASSIFYCHILDOld#,#CreateTime#,#UpdateTime#,0,0)
+	</insert>
+	<statement id="insertOrUpdateUserInfo" parameterClass="java.util.HashMap">
+		INSERT INTO SOLR_WEB.SSOUserInfo ( userIdentity, userName, department, insertTime, updateTime )
+	    VALUES (#userIdentity#,#userName#,#department#,#insertTime#,#insertTime#)
+		ON DUPLICATE KEY 
+		UPDATE userName = #userName#,department = #department#,updateTime = #updateTime#
+	</statement>
+	<!-- ********************************************************************表达式管理************************************************************* -->
+	<!-- 从表达式表中读取数据 -->
+	<select id="getCurrentPageExpression" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			Expression,
+			UserId,
+			CreateTime,
+			UpdateTime,
+			id 
+		FROM
+			SOLR_WEB.EXPRESSION_MANAGE 
+		WHERE
+			IsDeleted = 0 
+			AND UserId = '$UserId$' 
+			order BY ID DESC
+			LIMIT $pageCount$,$previousPageCountTotal$
+	</select>
+	
+	<!-- 获取表达式总数 -->
+	<select id="getExpressionCount" resultClass="int" parameterClass="java.util.HashMap">
+		select count(*)
+		from SOLR_WEB.EXPRESSION_MANAGE   where IsDeleted = 0 and UserId = #UserId#
+	</select>
+	<!-- 获取所有表达式 -->
+	<select id="getExpressionALL" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		select Expression,UserId,CreateTime,UpdateTime,id
+		from SOLR_WEB.EXPRESSION_MANAGE  where IsDeleted = 0 and UserId = #UserId#  order by id ASC
+	</select>
+	<!-- 更新表达式 （数据量超过1000更新旧输就为2）-->
+	<delete id="updateExpression" parameterClass="java.util.HashMap">
+		update
+		 SOLR_WEB.EXPRESSION_MANAGE set isDeleted = 2
+		where id=#id# and UserId=#UserId#
+	</delete>
+	<!-- 从表达式表中读取数据并清空 -->
+	<select id="getAllExpressionAndTruncate" resultClass="java.util.HashMap">
+		select expression
+		from SOLR_WEB.EXPRESSION_MANAGE 
+		where IsDeleted = 0
+		order by UpdateTime desc
+		truncate table SOLR_WEB.EXPRESSION_MANAGE
+	</select>
+	
+	<!-- 往表达式表中插入数据 -->
+	<insert id="addAllExpression" parameterClass="java.util.HashMap">
+		insert into SOLR_WEB.EXPRESSION_MANAGE (Expression,UserId,CreateTime,UpdateTime,Status,IsDeleted)
+		values (#Expression#,#UserId#,#CreateTime#,#UpdateTime#,0,0)
+	</insert>	
+	
+	<!-- 删除指定表达式 -->
+	<delete id="removeExpression" parameterClass="java.util.HashMap">
+		update
+		 SOLR_WEB.EXPRESSION_MANAGE set isDeleted = 1
+		where id=#id# and UserId=#UserId#
+	</delete>
+	<!-- 删除指定表达式 -->
+	<delete id="deleteExpression" parameterClass="java.util.HashMap">
+		delete from SOLR_WEB.EXPRESSION_MANAGE 
+				where id=#id# and UserId=#UserId# 
+	</delete>
+	    <!-- 往反馈表中插入数据 -->
+	<insert id="addFeedback" parameterClass="java.util.HashMap">
+		INSERT INTO SOLR_Date.Feedback (UserId,Types,ContactPhone,FeedbackContent,Annex,CreateTime,Status,UpdateTime)
+        VALUES (#UserId#,#Types#,#ContactPhone#,#FeedbackContent#,#Annex#,#CreateTime#,0,#UpdateTime#)
+        <selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+		<!--查询配置信息表数据信息   -->
+	<select id="getConfigInfo" resultClass="java.util.HashMap" >
+		select Id,ConfigKey,ConfigValue,ConfigDescribe from SOLR_Date.config_info
+	</select>
+	
+	<!--修改配置文件信息  -->
+	<update id="updateConfig" parameterClass="java.util.HashMap">
+		update SOLR_Date.config_info set ConfigKey=#ConfigKey#,ConfigValue=#ConfigValue#,ConfigDescribe=#ConfigDescribe# where Id=#Id#
+	</update>
+	
+	<!-- 热词统计-->
+	<select id="getWordCloudMessage" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	<dynamic>
+            <![CDATA[
+		SELECT words as name,count(words) as weight FROM SOLR_WEB.Expression_wordCloud e
+ 	 	WHERE CreateTime >= #createTime# AND CreateTime <= #lastTime#
+ 	 	]]>
+		</dynamic>
+ 	 	<isNotEqual property="department" compareValue="">
+ 	 		and department= #department#
+ 	 	</isNotEqual>
+ 	 	GROUP BY words ORDER BY COUNT(words) DESC limit  0,$tops$
+	</select>
+	<!-- 热词统计-->
+	<select id="getWordCloudMessageForWordsCloud_js" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	<dynamic>
+            <![CDATA[
+		SELECT words as name,count(words) as counts FROM SOLR_WEB.Expression_wordCloud e
+ 	 	WHERE CreateTime >= #createTime# AND CreateTime <= #lastTime#
+ 	 	]]>
+		</dynamic>
+ 	 	<isNotEqual property="department" compareValue="">
+ 	 		and department= #department#
+ 	 	</isNotEqual>
+ 	 	GROUP BY words ORDER BY COUNT(words) DESC limit  0,$tops$
+	</select>
+	<!-- 使用系统的科室统计-->
+	<select id="getDepartmentMessage" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT count(department),department from 
+		SOLR_WEB.Expression_wordCloud
+		WHERE  department IS NOT NULL and department !='全院' 
+		GROUP BY department HAVING  count(department) > 600
+		ORDER BY count(department) desc
+	</select>
+	<select id="getDepartmentMessage_Old" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT DISTINCT department FROM SOLR_WEB.Expression_wordCloud e
+ 	 	WHERE  department IS NOT NULL and department !='全院'
+	</select>
+	<select id="getDiseaseCountDetailMessage" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		<dynamic>
+            <![CDATA[
+		SELECT  p.Value_DeptName as department,count(1) AS counts FROM SOLR_WEB.Expression e
+	 	INNER JOIN  SOLR_Date.Privilege_User p on e.UserId=p.USERID where p.Value_StatisticsOK ='是'
+	 	AND p.Value_DeptName IS NOT NULL AND p.Value_DeptName != ''
+	 	 AND e.CreateTime >= #CreateTime# AND e.CreateTime <= #LastTime# 
+	 	 GROUP BY p.Value_DeptName
+	 	  ORDER BY count(1) DESC
+	 	]]>
+		</dynamic>
+	</select>
+	<select id="getDiseaseCountMessage" parameterClass="java.util.HashMap" resultClass="int">
+		<dynamic>
+         <![CDATA[
+			SELECT  count(1) FROM SOLR_WEB.Expression e
+	 		INNER JOIN  SOLR_Date.Privilege_User p on e.UserId=p.USERID where p.Value_StatisticsOK ='是'
+	 	 	AND e.CreateTime >= #CreateTime# AND e.CreateTime <= #LastTime#
+ 	 	]]>
+		</dynamic>
+	</select>
+</sqlMap>

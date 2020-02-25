@@ -1,0 +1,7 @@
+spring:
+  # 安全配置
+  profiles: dev
+  security:
+    user:
+      name: admin     # pig
+      password: admin # pig

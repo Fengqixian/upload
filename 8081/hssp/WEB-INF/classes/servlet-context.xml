@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<context:component-scan base-package="com.clinbrain" />
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<mvc:annotation-driven />
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<!-- 转换器配置:只有配置好了转换器才能进行类与JSON和XML的转换 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<!-- String 转换器 -->
+				<ref bean="stringHttpMessageConverter" />
+				<!-- JSON 转换器 -->
+				<ref bean="jsonHttpMessageConverter" />
+				<!-- XML 转换器 -->
+				<ref bean="marshallingHttpMessageConverter" />
+				<bean class = "org.springframework.http.converter.StringHttpMessageConverter">   
+                 <property name = "supportedMediaTypes">
+                       <list>
+                           <value>text/html;charset=UTF-8</value>   
+                      </list>   
+                 </property>   
+               </bean>   
+			</list>
+		</property>
+	</bean>
+
+	<bean id="stringHttpMessageConverter"
+		class="org.springframework.http.converter.StringHttpMessageConverter" />
+
+	<bean id="jsonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+
+	<bean id="marshallingHttpMessageConverter"
+		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<constructor-arg ref="jaxbMarshaller" />
+		<property name="supportedMediaTypes" value="application/xml" />
+	</bean>
+	
+	<bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<!-- XML转换器需要绑定需要转换的类 -->
+		<property name="classesToBeBound">
+			<list>
+				<value>com.clinbrain.hssp.ws.dto.RequestData</value>
+				<value>com.clinbrain.hssp.ws.dto.RequestFieldDisplayData</value>
+				<value>com.clinbrain.hssp.ws.dto.RequestRelationShipWordsData</value>
+				<value>com.clinbrain.hssp.ws.dto.RequestGetCountData</value>
+				<value>com.clinbrain.hssp.ws.dto.RequestConditionData</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseData</value>
+				<value>com.clinbrain.hssp.ws.dto.RequestGetVKey</value>
+				<value>com.clinbrain.hssp.ws.dto.Table</value>
+				<value>com.clinbrain.hssp.ws.dto.RequestDraw</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseFieldDisplayData</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseRelationShipWordsData</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseGetCountData</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseSortData</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseConditionData</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseGetVKey</value>
+				<value>com.clinbrain.hssp.ws.dto.ResponseDraw</value>
+				<value>com.clinbrain.hssp.ws.dto.ExportMessage</value>
+				<value>com.clinbrain.hssp.ws.dto.UploadMessage</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- ContentNegotiatingViewResolver视图解析器,利用他就可以配置多种返回值 -->
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="1" />
+		<property name="favorParameter" value="false" />
+		<!-- 这里是否忽略掉accept header，默认就是false -->
+		<property name="ignoreAcceptHeader" value="true" />
+		<!-- 如果所有的mediaType都没匹配上，就会使用defaultContentType -->
+		<property name="defaultContentType" value="text/html" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/views/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
+		<!-- 默认使用MappingJacksonJsonView生成jsonview-->
+		<property name="defaultViews">
+			<list>
+				<bean id="jsonView"
+					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+				<bean id="xmlView"
+					class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<constructor-arg>
+						<bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+							<property name="classesToBeBound">
+								<list>
+									<value>com.clinbrain.hssp.ws.dto.RequestData</value>
+									<value>com.clinbrain.hssp.ws.dto.RequestFieldDisplayData</value>
+									<value>com.clinbrain.hssp.ws.dto.RequestRelationShipWordsData</value>
+									<value>com.clinbrain.hssp.ws.dto.RequestGetCountData</value>
+									<value>com.clinbrain.hssp.ws.dto.RequestConditionData</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseData</value>
+									<value>com.clinbrain.hssp.ws.dto.RequestGetVKey</value>
+									<value>com.clinbrain.hssp.ws.dto.Table</value>
+									<value>com.clinbrain.hssp.ws.dto.RequestDraw</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseFieldDisplayData</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseRelationShipWordsData</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseGetCountData</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseSortData</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseConditionData</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseGetVKey</value>
+									<value>com.clinbrain.hssp.ws.dto.ResponseDraw</value>
+									<value>com.clinbrain.hssp.ws.dto.ExportMessage</value>
+									<value>com.clinbrain.hssp.ws.dto.UploadMessage</value>
+								</list>
+							</property>
+						</bean>
+					</constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

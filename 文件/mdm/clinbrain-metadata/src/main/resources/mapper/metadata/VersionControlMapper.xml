@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.metadataVersion.mapper.VersionControlMapper">
+
+  <!-- column和element的master数据复制到edition表 -->
+  <insert id="createColumnMasterToEdition">
+    insert into mdm_technology_column_edition
+    SELECT  id,table_id,resource_id,resource_code,name_en,name_cn,data_type,data_length,
+    data_type_group,null_allow,primary_key,comment,${versionId} as version_id
+    FROM  mdm_technology_column_master
+  </insert>
+  <insert id = "createMetadataMasterToEdition">
+  insert into mdm_data_element_edition
+    select id,resource_id,resource_code,source_id,category,name_cn,name_en,definition,data_type,show_format,allowable_value,
+    allowable_type,allowable_code,${versionId} as version_id
+    from mdm_data_element_master
+  </insert>
+
+  <!-- 删除column和element的master数据 -->
+  <delete id="clearColumnFromMaster">
+      delete from mdm_technology_column_master
+  </delete>
+  <delete id = "clearMetadataFromMaster">
+    delete from  mdm_data_element_master
+  </delete>
+
+  <!-- column和element的host数据复制到master表 -->
+  <insert id="createColumnHostToMaster">
+  INSERT INTO mdm_technology_column_master
+    SELECT  id,table_id,resource_id,resource_code,name_en,name_cn,data_type,data_length,
+    data_type_group,null_allow,primary_key,comment
+    FROM   mdm_technology_column_host
+  </insert>
+  <insert  id="createMetadataHostToMaster">
+    insert into mdm_data_element_master
+      select id,resource_id,resource_code,source_id,category,name_cn,name_en,definition,data_type,show_format,allowable_value,
+      allowable_type,allowable_code
+       from mdm_data_element_host
+  </insert>
+
+  <!-- 回滚版本，清空host数据 -->
+  <delete id="clearColumnFromHost">
+    delete from mdm_technology_column_host
+  </delete>
+  <delete id="clearMetadataFromHost">
+    delete from mdm_data_element_host
+  </delete>
+
+  <!-- 回滚版本，master复制到host -->
+  <insert id="rollbackColumnMasterToHost">
+    insert into mdm_technology_column_host
+    SELECT  id,table_id,resource_id,resource_code,name_en,name_cn,data_type,data_length,
+    data_type_group,null_allow,primary_key,comment
+    FROM  mdm_technology_column_master
+  </insert>
+  <insert id = "rollbackElementMasterToHost">
+     insert into mdm_data_element_host
+    select id,resource_id,resource_code,source_id,category,name_cn,name_en,definition,data_type,show_format,allowable_value,
+    allowable_type,allowable_code
+    from mdm_data_element_master
+  </insert>
+
+ <!-- 回滚指定版本，从版本表复制指定版本数据到host表 -->
+  <insert id="rollbackColumnEditionToHost">
+    insert into mdm_technology_column_hot
+    SELECT  id,table_id,resource_id,resource_code,name_en,name_cn,data_type,data_length,
+    data_type_group,null_allow,primary_key,comment
+    FROM  mdm_technology_column_edition where version_id = ${versionId}
+  </insert>
+  <insert id = "rollbackElementEditionToHost">
+     insert into mdm_data_element_host
+    select id,resource_id,resource_code,source_id,category,name_cn,name_en,definition,data_type,show_format,allowable_value,
+    allowable_type,allowable_code
+    from mdm_data_element_master where version_id = ${versionId}
+  </insert>
+
+  <select id="callReleaseVersion" statementType="CALLABLE"  resultType="java.lang.Integer">
+        {call releaseVersion(${versionId})}
+    </select>
+
+  <select id="rollbackMasterVersion" statementType="CALLABLE"  resultType="java.lang.Integer">
+      {call rollbackMasterVersion()}
+  </select>
+
+  <select id="rollbackEditionVersion" statementType="CALLABLE"  resultType="java.lang.Integer">
+      {call rollbackEditionVersion(${versionId})}
+  </select>
+
+  <select id="getVersionList" resultType="com.clinbrain.bd.mdm.MetadataManage.metadataVersion.entity.EditionInfo">
+      select * from mdm_edition_info where 1=1
+    <if test="queryString != null and queryString.trim() != ''">
+      and (version_code like CONCAT('%',#{queryString},'%')
+      or description like CONCAT('%',#{queryString},'%')
+      or user_account like CONCAT('%',#{queryString},'%')
+      or user_id like CONCAT('%',#{queryString},'%'))
+    </if>
+    order by id
+  </select>
+
+  <select id="getMasterColumnInfo" resultType="com.clinbrain.bd.mdm.MetadataManage.technologyView.entity.Column">
+      select * from mdm_technology_column_master where table_id = ${tableId}
+    <if test="queryString != null and queryString.trim() != ''">
+      and (name_cn like CONCAT('%',#{queryString},'%')
+      or name_en like CONCAT('%',#{queryString},'%'))
+    </if>
+    order by id
+  </select>
+
+  <select id="getEditionColumnInfo" resultType="com.clinbrain.bd.mdm.MetadataManage.technologyView.entity.Column">
+    select * from mdm_technology_column_edition where table_id = ${tableId} and version_id = ${versionId}
+    <if test="queryString != null and queryString.trim() != ''">
+      and (name_cn like CONCAT('%',#{queryString},'%')
+      or name_en like CONCAT('%',#{queryString},'%'))
+    </if>
+    order by id
+  </select>
+
+  <select id="getMasterElementInfo" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.DataElement">
+    select * from mdm_data_element_master where id in
+     (SELECT element_id FROM mdm_dataset_element_ref where dataset_id = ${datasetId})
+    <if test="queryString != null and queryString.trim() != ''">
+      and (name_cn like CONCAT('%',#{queryString},'%')
+      or name_en like CONCAT('%',#{queryString},'%'))
+    </if>
+    order by id
+  </select>
+
+  <select id="getEditionElementInfo" resultType="com.clinbrain.bd.mdm.MetadataManage.businessView.entity.DataElement">
+    select * from mdm_data_element_edition where version_id =${versionId} and  id in
+    (SELECT element_id FROM mdm_dataset_element_ref where dataset_id = ${datasetId})
+    <if test="queryString != null and queryString.trim() != ''">
+      and (name_cn like CONCAT('%',#{queryString},'%')
+      or name_en like CONCAT('%',#{queryString},'%'))
+    </if>
+    order by id
+  </select>
+</mapper>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.RoleResourcePermissionMapper">
+
+    <resultMap id="roleResourcePermissionMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.RoleResourcePermission">
+        <id property="id" column="id"/>
+        <result property="roleId" column="role_id"/>
+        <result property="parentResourceId" column="parent_resource_id"/>
+        <result property="permissionType" column="permission_type"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="modelResourceId" column="model_resource_id"/>
+        <result property="permissionCreate" column="permission_create"/>
+        <result property="permissionDelete" column="permission_delete"/>
+        <result property="permissionUpdate" column="permission_update"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="rangeId" column="range_id"/>
+        <result property="rangeValues" column="range_values"/>
+        <result property="cancelDataMasking" column="cancel_data_masking"/>
+        <result property="customConditions" column="custom_conditions"/>
+    </resultMap>
+
+    <!--roleResourcePermission简单分页查询-->
+    <select id="getRoleResourcePermissionPage" resultMap="roleResourcePermissionMap">
+        SELECT
+        id,
+        role_id,
+        parent_resource_id,
+        permission_type,
+        resource_id,
+        model_resource_id,
+        range_id,
+        range_values,
+        cancel_data_masking,
+        custom_conditions,
+        permission_create,
+        permission_delete,
+        permission_update,
+        create_time,
+        update_time
+        FROM mdm_role_resource_permission
+        <trim prefix="where" prefixOverrides="and">
+            <!--<if test="roleIds.size()>0">-->
+                <!--role_id in-->
+                <!--<foreach collection="roleIds" item="item" open="(" separator="," close=")">-->
+                    <!--#{item}-->
+                <!--</foreach>-->
+            <!--</if>-->
+            <if test="roleResourcePermission.roleId != null and roleResourcePermission.roleId.trim() != ''">
+                AND role_id = #{roleResourcePermission.roleId}
+            </if>
+            <if test="roleResourcePermission.id != null and roleResourcePermission.id.trim() != ''">
+                AND id = #{roleResourcePermission.id}
+            </if>
+            <if test="roleResourcePermission.parentResourceId != null and roleResourcePermission.parentResourceId.trim() != ''">
+                AND parent_resource_id = #{roleResourcePermission.parentResourceId}
+            </if>
+            <if test="roleResourcePermission.permissionType != null and roleResourcePermission.permissionType.trim() != ''">
+                AND permission_type = #{roleResourcePermission.permissionType}
+            </if>
+            <if test="roleResourcePermission.resourceId != null and roleResourcePermission.resourceId.trim() != ''">
+                AND resource_id = #{roleResourcePermission.resourceId}
+            </if>
+            <if test="roleResourcePermission.modelResourceId != null and roleResourcePermission.modelResourceId.trim() != ''">
+                AND model_resource_id = #{roleResourcePermission.modelResourceId}
+            </if>
+            <if test="roleResourcePermission.permissionCreate != null and roleResourcePermission.permissionCreate.trim() != ''">
+                AND permission_create = #{roleResourcePermission.permissionCreate}
+            </if>
+            <if test="roleResourcePermission.permissionDelete != null and roleResourcePermission.permissionDelete.trim() != ''">
+                AND permission_delete = #{roleResourcePermission.permissionDelete}
+            </if>
+            <if test="roleResourcePermission.permissionUpdate != null and roleResourcePermission.permissionUpdate.trim() != ''">
+                AND permission_update = #{roleResourcePermission.permissionUpdate}
+            </if>
+            <if test="roleResourcePermission.createTime != null and roleResourcePermission.createTime.trim() != ''">
+                AND create_time = #{roleResourcePermission.createTime}
+            </if>
+            <if test="roleResourcePermission.updateTime != null and roleResourcePermission.updateTime.trim() != ''">
+                AND update_time = #{roleResourcePermission.updateTime}
+            </if>
+            <if test="roleResourcePermission.rangeId!=null and roleResourcePermission.rangeId.trim()!=''">
+                and range_id = #{roleResourcePermission.rangeId}
+            </if>
+            <if test="roleResourcePermission.rangeValues!=null and roleResourcePermission.rangeValues.trim()!=''">
+                and range_values = #{roleResourcePermission.rangeValues}
+            </if>
+            <if test="roleResourcePermission.cancelDataMasking!=null and roleResourcePermission.cancelDataMasking.trim()!=''">
+                and cancel_data_masking = #{roleResourcePermission.cancelDataMasking}
+            </if>
+            <if test="roleResourcePermission.customConditions!=null and roleResourcePermission.customConditions.trim()!=''">
+                and custom_conditions = #{roleResourcePermission.customConditions}
+            </if>
+        </trim>
+    </select>
+    <select id="getRoleResourcePermissionByRoleIds" resultMap="roleResourcePermissionMap">
+        select * from mdm_role_resource_permission
+        where 1=1
+        <if test="roleIds.size()>0">
+            role_id in
+            <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!--根据用户id获取当前用户所有的能操作的表权限集合-->
+    <select id="getResourcePermissionTableByUserId" resultMap="roleResourcePermissionMap">
+        SELECT
+       p.resource_id,p.custom_conditions
+        FROM mdm_role_resource_permission p left join mdm_metadata_model m
+					on p.model_resource_id = m.resource_id
+         where m.model_type in ('table') and p.permission_type = 'INS' and p.role_id in (select sys_role.role_id from sys_role left join
+         sys_user_role on sys_user_role.role_id = sys_role.role_id
+        where del_flag = 0 and sys_user_role.user_id = ${userId})
+    </select>
+
+    <!--根据用户id获取当前用户所有的能操作的列权限集合-->
+    <select id="getResourcePermissionColumnByUserId" resultMap="roleResourcePermissionMap">
+     SELECT
+        p.id,
+        p.role_id,
+        p.parent_resource_id,
+        p.permission_type,
+        p.resource_id,
+        p.model_resource_id,
+        p.range_id,
+        p.range_values,
+        p.cancel_datamasking,
+        p.custom_conditions,
+        p.permission_create,
+        p.permission_delete,
+        p.permission_update,
+        p.create_time,
+        p.update_time
+        FROM mdm_role_resource_permission p left join mdm_metadata_model m
+					on p.model_resource_id = m.resource_id
+         where m.model_type in ('column') and  p.permission_type = 'INS' and p.role_id in (select sys_role.role_id from sys_role left join sys_user_role on
+         sys_user_role.role_id = sys_role.role_id
+        where del_flag = 0 and sys_user_role.user_id = #{userId}) and p.parent_resource_id = #{tableId}
+    </select>
+
+    <select id="getMetadataValueInfo" resultType="java.util.Map">
+      select id,resource_id,parent_id,model_id,name_en,name_cn from mdm_metadata_value where resource_id = #{resourceId}
+    </select>
+    <!--roleResourcePermission集和-->
+    <select id="getRoleResourcePermissionList" resultMap="roleResourcePermissionMap">
+        SELECT
+        id,
+        role_id,
+        parent_resource_id,
+        permission_type,
+        resource_id,
+        model_resource_id,
+        range_id,
+        range_values,
+        cancel_data_masking,
+        custom_conditions,
+        permission_create,
+        permission_delete,
+        permission_update,
+        create_time,
+        update_time
+        FROM mdm_role_resource_permission
+        <trim prefix="where" prefixOverrides="and">
+            <if test="parentResourceIds.size()>0">
+               and parent_resource_id in
+                <foreach collection="parentResourceIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="roleResourcePermission.roleId != null and roleResourcePermission.roleId.trim() != ''">
+                AND role_id = #{roleResourcePermission.roleId}
+            </if>
+            <if test="roleResourcePermission.id != null and roleResourcePermission.id.trim() != ''">
+                AND id = #{roleResourcePermission.id}
+            </if>
+
+            <if test="roleResourcePermission.resourceId != null and roleResourcePermission.resourceId.trim() != ''">
+                AND resource_id = #{roleResourcePermission.resourceId}
+            </if>
+            <if test="roleResourcePermission.modelResourceId != null and roleResourcePermission.modelResourceId.trim() != ''">
+                AND model_resource_id = #{roleResourcePermission.modelResourceId}
+            </if>
+        </trim>
+    </select>
+</mapper>

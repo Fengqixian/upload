@@ -1,0 +1,1653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.MetadataValueMapper">
+    <resultMap id="elementResultMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.ElementNode">
+        <result property="id" column="id"></result>
+        <result property="name" column="name"></result>
+        <result property="modelType" column="modelType"></result>
+        <result property="modelId" column="modelId"></result>
+        <result property="parentId" column="parentId"></result>
+        <result property="sourceId" column="sourceId"></result>
+        <result property="targetId" column="targetId"></result>
+    </resultMap>
+    <resultMap id="metadataValueMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue">
+        <id property="id" column="id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="modelId" column="model_id"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="nameCn" column="name_cn"/>
+        <result property="status" column="status"/>
+        <result property="rangeId" column="range_id"/>
+        <result property="modelType" column="model_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isStandard" column="is_standard"/>
+        <result property="exVarcharL50Vc001" column="EX_VARCHAR_L50_VC001"/>
+        <result property="exVarcharL50Vc002" column="EX_VARCHAR_L50_VC002"/>
+        <result property="exVarcharL50Vc003" column="EX_VARCHAR_L50_VC003"/>
+        <result property="exVarcharL50Vc004" column="EX_VARCHAR_L50_VC004"/>
+        <result property="exVarcharL50Vc005" column="EX_VARCHAR_L50_VC005"/>
+        <result property="exVarcharL50Vc006" column="EX_VARCHAR_L50_VC006"/>
+        <result property="exVarcharL50Vc007" column="EX_VARCHAR_L50_VC007"/>
+        <result property="exVarcharL50Vc008" column="EX_VARCHAR_L50_VC008"/>
+        <result property="exVarcharL50Vc009" column="EX_VARCHAR_L50_VC009"/>
+        <result property="exVarcharL50Vc010" column="EX_VARCHAR_L50_VC010"/>
+        <result property="exVarcharL50Vc011" column="EX_VARCHAR_L50_VC011"/>
+        <result property="exVarcharL50Vc012" column="EX_VARCHAR_L50_VC012"/>
+        <result property="exVarcharL50Vc013" column="EX_VARCHAR_L50_VC013"/>
+        <result property="exVarcharL50Vc014" column="EX_VARCHAR_L50_VC014"/>
+        <result property="exVarcharL50Vc015" column="EX_VARCHAR_L50_VC015"/>
+        <result property="exVarcharL50Vc016" column="EX_VARCHAR_L50_VC016"/>
+        <result property="exVarcharL50Vc017" column="EX_VARCHAR_L50_VC017"/>
+        <result property="exVarcharL50Vc018" column="EX_VARCHAR_L50_VC018"/>
+        <result property="exVarcharL50Vc019" column="EX_VARCHAR_L50_VC019"/>
+        <result property="exVarcharL50Vc020" column="EX_VARCHAR_L50_VC020"/>
+        <result property="exVarcharL50Vc021" column="EX_VARCHAR_L50_VC021"/>
+        <result property="exVarcharL50Vc022" column="EX_VARCHAR_L50_VC022"/>
+        <result property="exVarcharL50Vc023" column="EX_VARCHAR_L50_VC023"/>
+        <result property="exVarcharL50Vc024" column="EX_VARCHAR_L50_VC024"/>
+        <result property="exVarcharL50Vc025" column="EX_VARCHAR_L50_VC025"/>
+        <result property="exVarcharL50Vc026" column="EX_VARCHAR_L50_VC026"/>
+        <result property="exVarcharL50Vc027" column="EX_VARCHAR_L50_VC027"/>
+        <result property="exVarcharL50Vc028" column="EX_VARCHAR_L50_VC028"/>
+        <result property="exVarcharL50Vc029" column="EX_VARCHAR_L50_VC029"/>
+        <result property="exVarcharL50Vc030" column="EX_VARCHAR_L50_VC030"/>
+        <result property="exVarcharL50Vc031" column="EX_VARCHAR_L50_VC031"/>
+        <result property="exVarcharL50Vc032" column="EX_VARCHAR_L50_VC032"/>
+        <result property="exVarcharL50Vc033" column="EX_VARCHAR_L50_VC033"/>
+        <result property="exVarcharL50Vc034" column="EX_VARCHAR_L50_VC034"/>
+        <result property="exVarcharL50Vc035" column="EX_VARCHAR_L50_VC035"/>
+        <result property="exVarcharL50Vc036" column="EX_VARCHAR_L50_VC036"/>
+        <result property="exVarcharL50Vc037" column="EX_VARCHAR_L50_VC037"/>
+        <result property="exVarcharL50Vc038" column="EX_VARCHAR_L50_VC038"/>
+        <result property="exVarcharL50Vc039" column="EX_VARCHAR_L50_VC039"/>
+        <result property="exVarcharL50Vc040" column="EX_VARCHAR_L50_VC040"/>
+        <result property="exVarcharL50Vc041" column="EX_VARCHAR_L50_VC041"/>
+        <result property="exVarcharL50Vc042" column="EX_VARCHAR_L50_VC042"/>
+        <result property="exVarcharL50Vc043" column="EX_VARCHAR_L50_VC043"/>
+        <result property="exVarcharL50Vc044" column="EX_VARCHAR_L50_VC044"/>
+        <result property="exVarcharL50Vc045" column="EX_VARCHAR_L50_VC045"/>
+        <result property="exVarcharL50Vc046" column="EX_VARCHAR_L50_VC046"/>
+        <result property="exVarcharL50Vc047" column="EX_VARCHAR_L50_VC047"/>
+        <result property="exVarcharL50Vc048" column="EX_VARCHAR_L50_VC048"/>
+        <result property="exVarcharL50Vc049" column="EX_VARCHAR_L50_VC049"/>
+        <result property="exVarcharL50Vc050" column="EX_VARCHAR_L50_VC050"/>
+        <result property="exVarcharL50Vc051" column="EX_VARCHAR_L50_VC051"/>
+        <result property="exVarcharL50Vc052" column="EX_VARCHAR_L50_VC052"/>
+        <result property="exVarcharL50Vc053" column="EX_VARCHAR_L50_VC053"/>
+        <result property="exVarcharL50Vc054" column="EX_VARCHAR_L50_VC054"/>
+        <result property="exVarcharL50Vc055" column="EX_VARCHAR_L50_VC055"/>
+        <result property="exVarcharL50Vc056" column="EX_VARCHAR_L50_VC056"/>
+        <result property="exVarcharL50Vc057" column="EX_VARCHAR_L50_VC057"/>
+        <result property="exVarcharL50Vc058" column="EX_VARCHAR_L50_VC058"/>
+        <result property="exVarcharL50Vc059" column="EX_VARCHAR_L50_VC059"/>
+        <result property="exVarcharL50Vc060" column="EX_VARCHAR_L50_VC060"/>
+        <result property="exVarcharL50Vc061" column="EX_VARCHAR_L50_VC061"/>
+        <result property="exVarcharL50Vc062" column="EX_VARCHAR_L50_VC062"/>
+        <result property="exVarcharL50Vc063" column="EX_VARCHAR_L50_VC063"/>
+        <result property="exVarcharL50Vc064" column="EX_VARCHAR_L50_VC064"/>
+        <result property="exVarcharL50Vc065" column="EX_VARCHAR_L50_VC065"/>
+        <result property="exVarcharL50Vc066" column="EX_VARCHAR_L50_VC066"/>
+        <result property="exVarcharL50Vc067" column="EX_VARCHAR_L50_VC067"/>
+        <result property="exVarcharL50Vc068" column="EX_VARCHAR_L50_VC068"/>
+        <result property="exVarcharL50Vc069" column="EX_VARCHAR_L50_VC069"/>
+        <result property="exVarcharL50Vc070" column="EX_VARCHAR_L50_VC070"/>
+        <result property="exVarcharL50Vc071" column="EX_VARCHAR_L50_VC071"/>
+        <result property="exVarcharL50Vc072" column="EX_VARCHAR_L50_VC072"/>
+        <result property="exVarcharL50Vc073" column="EX_VARCHAR_L50_VC073"/>
+        <result property="exVarcharL50Vc074" column="EX_VARCHAR_L50_VC074"/>
+        <result property="exVarcharL50Vc075" column="EX_VARCHAR_L50_VC075"/>
+        <result property="exVarcharL50Vc076" column="EX_VARCHAR_L50_VC076"/>
+        <result property="exVarcharL50Vc077" column="EX_VARCHAR_L50_VC077"/>
+        <result property="exVarcharL50Vc078" column="EX_VARCHAR_L50_VC078"/>
+        <result property="exVarcharL50Vc079" column="EX_VARCHAR_L50_VC079"/>
+        <!--<result property="exVarcharL50Vc080" column="EX_VARCHAR_L50_VC080"/>-->
+        <result property="exVarcharL100Vc001" column="EX_VARCHAR_L100_VC001"/>
+        <result property="exVarcharL100Vc002" column="EX_VARCHAR_L100_VC002"/>
+        <result property="exVarcharL100Vc003" column="EX_VARCHAR_L100_VC003"/>
+        <result property="exVarcharL100Vc004" column="EX_VARCHAR_L100_VC004"/>
+        <result property="exVarcharL100Vc005" column="EX_VARCHAR_L100_VC005"/>
+        <result property="exVarcharL100Vc006" column="EX_VARCHAR_L100_VC006"/>
+        <result property="exVarcharL100Vc007" column="EX_VARCHAR_L100_VC007"/>
+        <result property="exVarcharL100Vc008" column="EX_VARCHAR_L100_VC008"/>
+        <result property="exVarcharL100Vc009" column="EX_VARCHAR_L100_VC009"/>
+        <result property="exVarcharL100Vc010" column="EX_VARCHAR_L100_VC010"/>
+        <result property="exVarcharL100Vc011" column="EX_VARCHAR_L100_VC011"/>
+        <result property="exVarcharL100Vc012" column="EX_VARCHAR_L100_VC012"/>
+        <result property="exVarcharL100Vc013" column="EX_VARCHAR_L100_VC013"/>
+        <result property="exVarcharL100Vc014" column="EX_VARCHAR_L100_VC014"/>
+        <result property="exVarcharL100Vc015" column="EX_VARCHAR_L100_VC015"/>
+        <result property="exVarcharL100Vc016" column="EX_VARCHAR_L100_VC016"/>
+        <result property="exVarcharL100Vc017" column="EX_VARCHAR_L100_VC017"/>
+        <result property="exVarcharL100Vc018" column="EX_VARCHAR_L100_VC018"/>
+        <result property="exVarcharL100Vc019" column="EX_VARCHAR_L100_VC019"/>
+        <result property="exVarcharL100Vc020" column="EX_VARCHAR_L100_VC020"/>
+        <result property="exVarcharL100Vc021" column="EX_VARCHAR_L100_VC021"/>
+        <result property="exVarcharL100Vc022" column="EX_VARCHAR_L100_VC022"/>
+        <result property="exVarcharL100Vc023" column="EX_VARCHAR_L100_VC023"/>
+        <result property="exVarcharL100Vc024" column="EX_VARCHAR_L100_VC024"/>
+        <result property="exVarcharL100Vc025" column="EX_VARCHAR_L100_VC025"/>
+        <result property="exVarcharL100Vc026" column="EX_VARCHAR_L100_VC026"/>
+        <result property="exVarcharL100Vc027" column="EX_VARCHAR_L100_VC027"/>
+        <result property="exVarcharL100Vc028" column="EX_VARCHAR_L100_VC028"/>
+        <result property="exVarcharL100Vc029" column="EX_VARCHAR_L100_VC029"/>
+        <result property="exVarcharL100Vc030" column="EX_VARCHAR_L100_VC030"/>
+        <result property="exVarcharL100Vc031" column="EX_VARCHAR_L100_VC031"/>
+        <result property="exVarcharL100Vc032" column="EX_VARCHAR_L100_VC032"/>
+        <result property="exVarcharL100Vc033" column="EX_VARCHAR_L100_VC033"/>
+        <result property="exVarcharL100Vc034" column="EX_VARCHAR_L100_VC034"/>
+        <result property="exVarcharL100Vc035" column="EX_VARCHAR_L100_VC035"/>
+        <result property="exVarcharL100Vc036" column="EX_VARCHAR_L100_VC036"/>
+        <result property="exVarcharL100Vc037" column="EX_VARCHAR_L100_VC037"/>
+        <result property="exVarcharL100Vc038" column="EX_VARCHAR_L100_VC038"/>
+        <result property="exVarcharL100Vc039" column="EX_VARCHAR_L100_VC039"/>
+        <result property="exVarcharL100Vc040" column="EX_VARCHAR_L100_VC040"/>
+        <result property="exVarcharL100Vc041" column="EX_VARCHAR_L100_VC041"/>
+        <result property="exVarcharL100Vc042" column="EX_VARCHAR_L100_VC042"/>
+        <result property="exVarcharL100Vc043" column="EX_VARCHAR_L100_VC043"/>
+        <result property="exVarcharL100Vc044" column="EX_VARCHAR_L100_VC044"/>
+        <result property="exVarcharL100Vc045" column="EX_VARCHAR_L100_VC045"/>
+        <result property="exVarcharL100Vc046" column="EX_VARCHAR_L100_VC046"/>
+        <result property="exVarcharL100Vc047" column="EX_VARCHAR_L100_VC047"/>
+        <result property="exVarcharL100Vc048" column="EX_VARCHAR_L100_VC048"/>
+        <result property="exVarcharL100Vc049" column="EX_VARCHAR_L100_VC049"/>
+        <result property="exVarcharL100Vc050" column="EX_VARCHAR_L100_VC050"/>
+        <result property="exVarcharL100Vc051" column="EX_VARCHAR_L100_VC051"/>
+        <result property="exVarcharL100Vc052" column="EX_VARCHAR_L100_VC052"/>
+        <result property="exVarcharL100Vc053" column="EX_VARCHAR_L100_VC053"/>
+        <result property="exVarcharL100Vc054" column="EX_VARCHAR_L100_VC054"/>
+        <result property="exVarcharL100Vc055" column="EX_VARCHAR_L100_VC055"/>
+        <result property="exVarcharL100Vc056" column="EX_VARCHAR_L100_VC056"/>
+        <result property="exVarcharL100Vc057" column="EX_VARCHAR_L100_VC057"/>
+        <result property="exVarcharL100Vc058" column="EX_VARCHAR_L100_VC058"/>
+        <result property="exVarcharL100Vc059" column="EX_VARCHAR_L100_VC059"/>
+        <result property="exVarcharL100Vc060" column="EX_VARCHAR_L100_VC060"/>
+        <result property="exVarcharL100Vc061" column="EX_VARCHAR_L100_VC061"/>
+        <result property="exVarcharL100Vc062" column="EX_VARCHAR_L100_VC062"/>
+        <result property="exVarcharL100Vc063" column="EX_VARCHAR_L100_VC063"/>
+        <result property="exVarcharL100Vc064" column="EX_VARCHAR_L100_VC064"/>
+        <result property="exVarcharL100Vc065" column="EX_VARCHAR_L100_VC065"/>
+        <result property="exVarcharL100Vc066" column="EX_VARCHAR_L100_VC066"/>
+        <result property="exVarcharL100Vc067" column="EX_VARCHAR_L100_VC067"/>
+        <result property="exVarcharL100Vc068" column="EX_VARCHAR_L100_VC068"/>
+        <result property="exVarcharL100Vc069" column="EX_VARCHAR_L100_VC069"/>
+        <result property="exVarcharL100Vc070" column="EX_VARCHAR_L100_VC070"/>
+        <result property="exVarcharL100Vc071" column="EX_VARCHAR_L100_VC071"/>
+        <result property="exVarcharL100Vc072" column="EX_VARCHAR_L100_VC072"/>
+        <result property="exVarcharL100Vc073" column="EX_VARCHAR_L100_VC073"/>
+        <result property="exVarcharL100Vc074" column="EX_VARCHAR_L100_VC074"/>
+        <result property="exVarcharL100Vc075" column="EX_VARCHAR_L100_VC075"/>
+        <result property="exVarcharL100Vc076" column="EX_VARCHAR_L100_VC076"/>
+        <result property="exVarcharL100Vc077" column="EX_VARCHAR_L100_VC077"/>
+        <result property="exVarcharL100Vc078" column="EX_VARCHAR_L100_VC078"/>
+        <result property="exVarcharL100Vc079" column="EX_VARCHAR_L100_VC079"/>
+        <!--<result property="exVarcharL100Vc080" column="EX_VARCHAR_L100_VC080"/>-->
+        <result property="exDatetimeDt001" column="EX_DATETIME_DT001"/>
+        <result property="exDatetimeDt002" column="EX_DATETIME_DT002"/>
+        <result property="exDatetimeDt003" column="EX_DATETIME_DT003"/>
+        <result property="exDatetimeDt004" column="EX_DATETIME_DT004"/>
+        <result property="exDatetimeDt005" column="EX_DATETIME_DT005"/>
+        <result property="exDatetimeDt006" column="EX_DATETIME_DT006"/>
+        <result property="exDatetimeDt007" column="EX_DATETIME_DT007"/>
+        <result property="exDatetimeDt008" column="EX_DATETIME_DT008"/>
+        <result property="exDatetimeDt009" column="EX_DATETIME_DT009"/>
+        <result property="exDatetimeDt010" column="EX_DATETIME_DT010"/>
+        <result property="exDatetimeDt011" column="EX_DATETIME_DT011"/>
+        <result property="exDatetimeDt012" column="EX_DATETIME_DT012"/>
+        <result property="exDatetimeDt013" column="EX_DATETIME_DT013"/>
+        <result property="exDatetimeDt014" column="EX_DATETIME_DT014"/>
+        <result property="exDatetimeDt015" column="EX_DATETIME_DT015"/>
+        <result property="exDatetimeDt016" column="EX_DATETIME_DT016"/>
+        <result property="exDatetimeDt017" column="EX_DATETIME_DT017"/>
+        <result property="exDatetimeDt018" column="EX_DATETIME_DT018"/>
+        <result property="exDatetimeDt019" column="EX_DATETIME_DT019"/>
+        <result property="exDatetimeDt020" column="EX_DATETIME_DT020"/>
+        <result property="exTextT001" column="EX_TEXT_T001"/>
+        <result property="exTextT002" column="EX_TEXT_T002"/>
+        <result property="exTextT003" column="EX_TEXT_T003"/>
+        <result property="exTextT004" column="EX_TEXT_T004"/>
+        <result property="exTextT005" column="EX_TEXT_T005"/>
+        <result property="exTextT006" column="EX_TEXT_T006"/>
+        <result property="exTextT007" column="EX_TEXT_T007"/>
+        <result property="exTextT008" column="EX_TEXT_T008"/>
+        <result property="exTextT009" column="EX_TEXT_T009"/>
+        <result property="exTextT010" column="EX_TEXT_T010"/>
+        <result property="exTextT011" column="EX_TEXT_T011"/>
+        <result property="exTextT012" column="EX_TEXT_T012"/>
+        <result property="exTextT013" column="EX_TEXT_T013"/>
+        <result property="exTextT014" column="EX_TEXT_T014"/>
+        <result property="exTextT015" column="EX_TEXT_T015"/>
+        <result property="exTextT016" column="EX_TEXT_T016"/>
+        <result property="exTextT017" column="EX_TEXT_T017"/>
+        <result property="exTextT018" column="EX_TEXT_T018"/>
+        <result property="exTextT019" column="EX_TEXT_T019"/>
+        <result property="exTextT020" column="EX_TEXT_T020"/>
+        <result property="exTextT021" column="EX_TEXT_T021"/>
+        <result property="exTextT022" column="EX_TEXT_T022"/>
+        <result property="exTextT023" column="EX_TEXT_T023"/>
+        <result property="exTextT024" column="EX_TEXT_T024"/>
+        <result property="exTextT025" column="EX_TEXT_T025"/>
+        <result property="exTextT026" column="EX_TEXT_T026"/>
+        <result property="exTextT027" column="EX_TEXT_T027"/>
+        <result property="exTextT028" column="EX_TEXT_T028"/>
+        <result property="exTextT029" column="EX_TEXT_T029"/>
+    </resultMap>
+
+    <!--metadataValue简单分页查询-->
+    <select id="getMetadataValuePage" resultMap="metadataValueMap">
+        SELECT
+        id,
+        resource_id,
+        parent_id,
+        model_id,
+        name_en,
+        name_cn,
+        range_id,
+        model_type,
+        status,
+        create_time,
+        update_time,
+        is_standard,
+        EX_VARCHAR_L50_VC001,
+        EX_VARCHAR_L50_VC002,
+        EX_VARCHAR_L50_VC003,
+        EX_VARCHAR_L50_VC004,
+        EX_VARCHAR_L50_VC005,
+        EX_VARCHAR_L50_VC006,
+        EX_VARCHAR_L50_VC007,
+        EX_VARCHAR_L50_VC008,
+        EX_VARCHAR_L50_VC009,
+        EX_VARCHAR_L50_VC010,
+        EX_VARCHAR_L50_VC011,
+        EX_VARCHAR_L50_VC012,
+        EX_VARCHAR_L50_VC013,
+        EX_VARCHAR_L50_VC014,
+        EX_VARCHAR_L50_VC015,
+        EX_VARCHAR_L50_VC016,
+        EX_VARCHAR_L50_VC017,
+        EX_VARCHAR_L50_VC018,
+        EX_VARCHAR_L50_VC019,
+        EX_VARCHAR_L50_VC020,
+        EX_VARCHAR_L50_VC021,
+        EX_VARCHAR_L50_VC022,
+        EX_VARCHAR_L50_VC023,
+        EX_VARCHAR_L50_VC024,
+        EX_VARCHAR_L50_VC025,
+        EX_VARCHAR_L50_VC026,
+        EX_VARCHAR_L50_VC027,
+        EX_VARCHAR_L50_VC028,
+        EX_VARCHAR_L50_VC029,
+        EX_VARCHAR_L50_VC030,
+        EX_VARCHAR_L50_VC031,
+        EX_VARCHAR_L50_VC032,
+        EX_VARCHAR_L50_VC033,
+        EX_VARCHAR_L50_VC034,
+        EX_VARCHAR_L50_VC035,
+        EX_VARCHAR_L50_VC036,
+        EX_VARCHAR_L50_VC037,
+        EX_VARCHAR_L50_VC038,
+        EX_VARCHAR_L50_VC039,
+        EX_VARCHAR_L50_VC040,
+        EX_VARCHAR_L50_VC041,
+        EX_VARCHAR_L50_VC042,
+        EX_VARCHAR_L50_VC043,
+        EX_VARCHAR_L50_VC044,
+        EX_VARCHAR_L50_VC045,
+        EX_VARCHAR_L50_VC046,
+        EX_VARCHAR_L50_VC047,
+        EX_VARCHAR_L50_VC048,
+        EX_VARCHAR_L50_VC049,
+        EX_VARCHAR_L50_VC050,
+        EX_VARCHAR_L50_VC051,
+        EX_VARCHAR_L50_VC052,
+        EX_VARCHAR_L50_VC053,
+        EX_VARCHAR_L50_VC054,
+        EX_VARCHAR_L50_VC055,
+        EX_VARCHAR_L50_VC056,
+        EX_VARCHAR_L50_VC057,
+        EX_VARCHAR_L50_VC058,
+        EX_VARCHAR_L50_VC059,
+        EX_VARCHAR_L50_VC060,
+        EX_VARCHAR_L50_VC061,
+        EX_VARCHAR_L50_VC062,
+        EX_VARCHAR_L50_VC063,
+        EX_VARCHAR_L50_VC064,
+        EX_VARCHAR_L50_VC065,
+        EX_VARCHAR_L50_VC066,
+        EX_VARCHAR_L50_VC067,
+        EX_VARCHAR_L50_VC068,
+        EX_VARCHAR_L50_VC069,
+        EX_VARCHAR_L50_VC070,
+        EX_VARCHAR_L50_VC071,
+        EX_VARCHAR_L50_VC072,
+        EX_VARCHAR_L50_VC073,
+        EX_VARCHAR_L50_VC074,
+        EX_VARCHAR_L50_VC075,
+        EX_VARCHAR_L50_VC076,
+        EX_VARCHAR_L50_VC077,
+        EX_VARCHAR_L50_VC078,
+        EX_VARCHAR_L50_VC079,
+
+        EX_VARCHAR_L100_VC001,
+        EX_VARCHAR_L100_VC002,
+        EX_VARCHAR_L100_VC003,
+        EX_VARCHAR_L100_VC004,
+        EX_VARCHAR_L100_VC005,
+        EX_VARCHAR_L100_VC006,
+        EX_VARCHAR_L100_VC007,
+        EX_VARCHAR_L100_VC008,
+        EX_VARCHAR_L100_VC009,
+        EX_VARCHAR_L100_VC010,
+        EX_VARCHAR_L100_VC011,
+        EX_VARCHAR_L100_VC012,
+        EX_VARCHAR_L100_VC013,
+        EX_VARCHAR_L100_VC014,
+        EX_VARCHAR_L100_VC015,
+        EX_VARCHAR_L100_VC016,
+        EX_VARCHAR_L100_VC017,
+        EX_VARCHAR_L100_VC018,
+        EX_VARCHAR_L100_VC019,
+        EX_VARCHAR_L100_VC020,
+        EX_VARCHAR_L100_VC021,
+        EX_VARCHAR_L100_VC022,
+        EX_VARCHAR_L100_VC023,
+        EX_VARCHAR_L100_VC024,
+        EX_VARCHAR_L100_VC025,
+        EX_VARCHAR_L100_VC026,
+        EX_VARCHAR_L100_VC027,
+        EX_VARCHAR_L100_VC028,
+        EX_VARCHAR_L100_VC029,
+        EX_VARCHAR_L100_VC030,
+        EX_VARCHAR_L100_VC031,
+        EX_VARCHAR_L100_VC032,
+        EX_VARCHAR_L100_VC033,
+        EX_VARCHAR_L100_VC034,
+        EX_VARCHAR_L100_VC035,
+        EX_VARCHAR_L100_VC036,
+        EX_VARCHAR_L100_VC037,
+        EX_VARCHAR_L100_VC038,
+        EX_VARCHAR_L100_VC039,
+        EX_VARCHAR_L100_VC040,
+        EX_VARCHAR_L100_VC041,
+        EX_VARCHAR_L100_VC042,
+        EX_VARCHAR_L100_VC043,
+        EX_VARCHAR_L100_VC044,
+        EX_VARCHAR_L100_VC045,
+        EX_VARCHAR_L100_VC046,
+        EX_VARCHAR_L100_VC047,
+        EX_VARCHAR_L100_VC048,
+        EX_VARCHAR_L100_VC049,
+        EX_VARCHAR_L100_VC050,
+        EX_VARCHAR_L100_VC051,
+        EX_VARCHAR_L100_VC052,
+        EX_VARCHAR_L100_VC053,
+        EX_VARCHAR_L100_VC054,
+        EX_VARCHAR_L100_VC055,
+        EX_VARCHAR_L100_VC056,
+        EX_VARCHAR_L100_VC057,
+        EX_VARCHAR_L100_VC058,
+        EX_VARCHAR_L100_VC059,
+        EX_VARCHAR_L100_VC060,
+        EX_VARCHAR_L100_VC061,
+        EX_VARCHAR_L100_VC062,
+        EX_VARCHAR_L100_VC063,
+        EX_VARCHAR_L100_VC064,
+        EX_VARCHAR_L100_VC065,
+        EX_VARCHAR_L100_VC066,
+        EX_VARCHAR_L100_VC067,
+        EX_VARCHAR_L100_VC068,
+        EX_VARCHAR_L100_VC069,
+        EX_VARCHAR_L100_VC070,
+        EX_VARCHAR_L100_VC071,
+        EX_VARCHAR_L100_VC072,
+        EX_VARCHAR_L100_VC073,
+        EX_VARCHAR_L100_VC074,
+        EX_VARCHAR_L100_VC075,
+        EX_VARCHAR_L100_VC076,
+        EX_VARCHAR_L100_VC077,
+        EX_VARCHAR_L100_VC078,
+        EX_VARCHAR_L100_VC079,
+
+        EX_DATETIME_DT001,
+        EX_DATETIME_DT002,
+        EX_DATETIME_DT003,
+        EX_DATETIME_DT004,
+        EX_DATETIME_DT005,
+        EX_DATETIME_DT006,
+        EX_DATETIME_DT007,
+        EX_DATETIME_DT008,
+        EX_DATETIME_DT009,
+        EX_DATETIME_DT010,
+        EX_DATETIME_DT011,
+        EX_DATETIME_DT012,
+        EX_DATETIME_DT013,
+        EX_DATETIME_DT014,
+        EX_DATETIME_DT015,
+        EX_DATETIME_DT016,
+        EX_DATETIME_DT017,
+        EX_DATETIME_DT018,
+        EX_DATETIME_DT019,
+        EX_DATETIME_DT020,
+        EX_TEXT_T001,
+        EX_TEXT_T002,
+        EX_TEXT_T003,
+        EX_TEXT_T004,
+        EX_TEXT_T005,
+        EX_TEXT_T006,
+        EX_TEXT_T007,
+        EX_TEXT_T008,
+        EX_TEXT_T009,
+        EX_TEXT_T010,
+        EX_TEXT_T011,
+        EX_TEXT_T012,
+        EX_TEXT_T013,
+        EX_TEXT_T014,
+        EX_TEXT_T015,
+        EX_TEXT_T016,
+        EX_TEXT_T017,
+        EX_TEXT_T018,
+        EX_TEXT_T019,
+        EX_TEXT_T020,
+        EX_TEXT_T021,
+        EX_TEXT_T022,
+        EX_TEXT_T023,
+        EX_TEXT_T024,
+        EX_TEXT_T025,
+        EX_TEXT_T026,
+        EX_TEXT_T027,
+        EX_TEXT_T028,
+        EX_TEXT_T029
+        FROM mdm_metadata_value v
+        <where>
+            <if test="roleIds.size()>0">
+                v.resource_id in( select resource_id from mdm_role_resource_permission
+                <where>role_id in
+                    <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </where>
+                )
+            </if>
+            <if test="metadataValue.id != null">
+                AND id = #{metadataValue.id}
+            </if>
+            <if test="metadataValue.resourceId != null and metadataValue.resourceId.trim() != ''">
+                AND resource_id = #{metadataValue.resourceId}
+            </if>
+            <if test="metadataValue.parentId != null and metadataValue.parentId.trim() != ''">
+                AND parent_id = #{metadataValue.parentId}
+            </if>
+            <if test="metadataValue.modelId != null and metadataValue.modelId.trim() != ''">
+                AND model_id = #{metadataValue.modelId}
+            </if>
+            <if test="metadataValue.nameEn != null and metadataValue.nameEn.trim() != ''">
+                AND (name_en like concat('%',concat(#{metadataValue.nameEn},'%') )
+                OR name_cn like concat('%',concat(#{metadataValue.nameEn},'%') ))
+            </if>
+            <if test="metadataValue.status != null">
+                AND status = #{metadataValue.status}
+            </if>
+            <if test="metadataValue.rangeId != null and metadataValue.rangeId.trim() != ''">
+                AND range_id = #{metadataValue.rangeId}
+            </if>
+            <if test="metadataValue.modelType != null and metadataValue.modelType.trim() != ''">
+                AND model_type = #{metadataValue.modelType}
+            </if>
+            <if test="metadataValue.createTime != null and metadataValue.createTime.trim() != ''">
+                AND create_time = #{metadataValue.createTime}
+            </if>
+            <if test="metadataValue.updateTime != null and metadataValue.updateTime.trim() != ''">
+                AND update_time = #{metadataValue.updateTime}
+            </if>
+            <if test="metadataValue.isStandard != null">
+                AND is_standard = #{metadataValue.isStandard}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc001 != null and metadataValue.exVarcharL50Vc001.trim() != ''">
+                AND EX_VARCHAR_L50_VC001 = #{metadataValue.exVarcharL50Vc001}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc002 != null and metadataValue.exVarcharL50Vc002.trim() != ''">
+                AND EX_VARCHAR_L50_VC002 = #{metadataValue.exVarcharL50Vc002}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc003 != null and metadataValue.exVarcharL50Vc003.trim() != ''">
+                AND EX_VARCHAR_L50_VC003 = #{metadataValue.exVarcharL50Vc003}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc004 != null and metadataValue.exVarcharL50Vc004.trim() != ''">
+                AND EX_VARCHAR_L50_VC004 = #{metadataValue.exVarcharL50Vc004}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc005 != null and metadataValue.exVarcharL50Vc005.trim() != ''">
+                AND EX_VARCHAR_L50_VC005 = #{metadataValue.exVarcharL50Vc005}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc006 != null and metadataValue.exVarcharL50Vc006.trim() != ''">
+                AND EX_VARCHAR_L50_VC006 = #{metadataValue.exVarcharL50Vc006}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc007 != null and metadataValue.exVarcharL50Vc007.trim() != ''">
+                AND EX_VARCHAR_L50_VC007 = #{metadataValue.exVarcharL50Vc007}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc008 != null and metadataValue.exVarcharL50Vc008.trim() != ''">
+                AND EX_VARCHAR_L50_VC008 = #{metadataValue.exVarcharL50Vc008}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc009 != null and metadataValue.exVarcharL50Vc009.trim() != ''">
+                AND EX_VARCHAR_L50_VC009 = #{metadataValue.exVarcharL50Vc009}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc010 != null and metadataValue.exVarcharL50Vc010.trim() != ''">
+                AND EX_VARCHAR_L50_VC010 = #{metadataValue.exVarcharL50Vc010}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc011 != null and metadataValue.exVarcharL50Vc011.trim() != ''">
+                AND EX_VARCHAR_L50_VC011 = #{metadataValue.exVarcharL50Vc011}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc012 != null and metadataValue.exVarcharL50Vc012.trim() != ''">
+                AND EX_VARCHAR_L50_VC012 = #{metadataValue.exVarcharL50Vc012}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc013 != null and metadataValue.exVarcharL50Vc013.trim() != ''">
+                AND EX_VARCHAR_L50_VC013 = #{metadataValue.exVarcharL50Vc013}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc014 != null and metadataValue.exVarcharL50Vc014.trim() != ''">
+                AND EX_VARCHAR_L50_VC014 = #{metadataValue.exVarcharL50Vc014}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc015 != null and metadataValue.exVarcharL50Vc015.trim() != ''">
+                AND EX_VARCHAR_L50_VC015 = #{metadataValue.exVarcharL50Vc015}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc016 != null and metadataValue.exVarcharL50Vc016.trim() != ''">
+                AND EX_VARCHAR_L50_VC016 = #{metadataValue.exVarcharL50Vc016}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc017 != null and metadataValue.exVarcharL50Vc017.trim() != ''">
+                AND EX_VARCHAR_L50_VC017 = #{metadataValue.exVarcharL50Vc017}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc018 != null and metadataValue.exVarcharL50Vc018.trim() != ''">
+                AND EX_VARCHAR_L50_VC018 = #{metadataValue.exVarcharL50Vc018}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc019 != null and metadataValue.exVarcharL50Vc019.trim() != ''">
+                AND EX_VARCHAR_L50_VC019 = #{metadataValue.exVarcharL50Vc019}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc020 != null and metadataValue.exVarcharL50Vc020.trim() != ''">
+                AND EX_VARCHAR_L50_VC020 = #{metadataValue.exVarcharL50Vc020}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc021 != null and metadataValue.exVarcharL50Vc021.trim() != ''">
+                AND EX_VARCHAR_L50_VC021 = #{metadataValue.exVarcharL50Vc021}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc022 != null and metadataValue.exVarcharL50Vc022.trim() != ''">
+                AND EX_VARCHAR_L50_VC022 = #{metadataValue.exVarcharL50Vc022}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc023 != null and metadataValue.exVarcharL50Vc023.trim() != ''">
+                AND EX_VARCHAR_L50_VC023 = #{metadataValue.exVarcharL50Vc023}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc024 != null and metadataValue.exVarcharL50Vc024.trim() != ''">
+                AND EX_VARCHAR_L50_VC024 = #{metadataValue.exVarcharL50Vc024}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc025 != null and metadataValue.exVarcharL50Vc025.trim() != ''">
+                AND EX_VARCHAR_L50_VC025 = #{metadataValue.exVarcharL50Vc025}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc026 != null and metadataValue.exVarcharL50Vc026.trim() != ''">
+                AND EX_VARCHAR_L50_VC026 = #{metadataValue.exVarcharL50Vc026}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc027 != null and metadataValue.exVarcharL50Vc027.trim() != ''">
+                AND EX_VARCHAR_L50_VC027 = #{metadataValue.exVarcharL50Vc027}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc028 != null and metadataValue.exVarcharL50Vc028.trim() != ''">
+                AND EX_VARCHAR_L50_VC028 = #{metadataValue.exVarcharL50Vc028}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc029 != null and metadataValue.exVarcharL50Vc029.trim() != ''">
+                AND EX_VARCHAR_L50_VC029 = #{metadataValue.exVarcharL50Vc029}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc030 != null and metadataValue.exVarcharL50Vc030.trim() != ''">
+                AND EX_VARCHAR_L50_VC030 = #{metadataValue.exVarcharL50Vc030}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc031 != null and metadataValue.exVarcharL50Vc031.trim() != ''">
+                AND EX_VARCHAR_L50_VC031 = #{metadataValue.exVarcharL50Vc031}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc032 != null and metadataValue.exVarcharL50Vc032.trim() != ''">
+                AND EX_VARCHAR_L50_VC032 = #{metadataValue.exVarcharL50Vc032}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc033 != null and metadataValue.exVarcharL50Vc033.trim() != ''">
+                AND EX_VARCHAR_L50_VC033 = #{metadataValue.exVarcharL50Vc033}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc034 != null and metadataValue.exVarcharL50Vc034.trim() != ''">
+                AND EX_VARCHAR_L50_VC034 = #{metadataValue.exVarcharL50Vc034}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc035 != null and metadataValue.exVarcharL50Vc035.trim() != ''">
+                AND EX_VARCHAR_L50_VC035 = #{metadataValue.exVarcharL50Vc035}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc036 != null and metadataValue.exVarcharL50Vc036.trim() != ''">
+                AND EX_VARCHAR_L50_VC036 = #{metadataValue.exVarcharL50Vc036}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc037 != null and metadataValue.exVarcharL50Vc037.trim() != ''">
+                AND EX_VARCHAR_L50_VC037 = #{metadataValue.exVarcharL50Vc037}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc038 != null and metadataValue.exVarcharL50Vc038.trim() != ''">
+                AND EX_VARCHAR_L50_VC038 = #{metadataValue.exVarcharL50Vc038}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc039 != null and metadataValue.exVarcharL50Vc039.trim() != ''">
+                AND EX_VARCHAR_L50_VC039 = #{metadataValue.exVarcharL50Vc039}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc040 != null and metadataValue.exVarcharL50Vc040.trim() != ''">
+                AND EX_VARCHAR_L50_VC040 = #{metadataValue.exVarcharL50Vc040}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc041 != null and metadataValue.exVarcharL50Vc041.trim() != ''">
+                AND EX_VARCHAR_L50_VC041 = #{metadataValue.exVarcharL50Vc041}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc042 != null and metadataValue.exVarcharL50Vc042.trim() != ''">
+                AND EX_VARCHAR_L50_VC042 = #{metadataValue.exVarcharL50Vc042}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc043 != null and metadataValue.exVarcharL50Vc043.trim() != ''">
+                AND EX_VARCHAR_L50_VC043 = #{metadataValue.exVarcharL50Vc043}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc044 != null and metadataValue.exVarcharL50Vc044.trim() != ''">
+                AND EX_VARCHAR_L50_VC044 = #{metadataValue.exVarcharL50Vc044}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc045 != null and metadataValue.exVarcharL50Vc045.trim() != ''">
+                AND EX_VARCHAR_L50_VC045 = #{metadataValue.exVarcharL50Vc045}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc046 != null and metadataValue.exVarcharL50Vc046.trim() != ''">
+                AND EX_VARCHAR_L50_VC046 = #{metadataValue.exVarcharL50Vc046}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc047 != null and metadataValue.exVarcharL50Vc047.trim() != ''">
+                AND EX_VARCHAR_L50_VC047 = #{metadataValue.exVarcharL50Vc047}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc048 != null and metadataValue.exVarcharL50Vc048.trim() != ''">
+                AND EX_VARCHAR_L50_VC048 = #{metadataValue.exVarcharL50Vc048}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc049 != null and metadataValue.exVarcharL50Vc049.trim() != ''">
+                AND EX_VARCHAR_L50_VC049 = #{metadataValue.exVarcharL50Vc049}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc050 != null and metadataValue.exVarcharL50Vc050.trim() != ''">
+                AND EX_VARCHAR_L50_VC050 = #{metadataValue.exVarcharL50Vc050}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc051 != null and metadataValue.exVarcharL50Vc051.trim() != ''">
+                AND EX_VARCHAR_L50_VC051 = #{metadataValue.exVarcharL50Vc051}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc052 != null and metadataValue.exVarcharL50Vc052.trim() != ''">
+                AND EX_VARCHAR_L50_VC052 = #{metadataValue.exVarcharL50Vc052}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc053 != null and metadataValue.exVarcharL50Vc053.trim() != ''">
+                AND EX_VARCHAR_L50_VC053 = #{metadataValue.exVarcharL50Vc053}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc054 != null and metadataValue.exVarcharL50Vc054.trim() != ''">
+                AND EX_VARCHAR_L50_VC054 = #{metadataValue.exVarcharL50Vc054}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc055 != null and metadataValue.exVarcharL50Vc055.trim() != ''">
+                AND EX_VARCHAR_L50_VC055 = #{metadataValue.exVarcharL50Vc055}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc056 != null and metadataValue.exVarcharL50Vc056.trim() != ''">
+                AND EX_VARCHAR_L50_VC056 = #{metadataValue.exVarcharL50Vc056}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc057 != null and metadataValue.exVarcharL50Vc057.trim() != ''">
+                AND EX_VARCHAR_L50_VC057 = #{metadataValue.exVarcharL50Vc057}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc058 != null and metadataValue.exVarcharL50Vc058.trim() != ''">
+                AND EX_VARCHAR_L50_VC058 = #{metadataValue.exVarcharL50Vc058}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc059 != null and metadataValue.exVarcharL50Vc059.trim() != ''">
+                AND EX_VARCHAR_L50_VC059 = #{metadataValue.exVarcharL50Vc059}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc060 != null and metadataValue.exVarcharL50Vc060.trim() != ''">
+                AND EX_VARCHAR_L50_VC060 = #{metadataValue.exVarcharL50Vc060}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc061 != null and metadataValue.exVarcharL50Vc061.trim() != ''">
+                AND EX_VARCHAR_L50_VC061 = #{metadataValue.exVarcharL50Vc061}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc062 != null and metadataValue.exVarcharL50Vc062.trim() != ''">
+                AND EX_VARCHAR_L50_VC062 = #{metadataValue.exVarcharL50Vc062}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc063 != null and metadataValue.exVarcharL50Vc063.trim() != ''">
+                AND EX_VARCHAR_L50_VC063 = #{metadataValue.exVarcharL50Vc063}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc064 != null and metadataValue.exVarcharL50Vc064.trim() != ''">
+                AND EX_VARCHAR_L50_VC064 = #{metadataValue.exVarcharL50Vc064}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc065 != null and metadataValue.exVarcharL50Vc065.trim() != ''">
+                AND EX_VARCHAR_L50_VC065 = #{metadataValue.exVarcharL50Vc065}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc066 != null and metadataValue.exVarcharL50Vc066.trim() != ''">
+                AND EX_VARCHAR_L50_VC066 = #{metadataValue.exVarcharL50Vc066}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc067 != null and metadataValue.exVarcharL50Vc067.trim() != ''">
+                AND EX_VARCHAR_L50_VC067 = #{metadataValue.exVarcharL50Vc067}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc068 != null and metadataValue.exVarcharL50Vc068.trim() != ''">
+                AND EX_VARCHAR_L50_VC068 = #{metadataValue.exVarcharL50Vc068}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc069 != null and metadataValue.exVarcharL50Vc069.trim() != ''">
+                AND EX_VARCHAR_L50_VC069 = #{metadataValue.exVarcharL50Vc069}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc070 != null and metadataValue.exVarcharL50Vc070.trim() != ''">
+                AND EX_VARCHAR_L50_VC070 = #{metadataValue.exVarcharL50Vc070}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc071 != null and metadataValue.exVarcharL50Vc071.trim() != ''">
+                AND EX_VARCHAR_L50_VC071 = #{metadataValue.exVarcharL50Vc071}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc072 != null and metadataValue.exVarcharL50Vc072.trim() != ''">
+                AND EX_VARCHAR_L50_VC072 = #{metadataValue.exVarcharL50Vc072}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc073 != null and metadataValue.exVarcharL50Vc073.trim() != ''">
+                AND EX_VARCHAR_L50_VC073 = #{metadataValue.exVarcharL50Vc073}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc074 != null and metadataValue.exVarcharL50Vc074.trim() != ''">
+                AND EX_VARCHAR_L50_VC074 = #{metadataValue.exVarcharL50Vc074}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc075 != null and metadataValue.exVarcharL50Vc075.trim() != ''">
+                AND EX_VARCHAR_L50_VC075 = #{metadataValue.exVarcharL50Vc075}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc076 != null and metadataValue.exVarcharL50Vc076.trim() != ''">
+                AND EX_VARCHAR_L50_VC076 = #{metadataValue.exVarcharL50Vc076}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc077 != null and metadataValue.exVarcharL50Vc077.trim() != ''">
+                AND EX_VARCHAR_L50_VC077 = #{metadataValue.exVarcharL50Vc077}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc078 != null and metadataValue.exVarcharL50Vc078.trim() != ''">
+                AND EX_VARCHAR_L50_VC078 = #{metadataValue.exVarcharL50Vc078}
+            </if>
+            <if test="metadataValue.exVarcharL50Vc079 != null and metadataValue.exVarcharL50Vc079.trim() != ''">
+                AND EX_VARCHAR_L50_VC079 = #{metadataValue.exVarcharL50Vc079}
+            </if>
+            <!--<if test="metadataValue.exVarcharL50Vc080 != null and metadataValue.exVarcharL50Vc080.trim() != ''">
+        AND EX_VARCHAR_L50_VC080 = #{metadataValue.exVarcharL50Vc080}
+      </if>-->
+            <if test="metadataValue.exVarcharL100Vc001 != null and metadataValue.exVarcharL100Vc001.trim() != ''">
+                AND EX_VARCHAR_L100_VC001 = #{metadataValue.exVarcharL100Vc001}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc002 != null and metadataValue.exVarcharL100Vc002.trim() != ''">
+                AND EX_VARCHAR_L100_VC002 = #{metadataValue.exVarcharL100Vc002}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc003 != null and metadataValue.exVarcharL100Vc003.trim() != ''">
+                AND EX_VARCHAR_L100_VC003 = #{metadataValue.exVarcharL100Vc003}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc004 != null and metadataValue.exVarcharL100Vc004.trim() != ''">
+                AND EX_VARCHAR_L100_VC004 = #{metadataValue.exVarcharL100Vc004}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc005 != null and metadataValue.exVarcharL100Vc005.trim() != ''">
+                AND EX_VARCHAR_L100_VC005 = #{metadataValue.exVarcharL100Vc005}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc006 != null and metadataValue.exVarcharL100Vc006.trim() != ''">
+                AND EX_VARCHAR_L100_VC006 = #{metadataValue.exVarcharL100Vc006}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc007 != null and metadataValue.exVarcharL100Vc007.trim() != ''">
+                AND EX_VARCHAR_L100_VC007 = #{metadataValue.exVarcharL100Vc007}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc008 != null and metadataValue.exVarcharL100Vc008.trim() != ''">
+                AND EX_VARCHAR_L100_VC008 = #{metadataValue.exVarcharL100Vc008}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc009 != null and metadataValue.exVarcharL100Vc009.trim() != ''">
+                AND EX_VARCHAR_L100_VC009 = #{metadataValue.exVarcharL100Vc009}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc010 != null and metadataValue.exVarcharL100Vc010.trim() != ''">
+                AND EX_VARCHAR_L100_VC010 = #{metadataValue.exVarcharL100Vc010}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc011 != null and metadataValue.exVarcharL100Vc011.trim() != ''">
+                AND EX_VARCHAR_L100_VC011 = #{metadataValue.exVarcharL100Vc011}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc012 != null and metadataValue.exVarcharL100Vc012.trim() != ''">
+                AND EX_VARCHAR_L100_VC012 = #{metadataValue.exVarcharL100Vc012}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc013 != null and metadataValue.exVarcharL100Vc013.trim() != ''">
+                AND EX_VARCHAR_L100_VC013 = #{metadataValue.exVarcharL100Vc013}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc014 != null and metadataValue.exVarcharL100Vc014.trim() != ''">
+                AND EX_VARCHAR_L100_VC014 = #{metadataValue.exVarcharL100Vc014}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc015 != null and metadataValue.exVarcharL100Vc015.trim() != ''">
+                AND EX_VARCHAR_L100_VC015 = #{metadataValue.exVarcharL100Vc015}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc016 != null and metadataValue.exVarcharL100Vc016.trim() != ''">
+                AND EX_VARCHAR_L100_VC016 = #{metadataValue.exVarcharL100Vc016}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc017 != null and metadataValue.exVarcharL100Vc017.trim() != ''">
+                AND EX_VARCHAR_L100_VC017 = #{metadataValue.exVarcharL100Vc017}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc018 != null and metadataValue.exVarcharL100Vc018.trim() != ''">
+                AND EX_VARCHAR_L100_VC018 = #{metadataValue.exVarcharL100Vc018}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc019 != null and metadataValue.exVarcharL100Vc019.trim() != ''">
+                AND EX_VARCHAR_L100_VC019 = #{metadataValue.exVarcharL100Vc019}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc020 != null and metadataValue.exVarcharL100Vc020.trim() != ''">
+                AND EX_VARCHAR_L100_VC020 = #{metadataValue.exVarcharL100Vc020}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc021 != null and metadataValue.exVarcharL100Vc021.trim() != ''">
+                AND EX_VARCHAR_L100_VC021 = #{metadataValue.exVarcharL100Vc021}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc022 != null and metadataValue.exVarcharL100Vc022.trim() != ''">
+                AND EX_VARCHAR_L100_VC022 = #{metadataValue.exVarcharL100Vc022}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc023 != null and metadataValue.exVarcharL100Vc023.trim() != ''">
+                AND EX_VARCHAR_L100_VC023 = #{metadataValue.exVarcharL100Vc023}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc024 != null and metadataValue.exVarcharL100Vc024.trim() != ''">
+                AND EX_VARCHAR_L100_VC024 = #{metadataValue.exVarcharL100Vc024}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc025 != null and metadataValue.exVarcharL100Vc025.trim() != ''">
+                AND EX_VARCHAR_L100_VC025 = #{metadataValue.exVarcharL100Vc025}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc026 != null and metadataValue.exVarcharL100Vc026.trim() != ''">
+                AND EX_VARCHAR_L100_VC026 = #{metadataValue.exVarcharL100Vc026}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc027 != null and metadataValue.exVarcharL100Vc027.trim() != ''">
+                AND EX_VARCHAR_L100_VC027 = #{metadataValue.exVarcharL100Vc027}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc028 != null and metadataValue.exVarcharL100Vc028.trim() != ''">
+                AND EX_VARCHAR_L100_VC028 = #{metadataValue.exVarcharL100Vc028}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc029 != null and metadataValue.exVarcharL100Vc029.trim() != ''">
+                AND EX_VARCHAR_L100_VC029 = #{metadataValue.exVarcharL100Vc029}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc030 != null and metadataValue.exVarcharL100Vc030.trim() != ''">
+                AND EX_VARCHAR_L100_VC030 = #{metadataValue.exVarcharL100Vc030}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc031 != null and metadataValue.exVarcharL100Vc031.trim() != ''">
+                AND EX_VARCHAR_L100_VC031 = #{metadataValue.exVarcharL100Vc031}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc032 != null and metadataValue.exVarcharL100Vc032.trim() != ''">
+                AND EX_VARCHAR_L100_VC032 = #{metadataValue.exVarcharL100Vc032}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc033 != null and metadataValue.exVarcharL100Vc033.trim() != ''">
+                AND EX_VARCHAR_L100_VC033 = #{metadataValue.exVarcharL100Vc033}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc034 != null and metadataValue.exVarcharL100Vc034.trim() != ''">
+                AND EX_VARCHAR_L100_VC034 = #{metadataValue.exVarcharL100Vc034}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc035 != null and metadataValue.exVarcharL100Vc035.trim() != ''">
+                AND EX_VARCHAR_L100_VC035 = #{metadataValue.exVarcharL100Vc035}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc036 != null and metadataValue.exVarcharL100Vc036.trim() != ''">
+                AND EX_VARCHAR_L100_VC036 = #{metadataValue.exVarcharL100Vc036}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc037 != null and metadataValue.exVarcharL100Vc037.trim() != ''">
+                AND EX_VARCHAR_L100_VC037 = #{metadataValue.exVarcharL100Vc037}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc038 != null and metadataValue.exVarcharL100Vc038.trim() != ''">
+                AND EX_VARCHAR_L100_VC038 = #{metadataValue.exVarcharL100Vc038}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc039 != null and metadataValue.exVarcharL100Vc039.trim() != ''">
+                AND EX_VARCHAR_L100_VC039 = #{metadataValue.exVarcharL100Vc039}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc040 != null and metadataValue.exVarcharL100Vc040.trim() != ''">
+                AND EX_VARCHAR_L100_VC040 = #{metadataValue.exVarcharL100Vc040}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc041 != null and metadataValue.exVarcharL100Vc041.trim() != ''">
+                AND EX_VARCHAR_L100_VC041 = #{metadataValue.exVarcharL100Vc041}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc042 != null and metadataValue.exVarcharL100Vc042.trim() != ''">
+                AND EX_VARCHAR_L100_VC042 = #{metadataValue.exVarcharL100Vc042}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc043 != null and metadataValue.exVarcharL100Vc043.trim() != ''">
+                AND EX_VARCHAR_L100_VC043 = #{metadataValue.exVarcharL100Vc043}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc044 != null and metadataValue.exVarcharL100Vc044.trim() != ''">
+                AND EX_VARCHAR_L100_VC044 = #{metadataValue.exVarcharL100Vc044}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc045 != null and metadataValue.exVarcharL100Vc045.trim() != ''">
+                AND EX_VARCHAR_L100_VC045 = #{metadataValue.exVarcharL100Vc045}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc046 != null and metadataValue.exVarcharL100Vc046.trim() != ''">
+                AND EX_VARCHAR_L100_VC046 = #{metadataValue.exVarcharL100Vc046}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc047 != null and metadataValue.exVarcharL100Vc047.trim() != ''">
+                AND EX_VARCHAR_L100_VC047 = #{metadataValue.exVarcharL100Vc047}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc048 != null and metadataValue.exVarcharL100Vc048.trim() != ''">
+                AND EX_VARCHAR_L100_VC048 = #{metadataValue.exVarcharL100Vc048}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc049 != null and metadataValue.exVarcharL100Vc049.trim() != ''">
+                AND EX_VARCHAR_L100_VC049 = #{metadataValue.exVarcharL100Vc049}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc050 != null and metadataValue.exVarcharL100Vc050.trim() != ''">
+                AND EX_VARCHAR_L100_VC050 = #{metadataValue.exVarcharL100Vc050}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc051 != null and metadataValue.exVarcharL100Vc051.trim() != ''">
+                AND EX_VARCHAR_L100_VC051 = #{metadataValue.exVarcharL100Vc051}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc052 != null and metadataValue.exVarcharL100Vc052.trim() != ''">
+                AND EX_VARCHAR_L100_VC052 = #{metadataValue.exVarcharL100Vc052}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc053 != null and metadataValue.exVarcharL100Vc053.trim() != ''">
+                AND EX_VARCHAR_L100_VC053 = #{metadataValue.exVarcharL100Vc053}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc054 != null and metadataValue.exVarcharL100Vc054.trim() != ''">
+                AND EX_VARCHAR_L100_VC054 = #{metadataValue.exVarcharL100Vc054}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc055 != null and metadataValue.exVarcharL100Vc055.trim() != ''">
+                AND EX_VARCHAR_L100_VC055 = #{metadataValue.exVarcharL100Vc055}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc056 != null and metadataValue.exVarcharL100Vc056.trim() != ''">
+                AND EX_VARCHAR_L100_VC056 = #{metadataValue.exVarcharL100Vc056}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc057 != null and metadataValue.exVarcharL100Vc057.trim() != ''">
+                AND EX_VARCHAR_L100_VC057 = #{metadataValue.exVarcharL100Vc057}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc058 != null and metadataValue.exVarcharL100Vc058.trim() != ''">
+                AND EX_VARCHAR_L100_VC058 = #{metadataValue.exVarcharL100Vc058}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc059 != null and metadataValue.exVarcharL100Vc059.trim() != ''">
+                AND EX_VARCHAR_L100_VC059 = #{metadataValue.exVarcharL100Vc059}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc060 != null and metadataValue.exVarcharL100Vc060.trim() != ''">
+                AND EX_VARCHAR_L100_VC060 = #{metadataValue.exVarcharL100Vc060}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc061 != null and metadataValue.exVarcharL100Vc061.trim() != ''">
+                AND EX_VARCHAR_L100_VC061 = #{metadataValue.exVarcharL100Vc061}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc062 != null and metadataValue.exVarcharL100Vc062.trim() != ''">
+                AND EX_VARCHAR_L100_VC062 = #{metadataValue.exVarcharL100Vc062}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc063 != null and metadataValue.exVarcharL100Vc063.trim() != ''">
+                AND EX_VARCHAR_L100_VC063 = #{metadataValue.exVarcharL100Vc063}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc064 != null and metadataValue.exVarcharL100Vc064.trim() != ''">
+                AND EX_VARCHAR_L100_VC064 = #{metadataValue.exVarcharL100Vc064}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc065 != null and metadataValue.exVarcharL100Vc065.trim() != ''">
+                AND EX_VARCHAR_L100_VC065 = #{metadataValue.exVarcharL100Vc065}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc066 != null and metadataValue.exVarcharL100Vc066.trim() != ''">
+                AND EX_VARCHAR_L100_VC066 = #{metadataValue.exVarcharL100Vc066}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc067 != null and metadataValue.exVarcharL100Vc067.trim() != ''">
+                AND EX_VARCHAR_L100_VC067 = #{metadataValue.exVarcharL100Vc067}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc068 != null and metadataValue.exVarcharL100Vc068.trim() != ''">
+                AND EX_VARCHAR_L100_VC068 = #{metadataValue.exVarcharL100Vc068}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc069 != null and metadataValue.exVarcharL100Vc069.trim() != ''">
+                AND EX_VARCHAR_L100_VC069 = #{metadataValue.exVarcharL100Vc069}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc070 != null and metadataValue.exVarcharL100Vc070.trim() != ''">
+                AND EX_VARCHAR_L100_VC070 = #{metadataValue.exVarcharL100Vc070}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc071 != null and metadataValue.exVarcharL100Vc071.trim() != ''">
+                AND EX_VARCHAR_L100_VC071 = #{metadataValue.exVarcharL100Vc071}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc072 != null and metadataValue.exVarcharL100Vc072.trim() != ''">
+                AND EX_VARCHAR_L100_VC072 = #{metadataValue.exVarcharL100Vc072}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc073 != null and metadataValue.exVarcharL100Vc073.trim() != ''">
+                AND EX_VARCHAR_L100_VC073 = #{metadataValue.exVarcharL100Vc073}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc074 != null and metadataValue.exVarcharL100Vc074.trim() != ''">
+                AND EX_VARCHAR_L100_VC074 = #{metadataValue.exVarcharL100Vc074}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc075 != null and metadataValue.exVarcharL100Vc075.trim() != ''">
+                AND EX_VARCHAR_L100_VC075 = #{metadataValue.exVarcharL100Vc075}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc076 != null and metadataValue.exVarcharL100Vc076.trim() != ''">
+                AND EX_VARCHAR_L100_VC076 = #{metadataValue.exVarcharL100Vc076}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc077 != null and metadataValue.exVarcharL100Vc077.trim() != ''">
+                AND EX_VARCHAR_L100_VC077 = #{metadataValue.exVarcharL100Vc077}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc078 != null and metadataValue.exVarcharL100Vc078.trim() != ''">
+                AND EX_VARCHAR_L100_VC078 = #{metadataValue.exVarcharL100Vc078}
+            </if>
+            <if test="metadataValue.exVarcharL100Vc079 != null and metadataValue.exVarcharL100Vc079.trim() != ''">
+                AND EX_VARCHAR_L100_VC079 = #{metadataValue.exVarcharL100Vc079}
+            </if>
+            <!--<if test="metadataValue.exVarcharL100Vc080 != null and metadataValue.exVarcharL100Vc080.trim() != ''">
+        AND EX_VARCHAR_L100_VC080 = #{metadataValue.exVarcharL100Vc080}
+      </if>-->
+            <if test="metadataValue.exDatetimeDt001 != null and metadataValue.exDatetimeDt001.trim() != ''">
+                AND EX_DATETIME_DT001 = #{metadataValue.exDatetimeDt001}
+            </if>
+            <if test="metadataValue.exDatetimeDt002 != null and metadataValue.exDatetimeDt002.trim() != ''">
+                AND EX_DATETIME_DT002 = #{metadataValue.exDatetimeDt002}
+            </if>
+            <if test="metadataValue.exDatetimeDt003 != null and metadataValue.exDatetimeDt003.trim() != ''">
+                AND EX_DATETIME_DT003 = #{metadataValue.exDatetimeDt003}
+            </if>
+            <if test="metadataValue.exDatetimeDt004 != null and metadataValue.exDatetimeDt004.trim() != ''">
+                AND EX_DATETIME_DT004 = #{metadataValue.exDatetimeDt004}
+            </if>
+            <if test="metadataValue.exDatetimeDt005 != null and metadataValue.exDatetimeDt005.trim() != ''">
+                AND EX_DATETIME_DT005 = #{metadataValue.exDatetimeDt005}
+            </if>
+            <if test="metadataValue.exDatetimeDt006 != null and metadataValue.exDatetimeDt006.trim() != ''">
+                AND EX_DATETIME_DT006 = #{metadataValue.exDatetimeDt006}
+            </if>
+            <if test="metadataValue.exDatetimeDt007 != null and metadataValue.exDatetimeDt007.trim() != ''">
+                AND EX_DATETIME_DT007 = #{metadataValue.exDatetimeDt007}
+            </if>
+            <if test="metadataValue.exDatetimeDt008 != null and metadataValue.exDatetimeDt008.trim() != ''">
+                AND EX_DATETIME_DT008 = #{metadataValue.exDatetimeDt008}
+            </if>
+            <if test="metadataValue.exDatetimeDt009 != null and metadataValue.exDatetimeDt009.trim() != ''">
+                AND EX_DATETIME_DT009 = #{metadataValue.exDatetimeDt009}
+            </if>
+            <if test="metadataValue.exDatetimeDt010 != null and metadataValue.exDatetimeDt010.trim() != ''">
+                AND EX_DATETIME_DT010 = #{metadataValue.exDatetimeDt010}
+            </if>
+            <if test="metadataValue.exDatetimeDt011 != null and metadataValue.exDatetimeDt011.trim() != ''">
+                AND EX_DATETIME_DT011 = #{metadataValue.exDatetimeDt011}
+            </if>
+            <if test="metadataValue.exDatetimeDt012 != null and metadataValue.exDatetimeDt012.trim() != ''">
+                AND EX_DATETIME_DT012 = #{metadataValue.exDatetimeDt012}
+            </if>
+            <if test="metadataValue.exDatetimeDt013 != null and metadataValue.exDatetimeDt013.trim() != ''">
+                AND EX_DATETIME_DT013 = #{metadataValue.exDatetimeDt013}
+            </if>
+            <if test="metadataValue.exDatetimeDt014 != null and metadataValue.exDatetimeDt014.trim() != ''">
+                AND EX_DATETIME_DT014 = #{metadataValue.exDatetimeDt014}
+            </if>
+            <if test="metadataValue.exDatetimeDt015 != null and metadataValue.exDatetimeDt015.trim() != ''">
+                AND EX_DATETIME_DT015 = #{metadataValue.exDatetimeDt015}
+            </if>
+            <if test="metadataValue.exDatetimeDt016 != null and metadataValue.exDatetimeDt016.trim() != ''">
+                AND EX_DATETIME_DT016 = #{metadataValue.exDatetimeDt016}
+            </if>
+            <if test="metadataValue.exDatetimeDt017 != null and metadataValue.exDatetimeDt017.trim() != ''">
+                AND EX_DATETIME_DT017 = #{metadataValue.exDatetimeDt017}
+            </if>
+            <if test="metadataValue.exDatetimeDt018 != null and metadataValue.exDatetimeDt018.trim() != ''">
+                AND EX_DATETIME_DT018 = #{metadataValue.exDatetimeDt018}
+            </if>
+            <if test="metadataValue.exDatetimeDt019 != null and metadataValue.exDatetimeDt019.trim() != ''">
+                AND EX_DATETIME_DT019 = #{metadataValue.exDatetimeDt019}
+            </if>
+            <if test="metadataValue.exDatetimeDt020 != null and metadataValue.exDatetimeDt020.trim() != ''">
+                AND EX_DATETIME_DT020 = #{metadataValue.exDatetimeDt020}
+            </if>
+            <if test="metadataValue.exTextT001 != null and metadataValue.exTextT001.trim() != ''">
+                AND EX_TEXT_T001 = #{metadataValue.exTextT001}
+            </if>
+            <if test="metadataValue.exTextT002 != null and metadataValue.exTextT002.trim() != ''">
+                AND EX_TEXT_T002 = #{metadataValue.exTextT002}
+            </if>
+            <if test="metadataValue.exTextT003 != null and metadataValue.exTextT003.trim() != ''">
+                AND EX_TEXT_T003 = #{metadataValue.exTextT003}
+            </if>
+            <if test="metadataValue.exTextT004 != null and metadataValue.exTextT004.trim() != ''">
+                AND EX_TEXT_T004 = #{metadataValue.exTextT004}
+            </if>
+            <if test="metadataValue.exTextT005 != null and metadataValue.exTextT005.trim() != ''">
+                AND EX_TEXT_T005 = #{metadataValue.exTextT005}
+            </if>
+            <if test="metadataValue.exTextT006 != null and metadataValue.exTextT006.trim() != ''">
+                AND EX_TEXT_T006 = #{metadataValue.exTextT006}
+            </if>
+            <if test="metadataValue.exTextT007 != null and metadataValue.exTextT007.trim() != ''">
+                AND EX_TEXT_T007 = #{metadataValue.exTextT007}
+            </if>
+            <if test="metadataValue.exTextT008 != null and metadataValue.exTextT008.trim() != ''">
+                AND EX_TEXT_T008 = #{metadataValue.exTextT008}
+            </if>
+            <if test="metadataValue.exTextT009 != null and metadataValue.exTextT009.trim() != ''">
+                AND EX_TEXT_T009 = #{metadataValue.exTextT009}
+            </if>
+            <if test="metadataValue.exTextT010 != null and metadataValue.exTextT010.trim() != ''">
+                AND EX_TEXT_T010 = #{metadataValue.exTextT010}
+            </if>
+            <if test="metadataValue.exTextT011 != null and metadataValue.exTextT011.trim() != ''">
+                AND EX_TEXT_T011 = #{metadataValue.exTextT011}
+            </if>
+            <if test="metadataValue.exTextT012 != null and metadataValue.exTextT012.trim() != ''">
+                AND EX_TEXT_T012 = #{metadataValue.exTextT012}
+            </if>
+            <if test="metadataValue.exTextT013 != null and metadataValue.exTextT013.trim() != ''">
+                AND EX_TEXT_T013 = #{metadataValue.exTextT013}
+            </if>
+            <if test="metadataValue.exTextT014 != null and metadataValue.exTextT014.trim() != ''">
+                AND EX_TEXT_T014 = #{metadataValue.exTextT014}
+            </if>
+            <if test="metadataValue.exTextT015 != null and metadataValue.exTextT015.trim() != ''">
+                AND EX_TEXT_T015 = #{metadataValue.exTextT015}
+            </if>
+            <if test="metadataValue.exTextT016 != null and metadataValue.exTextT016.trim() != ''">
+                AND EX_TEXT_T016 = #{metadataValue.exTextT016}
+            </if>
+            <if test="metadataValue.exTextT017 != null and metadataValue.exTextT017.trim() != ''">
+                AND EX_TEXT_T017 = #{metadataValue.exTextT017}
+            </if>
+            <if test="metadataValue.exTextT018 != null and metadataValue.exTextT018.trim() != ''">
+                AND EX_TEXT_T018 = #{metadataValue.exTextT018}
+            </if>
+            <if test="metadataValue.exTextT019 != null and metadataValue.exTextT019.trim() != ''">
+                AND EX_TEXT_T019 = #{metadataValue.exTextT019}
+            </if>
+            <if test="metadataValue.exTextT020 != null and metadataValue.exTextT020.trim() != ''">
+                AND EX_TEXT_T020 = #{metadataValue.exTextT020}
+            </if>
+            <if test="metadataValue.exTextT021 != null and metadataValue.exTextT021.trim() != ''">
+                AND EX_TEXT_T021 = #{metadataValue.exTextT021}
+            </if>
+            <if test="metadataValue.exTextT022 != null and metadataValue.exTextT022.trim() != ''">
+                AND EX_TEXT_T022 = #{metadataValue.exTextT022}
+            </if>
+            <if test="metadataValue.exTextT023 != null and metadataValue.exTextT023.trim() != ''">
+                AND EX_TEXT_T023 = #{metadataValue.exTextT023}
+            </if>
+            <if test="metadataValue.exTextT024 != null and metadataValue.exTextT024.trim() != ''">
+                AND EX_TEXT_T024 = #{metadataValue.exTextT024}
+            </if>
+            <if test="metadataValue.exTextT025 != null and metadataValue.exTextT025.trim() != ''">
+                AND EX_TEXT_T025 = #{metadataValue.exTextT025}
+            </if>
+            <if test="metadataValue.exTextT026 != null and metadataValue.exTextT026.trim() != ''">
+                AND EX_TEXT_T026 = #{metadataValue.exTextT026}
+            </if>
+            <if test="metadataValue.exTextT027 != null and metadataValue.exTextT027.trim() != ''">
+                AND EX_TEXT_T027 = #{metadataValue.exTextT027}
+            </if>
+            <if test="metadataValue.exTextT028 != null and metadataValue.exTextT028.trim() != ''">
+                AND EX_TEXT_T028 = #{metadataValue.exTextT028}
+            </if>
+            <if test="metadataValue.exTextT029 != null and metadataValue.exTextT029.trim() != ''">
+                AND EX_TEXT_T029 = #{metadataValue.exTextT029}
+            </if>
+        </where>
+    </select>
+    <select id="getMetadataValueByIds" resultMap="metadataValueMap">
+        SELECT
+        id,
+        resource_id,
+        parent_id,
+        model_id,
+        name_en,
+        name_cn,
+        range_id,
+        model_type,
+        status,
+        create_time,
+        update_time,
+        is_standard,
+        EX_VARCHAR_L50_VC001,
+        EX_VARCHAR_L50_VC002,
+        EX_VARCHAR_L50_VC003,
+        EX_VARCHAR_L50_VC004,
+        EX_VARCHAR_L50_VC005,
+        EX_VARCHAR_L50_VC006,
+        EX_VARCHAR_L50_VC007,
+        EX_VARCHAR_L50_VC008,
+        EX_VARCHAR_L50_VC009,
+        EX_VARCHAR_L50_VC010,
+        EX_VARCHAR_L50_VC011,
+        EX_VARCHAR_L50_VC012,
+        EX_VARCHAR_L50_VC013,
+        EX_VARCHAR_L50_VC014,
+        EX_VARCHAR_L50_VC015,
+        EX_VARCHAR_L50_VC016,
+        EX_VARCHAR_L50_VC017,
+        EX_VARCHAR_L50_VC018,
+        EX_VARCHAR_L50_VC019,
+        EX_VARCHAR_L50_VC020,
+        EX_VARCHAR_L50_VC021,
+        EX_VARCHAR_L50_VC022,
+        EX_VARCHAR_L50_VC023,
+        EX_VARCHAR_L50_VC024,
+        EX_VARCHAR_L50_VC025,
+        EX_VARCHAR_L50_VC026,
+        EX_VARCHAR_L50_VC027,
+        EX_VARCHAR_L50_VC028,
+        EX_VARCHAR_L50_VC029,
+        EX_VARCHAR_L50_VC030,
+        EX_VARCHAR_L50_VC031,
+        EX_VARCHAR_L50_VC032,
+        EX_VARCHAR_L50_VC033,
+        EX_VARCHAR_L50_VC034,
+        EX_VARCHAR_L50_VC035,
+        EX_VARCHAR_L50_VC036,
+        EX_VARCHAR_L50_VC037,
+        EX_VARCHAR_L50_VC038,
+        EX_VARCHAR_L50_VC039,
+        EX_VARCHAR_L50_VC040,
+        EX_VARCHAR_L50_VC041,
+        EX_VARCHAR_L50_VC042,
+        EX_VARCHAR_L50_VC043,
+        EX_VARCHAR_L50_VC044,
+        EX_VARCHAR_L50_VC045,
+        EX_VARCHAR_L50_VC046,
+        EX_VARCHAR_L50_VC047,
+        EX_VARCHAR_L50_VC048,
+        EX_VARCHAR_L50_VC049,
+        EX_VARCHAR_L50_VC050,
+        EX_VARCHAR_L50_VC051,
+        EX_VARCHAR_L50_VC052,
+        EX_VARCHAR_L50_VC053,
+        EX_VARCHAR_L50_VC054,
+        EX_VARCHAR_L50_VC055,
+        EX_VARCHAR_L50_VC056,
+        EX_VARCHAR_L50_VC057,
+        EX_VARCHAR_L50_VC058,
+        EX_VARCHAR_L50_VC059,
+        EX_VARCHAR_L50_VC060,
+        EX_VARCHAR_L50_VC061,
+        EX_VARCHAR_L50_VC062,
+        EX_VARCHAR_L50_VC063,
+        EX_VARCHAR_L50_VC064,
+        EX_VARCHAR_L50_VC065,
+        EX_VARCHAR_L50_VC066,
+        EX_VARCHAR_L50_VC067,
+        EX_VARCHAR_L50_VC068,
+        EX_VARCHAR_L50_VC069,
+        EX_VARCHAR_L50_VC070,
+        EX_VARCHAR_L50_VC071,
+        EX_VARCHAR_L50_VC072,
+        EX_VARCHAR_L50_VC073,
+        EX_VARCHAR_L50_VC074,
+        EX_VARCHAR_L50_VC075,
+        EX_VARCHAR_L50_VC076,
+        EX_VARCHAR_L50_VC077,
+        EX_VARCHAR_L50_VC078,
+        EX_VARCHAR_L50_VC079,
+
+        EX_VARCHAR_L100_VC001,
+        EX_VARCHAR_L100_VC002,
+        EX_VARCHAR_L100_VC003,
+        EX_VARCHAR_L100_VC004,
+        EX_VARCHAR_L100_VC005,
+        EX_VARCHAR_L100_VC006,
+        EX_VARCHAR_L100_VC007,
+        EX_VARCHAR_L100_VC008,
+        EX_VARCHAR_L100_VC009,
+        EX_VARCHAR_L100_VC010,
+        EX_VARCHAR_L100_VC011,
+        EX_VARCHAR_L100_VC012,
+        EX_VARCHAR_L100_VC013,
+        EX_VARCHAR_L100_VC014,
+        EX_VARCHAR_L100_VC015,
+        EX_VARCHAR_L100_VC016,
+        EX_VARCHAR_L100_VC017,
+        EX_VARCHAR_L100_VC018,
+        EX_VARCHAR_L100_VC019,
+        EX_VARCHAR_L100_VC020,
+        EX_VARCHAR_L100_VC021,
+        EX_VARCHAR_L100_VC022,
+        EX_VARCHAR_L100_VC023,
+        EX_VARCHAR_L100_VC024,
+        EX_VARCHAR_L100_VC025,
+        EX_VARCHAR_L100_VC026,
+        EX_VARCHAR_L100_VC027,
+        EX_VARCHAR_L100_VC028,
+        EX_VARCHAR_L100_VC029,
+        EX_VARCHAR_L100_VC030,
+        EX_VARCHAR_L100_VC031,
+        EX_VARCHAR_L100_VC032,
+        EX_VARCHAR_L100_VC033,
+        EX_VARCHAR_L100_VC034,
+        EX_VARCHAR_L100_VC035,
+        EX_VARCHAR_L100_VC036,
+        EX_VARCHAR_L100_VC037,
+        EX_VARCHAR_L100_VC038,
+        EX_VARCHAR_L100_VC039,
+        EX_VARCHAR_L100_VC040,
+        EX_VARCHAR_L100_VC041,
+        EX_VARCHAR_L100_VC042,
+        EX_VARCHAR_L100_VC043,
+        EX_VARCHAR_L100_VC044,
+        EX_VARCHAR_L100_VC045,
+        EX_VARCHAR_L100_VC046,
+        EX_VARCHAR_L100_VC047,
+        EX_VARCHAR_L100_VC048,
+        EX_VARCHAR_L100_VC049,
+        EX_VARCHAR_L100_VC050,
+        EX_VARCHAR_L100_VC051,
+        EX_VARCHAR_L100_VC052,
+        EX_VARCHAR_L100_VC053,
+        EX_VARCHAR_L100_VC054,
+        EX_VARCHAR_L100_VC055,
+        EX_VARCHAR_L100_VC056,
+        EX_VARCHAR_L100_VC057,
+        EX_VARCHAR_L100_VC058,
+        EX_VARCHAR_L100_VC059,
+        EX_VARCHAR_L100_VC060,
+        EX_VARCHAR_L100_VC061,
+        EX_VARCHAR_L100_VC062,
+        EX_VARCHAR_L100_VC063,
+        EX_VARCHAR_L100_VC064,
+        EX_VARCHAR_L100_VC065,
+        EX_VARCHAR_L100_VC066,
+        EX_VARCHAR_L100_VC067,
+        EX_VARCHAR_L100_VC068,
+        EX_VARCHAR_L100_VC069,
+        EX_VARCHAR_L100_VC070,
+        EX_VARCHAR_L100_VC071,
+        EX_VARCHAR_L100_VC072,
+        EX_VARCHAR_L100_VC073,
+        EX_VARCHAR_L100_VC074,
+        EX_VARCHAR_L100_VC075,
+        EX_VARCHAR_L100_VC076,
+        EX_VARCHAR_L100_VC077,
+        EX_VARCHAR_L100_VC078,
+        EX_VARCHAR_L100_VC079,
+
+        EX_DATETIME_DT001,
+        EX_DATETIME_DT002,
+        EX_DATETIME_DT003,
+        EX_DATETIME_DT004,
+        EX_DATETIME_DT005,
+        EX_DATETIME_DT006,
+        EX_DATETIME_DT007,
+        EX_DATETIME_DT008,
+        EX_DATETIME_DT009,
+        EX_DATETIME_DT010,
+        EX_DATETIME_DT011,
+        EX_DATETIME_DT012,
+        EX_DATETIME_DT013,
+        EX_DATETIME_DT014,
+        EX_DATETIME_DT015,
+        EX_DATETIME_DT016,
+        EX_DATETIME_DT017,
+        EX_DATETIME_DT018,
+        EX_DATETIME_DT019,
+        EX_DATETIME_DT020,
+        EX_TEXT_T001,
+        EX_TEXT_T002,
+        EX_TEXT_T003,
+        EX_TEXT_T004,
+        EX_TEXT_T005,
+        EX_TEXT_T006,
+        EX_TEXT_T007,
+        EX_TEXT_T008,
+        EX_TEXT_T009,
+        EX_TEXT_T010,
+        EX_TEXT_T011,
+        EX_TEXT_T012,
+        EX_TEXT_T013,
+        EX_TEXT_T014,
+        EX_TEXT_T015,
+        EX_TEXT_T016,
+        EX_TEXT_T017,
+        EX_TEXT_T018,
+        EX_TEXT_T019,
+        EX_TEXT_T020,
+        EX_TEXT_T021,
+        EX_TEXT_T022,
+        EX_TEXT_T023,
+        EX_TEXT_T024,
+        EX_TEXT_T025,
+        EX_TEXT_T026,
+        EX_TEXT_T027,
+        EX_TEXT_T028,
+        EX_TEXT_T029
+        FROM mdm_metadata_value where FIND_IN_SET(resource_id,#{ids})
+    </select>
+
+    <select  id="listModelResourceTree" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select t.*
+        from mdm_model_resource_v t
+        <where>
+            <if test="roleIds.size() > 0">
+                t.resource_id in( select resource_id from mdm_role_resource_permission
+                <where>role_id in
+                    <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </where>
+                )
+            </if>
+        </where>
+        order by parent_uuid desc
+    </select>
+    <select id="listModelResourceTreeByModelId" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select t.* from mdm_model_resource_v t where t.model_id = #{modelId}
+        <if test="roleIds.size() > 0">
+            and t.resource_id in( select resource_id from mdm_role_resource_permission
+            <where>role_id in
+                <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </where>
+            )
+        </if>
+        order by parent_uuid desc
+    </select>
+    <select id="listRoleModelResourceTree"
+            resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select tt.*,p.range_values,p.custom_conditions,p.cancel_data_masking,p.permission_update,p.permission_delete,p.permission_create
+        from mdm_model_resource_v tt join mdm_role_resource_permission p
+            on tt.resource_id = p.resource_id and tt.parent_resource_id = p.parent_resource_id
+            where p.role_id = #{roleId}
+            order by tt.parent_uuid desc
+    </select>
+
+    <!--<select id="listModelParentResourceTree"
+            resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select * from (
+        select resource_id uuid ,CONCAT_WS('-',parent_id,model_id) parent_uuid, resource_id ,
+        parent_id parent_resource_id,model_id ,name_cn,name_en,'INS' type, status,id , '' model_type
+        from mdm_metadata_value
+        union all
+        select CONCAT_WS('-',v.resource_id,m.resource_id) uuid,v.resource_id parent_uuid,m.resource_id,
+        v.resource_id parent_resource_id,m.resource_id model_id ,
+        m.name_cn,m.name_en,'MOD' type,m.status,m.id, m.model_type
+        from mdm_metadata_value v join mdm_metadata_model m on m.parent_resource_id=v.model_id
+        union all
+        select CONCAT_WS('-',v.parent_id,m.resource_id) uuid,'' parent_uuid,m.resource_id,
+        '' parent_resource_id,m.resource_id model_id ,
+        m.name_cn,m.name_en,'MOD' type,m.status,m.id, m.model_type
+        from mdm_metadata_value v join mdm_metadata_model m on m.resource_id = v.model_id
+        where v.parent_id = ''
+        union
+        select CONCAT_WS('-','',m.resource_id) uuid,'' parent_uuid,m.resource_id,
+        '' parent_resource_id,m.resource_id model_id ,
+        m.name_cn,m.name_en ,'MOD' type,m.status,m.id, m.model_type
+        from mdm_metadata_model m where m.parent_resource_id = ''
+        ) t
+        <where>
+
+            <if test="parentUuid != null and parentUuid != ''">
+                t.parent_uuid =#{parentUuid}
+            </if>
+            <if test="parentUuid == null or parentUuid==''">
+                t.parent_uuid = ''
+            </if>
+        </where>
+        order by t.parent_uuid desc
+    </select>-->
+    <!--懒加载树形结构的查询语句-->
+    <select id="listModelResourceLazyTree" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select * from mdm_model_resource_v where parent_uuid = #{parentUuid}
+    </select>
+
+    <select id="listModelResourceByUuid" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select * from mdm_model_resource_v where 1=1
+
+        <if test="uuid != null and uuid.trim()!=''">
+            AND uuid = #{uuid}
+        </if>
+    </select>
+    <!--根据条件模糊查询树形结构-->
+    <!--<select id="queryModelResourceLazyTree" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        SELECT v.*
+        FROM (
+        SELECT @r AS _uuid,
+        (
+            SELECT @r := GROUP_CONCAT(parent_uuid)
+            FROM mdm_model_resource_v
+            WHERE FIND_IN_SET(uuid,_uuid)
+        ) AS parent_id,
+        @l := @l + 1 AS LEVEL
+        FROM (
+            select @r := GROUP_CONCAT(uuid),@l :=0 from mdm_model_resource_v
+            <where>
+                name_cn like concat(concat('%',#{queryString}),'%')
+                OR  name_en like concat(concat('%',#{queryString}),'%')
+            </where>
+        ) var,mdm_model_resource_v
+        WHERE @r  != ''
+        ) t
+        JOIN mdm_model_resource_v v ON FIND_IN_SET(uuid,_uuid)
+    </select>-->
+    <!--mysql查询深度树不给力，只能返回扁平化数据-->
+    <select id="queryModelResourceLazyTree" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select * from mdm_model_resource_v
+        where name_cn like concat(concat('%',#{queryString}),'%')
+            OR  name_en like concat(concat('%',#{queryString}),'%')
+    </select>
+
+
+    <!-- 根据元数据英文名查找元数据信息，忽略大小写 -->
+    <select id="getMetadataValueListByName"  resultMap="metadataValueMap">
+        SELECT
+        id,
+        resource_id,
+        parent_id,
+        model_id,
+        name_en,
+        name_cn,
+        range_id,
+        model_type,
+        status,
+        create_time,
+        update_time FROM mdm_metadata_value where 1=1
+
+        <if test="metadataValue.isStandard != null">
+            AND is_standard = ${metadataValue.isStandard}
+        </if>
+        <if test="metadataValue.nameEn != null and metadataValue.nameEn.trim() != ''">
+            AND UPPER(name_en) = UPPER(#{metadataValue.nameEn})
+        </if>
+        <if test="metadataValue.nameCn != null and metadataValue.nameCn.trim() != ''">
+            AND UPPER(name_cn) = UPPER(#{metadataValue.nameCn})
+        </if>
+        <if test="metadataValue.modelType != null and metadataValue.modelType.trim() != ''">
+            AND model_type = #{metadataValue.modelType}
+        </if>
+        <if test="metadataValue.parentId != null and metadataValue.parentId.trim() != ''">
+            AND parent_id = #{metadataValue.parentId}
+        </if>
+        <if test="metadataValue.modelId != null and metadataValue.modelId.trim() != ''">
+            AND model_id = #{metadataValue.modelId}
+        </if>
+    </select>
+    <!-- 根据动态传入的SQL 查询MetaData数据  -->
+    <select id="selectMetaValueByDynSql" flushCache="true" resultType="Map" >
+      select
+        ${sql},
+        id,
+        resource_id,
+        parent_id,
+        model_id,
+        name_en,
+        name_cn,
+        range_id,
+        model_type,
+        status,
+        create_time,
+        update_time
+      from
+        mdm_metadata_value
+      where 1=1
+        <if test="metadataValue.isStandard != null">
+            AND is_standard = ${metadataValue.isStandard}
+        </if>
+        <if test="metadataValue.nameEn != null and metadataValue.nameEn.trim() != ''">
+            AND UPPER(name_en) = UPPER(#{metadataValue.nameEn})
+        </if>
+        <if test="metadataValue.modelType != null and metadataValue.modelType.trim() != ''">
+            AND model_type = #{metadataValue.modelType}
+        </if>
+        <if test="metadataValue.parentId != null and metadataValue.parentId.trim() != ''">
+            AND parent_id = #{metadataValue.parentId}
+        </if>
+        <if test="metadataValue.modelId != null and metadataValue.modelId.trim() != ''">
+            AND model_id = #{metadataValue.modelId}
+        </if>
+        <if test="metadataValue.resourceId != null and metadataValue.resourceId.trim() != ''">
+            AND resource_id = #{metadataValue.resourceId}
+        </if>
+    </select>
+    <select id="selectDistinctMetadata" resultMap="metadataValueMap" >
+        select DISTINCT(name_en),t.*
+        from mdm_metadata_value t
+        where 1=1
+            <if test="metadataValue.isStandard != null">
+                AND is_standard = ${metadataValue.isStandard}
+            </if>
+            <if test="metadataValue.nameEn != null and metadataValue.nameEn.trim() != ''">
+                AND UPPER(name_en) = UPPER(#{metadataValue.nameEn})
+            </if>
+            <if test="metadataValue.modelType != null and metadataValue.modelType.trim() != ''">
+                AND model_type = #{metadataValue.modelType}
+            </if>
+            <if test="metadataValue.parentId != null and metadataValue.parentId.trim() != ''">
+                AND parent_id = #{metadataValue.parentId}
+            </if>
+            <if test="metadataValue.modelId != null and metadataValue.modelId.trim() != ''">
+                AND model_id = #{metadataValue.modelId}
+            </if>
+          GROUP BY  name_en
+    </select>
+    <select id="selectDbByCloumn" resultMap="metadataValueMap">
+        select
+          id,
+          resource_id,
+          parent_id,
+          model_id,
+          name_en,
+          name_cn,
+          range_id,
+          model_type,
+          status,
+          create_time,
+          update_time
+        from mdm_metadata_value
+        where  resource_id = (select parent_id
+                              from mdm_metadata_value
+                              where resource_id = (select parent_id
+                                                    from mdm_metadata_value
+                                                    where resource_id = #{metadataValue.resourceId}
+                                                    )
+                              )
+    </select>
+    <select id="selectNotInElement" resultMap="metadataValueMap">
+        select * from  mdm_metadata_value t
+        where t.model_id = #{columnModelId}
+        and t.parent_id = #{tbResouceId}
+        and t.name_en not in (select name_en from mdm_metadata_value
+                              where model_id=#{elementModelId}
+                              and parent_id=#{dbResouceId}
+                              )
+    </select>
+
+   <!--<parameterMap id="paramMap" type="HashMap">
+        <parameter property="dbResourceId" jdbcType="VARCHAR" mode="IN"/>
+        &lt;!&ndash;<parameter property="number"  javaType="java.lang.String"  mode="OUT"/>&ndash;&gt;
+    </parameterMap>-->
+
+    <select id="callCreateElementItem" statementType="CALLABLE"  resultType="String">
+        { CALL MDM_ITEM_AUTO_GEN(#{paramMap.dbResourceId,mode=IN},null,null)}
+    </select>
+
+    <select id="getAllItem" resultMap="elementResultMap">
+      select v.resource_id id,IFNULL(v.name_cn,v.name_en) name,
+             v.model_type modelType,v.model_id modelId,v.parent_id parentId, r.source_id sourceId,r.target_id targetId
+      from mdm_resource_reference r
+      left join mdm_metadata_value v on v.resource_id = r.source_id
+      where r.ref_type = 'ITEM_ITEM'
+    </select>
+
+    <select id="listRoleModelResourcePage"
+            resultType="com.clinbrain.bd.mdm.MetadataManage.dto.ModelResourceTree">
+        select
+        tt.*,p.range_values,p.custom_conditions,p.cancel_data_masking,p.permission_update,p.permission_delete,p.permission_create
+        from mdm_model_resource_v tt join mdm_role_resource_permission p
+        on tt.resource_id = p.resource_id and tt.parent_resource_id = p.parent_resource_id
+        where p.role_id = #{roleId}
+        <if test="resourceIds != null">
+            AND tt.resource_id in
+            <foreach item="item" index="index" collection="resourceIds"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by tt.parent_uuid desc
+    </select>
+</mapper>

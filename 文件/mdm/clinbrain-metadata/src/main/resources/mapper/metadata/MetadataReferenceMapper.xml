@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.MetadataReferenceMapper">
+
+    <resultMap id="metadataReferenceMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataReference">
+        <result property="sourceId" column="source_id"/>
+        <result property="targetId" column="target_id"/>
+        <result property="sourceParentId" column="source_parent_id"/>
+        <result property="targetParentId" column="target_parent_id"/>
+        <result property="refType" column="ref_type"/>
+    </resultMap>
+
+    <select id="getMetadataReferencePage" resultMap="metadataReferenceMap">
+        select * from mdm_resource_reference where 1=1
+        <if test="metadataReference.sourceId != null and metadataReference.sourceId.trim() != ''">
+            AND source_id = #{metadataReference.sourceId}
+        </if>
+        <if test="metadataReference.targetId != null and metadataReference.targetId.trim() != ''">
+            AND target_id = #{metadataReference.targetId}
+        </if>
+    </select>
+
+    <select id="getMetadataReferenceChildPage" resultMap="metadataReferenceMap">
+        select * from mdm_resource_reference where 1=1
+        <if test="ids != null and ids.trim() != ''">
+            AND source_id in (#{ids})
+        </if>
+    </select>
+
+    <update id="updateReference">
+    update mdm_resource_reference set source_id = #{newSource} where
+     source_id = #{metadataReference.sourceId}
+   </update>
+
+    <delete id="deleteReference">
+        delete from mdm_resource_reference where 1=1
+        <if test="metadataReference.sourceId != null and metadataReference.sourceId.trim() != ''">
+            AND source_id = #{metadataReference.sourceId}
+        </if>
+        <if test="metadataReference.targetId != null and metadataReference.targetId.trim() != ''">
+            AND target_id = #{metadataReference.targetId}
+        </if>
+        <if test="metadataReference.sourceParentId != null and metadataReference.sourceParentId.trim() != ''">
+            AND source_parent_id = #{metadataReference.sourceParentId}
+        </if>
+        <if test="metadataReference.targetParentId != null and metadataReference.targetParentId.trim() != ''">
+            AND target_parent_id = #{metadataReference.targetParentId}
+        </if>
+    </delete>
+    <select id="getMetaDataReferenceList" resultType="java.util.Map">
+        select * from mdm_metadata_reference_v where 1=1
+        <if test=" sourceParentId!= null and sourceParentId.trim() != ''">
+            AND sourceParentId = #{sourceParentId}
+        </if>
+        <if test=" targetParentId!= null and targetParentId.trim() != ''">
+            AND targetParentId = #{targetParentId}
+        </if>
+    </select>
+    <select id="getMetaDataReferenceListByID" resultType="java.util.Map">
+        select * from mdm_metadata_reference_v where 1=1
+        <if test=" sourceId!= null and sourceId.trim() != ''">
+            AND sourceId = #{sourceId}
+        </if>
+        <if test=" targetId!= null and targetId.trim() != ''">
+            AND targetId = #{targetId}
+        </if>
+    </select>
+    <select id="getMetaDataReferenceListByIDList" resultType="java.util.Map">
+        select * from mdm_metadata_reference_v where 1=1
+        <if test=" sourceIdList!= null and sourceIdList.size()>0 != ''">
+            and sourceId in
+            <foreach collection="sourceIdList" item="item" open="('" separator="','" close="')">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getMetaDataConnectListByID" resultType="java.util.Map">
+        select * from mdm_metadata_connect_v where 1=1
+        <if test=" sourceId!= null and sourceId.trim() != ''">
+            AND sourceId = #{sourceId}
+        </if>
+        <if test=" targetId!= null and targetId.trim() != ''">
+            AND targetId = #{targetId}
+        </if>
+    </select>
+
+    <select id="getMetaDataConnectListByIDList" resultType="java.util.Map">
+        select * from mdm_metadata_connect_v where 1=1
+        <if test=" sourceIdList!= null and sourceIdList.size()>0 != ''">
+         and sourceId in
+            <foreach collection="sourceIdList" item="item" open="('" separator="','" close="')">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+
+    <select id="getMetaDataConnectListFromConnect" resultType="java.util.Map">
+      select * from mdm_element_item_relation where 1=1
+        <if test=" sourceId!= null and sourceId.trim() != ''">
+            AND source_id = #{sourceId}
+        </if>
+        <if test=" targetId!= null and targetId.trim() != ''">
+            AND target_id = #{targetId}
+        </if>
+    </select>
+
+    <!-- 根据resourceid获取数据信息和父数据信息 -->
+    <select id="getMetadataInfoWithPatentInfoByID" resultType="java.util.Map">
+      select v.resource_id,v.parent_id,v.name_en,v.name_cn,v.model_type,v1.name_cn parent_name_en,
+      v1.name_cn parent_name_cn,v1.model_type parent_model_type from mdm_metadata_value v
+        left join mdm_metadata_value v1
+          on v.parent_id = v1.resource_id where v.resource_id = #{resourceId}
+    </select>
+</mapper>

@@ -1,0 +1,164 @@
+@charset "utf-8";
+
+
+*{overflow:hidden }
+
+body{
+	width: 100%;
+	height: 100%;
+	background-color: #0a112d;
+}
+
+
+.m-2-2{
+	margin:20px 0;
+}
+
+.m-2-2 input{
+	width:90%;
+	height:38px;
+	background:transparent;
+	outline:none;
+	color:white;
+	text-align: center;
+	border:2px solid #3a8ee6;
+	border-radius:20px;
+	font-size: 16px;
+	letter-spacing: 4px;
+	
+}
+
+.m-2-2-1 input{
+	width:190px;
+	height:30px;
+	background:transparent;
+	outline:none;
+	color:white;
+	text-align: center;
+	border:3px solid #0095ff;
+	border-radius:20px;
+	font-size: 16px;
+	letter-spacing: 4px;
+	
+}
+.m-2-2-1 img{
+	vertical-align:bottom;
+	border-radius:20px;
+}
+
+.m-2-2 input:focus{
+	background:rgba(22, 94, 128, 0.67);
+}
+.m-2-2 button{
+	width:90%;
+	height:40px;
+	margin-top:0px;
+	border-radius:20px;
+	background-color: #3a8ee6;
+	border:none;
+	color:white;
+	font-size: 20px;
+	letter-spacing: 7px;
+	outline:none;
+	margin-top: 15px;
+}
+.m-2-2 button:hover{
+	opacity: 0.9;
+	cursor: pointer;
+
+}
+
+ .login-container {
+        width: 100%;
+        height: 100%;
+        background-color: #0a112d;
+    }
+
+        .login-container > .header {
+            background-color: rgba(7,14,41,0.6);
+            width: 100%;
+            height: 55px;
+            line-height: 55px;
+        }
+
+            .login-container > .header img {
+                margin-left: 20px;
+                margin-top: 10px;
+                float: left;
+            }
+
+    .login-content > img {
+        z-index: -1;
+    }
+
+    .login-container > .header span {
+        float: left;
+        color: #e6e6e6;
+        font-size: 24px;
+        font-family: '微软雅黑';
+        margin-left: 10px;
+    }
+
+    .login-content {
+        height: calc(100% - 95px);
+        max-height: calc(100% - 95px);
+        width: 100%;
+        text-align: center;
+        overflow-y: hidden;
+    }
+
+        .login-content .container {
+            height: 427px;
+            width: 1180px;
+            text-align: left;
+            margin: 100px auto;
+        }
+
+    .login-footer {
+        height: 40px;
+        line-height: 40px;
+        background-color: rgba(9,22,57,0.64);
+        width: 100%;
+    }
+
+        .login-footer img {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .login-footer .right {
+            float: right;
+            margin-right: 20px;
+            font-size: 12px;
+            color: #cccccc;
+            font-family: '微软雅黑';
+            height: 40px;
+            line-height: 40px;
+        }
+
+    .login-container .login {
+        width: 396px;
+        height: 396px;
+        border: 2px solid rgba(170,233,251,0.1);
+        background-color: rgba(5,66,167,0.1);
+        float: right;
+        border-radius: 4px;
+    }
+
+        .login-container .login > .header {
+            font-size: 36px;
+            margin-top: 30px;
+            margin-bottom: 40px;
+            color: #ffffff;
+            text-align: center;
+            font-family: '微软雅黑';
+            font-weight: bold;
+        }
+
+        .login-container .login > div:nth-child(3) {
+            margin-top: 40px;
+        }
+
+        .login-container .login > div:nth-child(4), .login-container .login > div:nth-child(5) {
+            margin-top: 30px;
+        }

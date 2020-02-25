@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.MetadataPropertiesMapper">
+
+  <resultMap id="metadataPropertiesMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataProperties">
+                  <id property="id" column="id"/>
+                        <result property="resourceId" column="resource_id"/>
+                        <result property="modelResourceId" column="model_resource_id"/>
+                        <result property="nameCn" column="name_cn"/>
+                        <result property="nameEn" column="name_en"/>
+                        <result property="dataType" column="data_type"/>
+                        <result property="dataLength" column="data_length"/>
+                        <result property="showType" column="show_type"/>
+                        <result property="cascadeProperties" column="cascade_properties"/>
+                        <result property="showFormat" column="show_format"/>
+                        <result property="valueScope" column="value_scope"/>
+                        <result property="mappingColumn" column="mapping_column"/>
+                        <result property="mappingField" column="mapping_field"/>
+                        <result property="createTime" column="create_time"/>
+                        <result property="updateTime" column="update_time"/>
+            </resultMap>
+
+  <!--metadataProperties简单分页查询-->
+      <select id="getMetadataPropertiesPage" resultMap="metadataPropertiesMap">
+        SELECT
+                      id,
+                            resource_id,
+                            model_resource_id,
+                            name_cn,
+                            name_en,
+                            data_type,
+                            data_length,
+                            show_type,
+                            cascade_properties,
+                            show_format,
+                            value_scope,
+                            mapping_column,
+                            mapping_field,
+                            create_time,
+                            update_time
+                  FROM mdm_metadata_properties
+        <where>
+            <if test="metadataProperties.id != null and metadataProperties.id.trim() != ''">
+              AND id = #{metadataProperties.id}
+            </if>
+                  <if test="metadataProperties.resourceId != null and metadataProperties.resourceId.trim() != ''">
+              AND resource_id = #{metadataProperties.resourceId}
+            </if>
+                  <if test="metadataProperties.modelResourceId != null and metadataProperties.modelResourceId.trim() != ''">
+              AND model_resource_id = #{metadataProperties.modelResourceId}
+            </if>
+                  <if test="metadataProperties.nameCn != null and metadataProperties.nameCn.trim() != ''">
+              AND name_cn = #{metadataProperties.nameCn}
+            </if>
+                  <if test="metadataProperties.nameEn != null and metadataProperties.nameEn.trim() != ''">
+              AND name_en = #{metadataProperties.nameEn}
+            </if>
+                  <if test="metadataProperties.dataType != null and metadataProperties.dataType.trim() != ''">
+              AND data_type = #{metadataProperties.dataType}
+            </if>
+                  <if test="metadataProperties.dataLength != null and metadataProperties.dataLength.trim() != ''">
+              AND data_length = #{metadataProperties.dataLength}
+            </if>
+                  <if test="metadataProperties.showType != null and metadataProperties.showType.trim() != ''">
+              AND show_type = #{metadataProperties.showType}
+            </if>
+                  <if test="metadataProperties.showFormat != null and metadataProperties.showFormat.trim() != ''">
+              AND show_format = #{metadataProperties.showFormat}
+            </if>
+                  <if test="metadataProperties.valueScope != null and metadataProperties.valueScope.trim() != ''">
+              AND value_scope = #{metadataProperties.valueScope}
+            </if>
+                  <if test="metadataProperties.mappingColumn != null and metadataProperties.mappingColumn.trim() != ''">
+              AND mapping_column = #{metadataProperties.mappingColumn}
+            </if>
+                  <if test="metadataProperties.mappingField != null and metadataProperties.mappingField.trim() != ''">
+              AND mapping_field = #{metadataProperties.mappingField}
+            </if>
+                  <if test="metadataProperties.createTime != null and metadataProperties.createTime.trim() != ''">
+              AND create_time = #{metadataProperties.createTime}
+            </if>
+                  <if test="metadataProperties.updateTime != null and metadataProperties.updateTime.trim() != ''">
+              AND update_time = #{metadataProperties.updateTime}
+            </if>
+              </where>
+      </select>
+      <!--metadataProperties生成自动映射列普通的 默认50长度 -->
+      <select id="generateMetadataPropertiesMappingColumnNormal"  resultType="String">
+        select column_name from mdm_columns where id =
+        (select MIN(id) from mdm_columns where column_name not in (
+            select mapping_column from mdm_metadata_properties where model_resource_id = #{metadataProperties.modelResourceId}
+        ) and  data_length >= #{metadataProperties.dataLength})
+      </select>
+      <!--metadataProperties生成自动映射列特殊的eg:datetime  text-->
+      <select id="generateMetadataPropertiesMappingColumnSpecial"  resultType="String">
+        select column_name from mdm_columns where id =
+        (select MIN(id) from mdm_columns where column_name not in (
+            select mapping_column from mdm_metadata_properties where model_resource_id = #{metadataProperties.modelResourceId}
+        ) and  data_type = #{metadataProperties.dataType})
+      </select>
+    <update id="updateMetadataPropertiesMappingColumn">
+        update mdm_metadata_properties set mapping_column = #{metadataProperties.mappingColumn},mapping_field = #{metadataProperties.mappingField} where resource_id = #{metadataProperties.resourceId}
+    </update>
+    <select id="selectColumnSql" resultType="String" >
+        select GROUP_CONCAT(col) as columns_sql
+        from(
+          select model_resource_id, concat(mapping_column,' as `',UPPER(name_en),'`') as col from mdm_metadata_properties
+          where model_resource_id = #{metadataProperties.modelResourceId}
+        ) t
+    </select>
+
+
+</mapper>

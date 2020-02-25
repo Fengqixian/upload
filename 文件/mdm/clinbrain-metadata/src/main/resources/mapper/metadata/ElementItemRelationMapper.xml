@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.ElementItemRelationMapper">
+
+    <resultMap id="BaseResultMap" type="com.clinbrain.bd.mdm.MetadataManage.entity.ElementItemRelation">
+        <id property="id" column="id"/>
+        <result property="elementId" column="element_id"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="parentSourceId" column="parent_source_id"/>
+        <result property="targetId" column="target_id"/>
+        <result property="parentTargetId" column="parent_target_id"/>
+    </resultMap>
+
+
+</mapper>

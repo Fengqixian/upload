@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.dataserver.mapper.DataServerMapper">
+  <resultMap id="BaseResultMap" type="com.clinbrain.bd.dataserver.dto.DataServer">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+    <result column="server_desc" jdbcType="VARCHAR" property="serverDesc" />
+    <result column="server_name_cn" jdbcType="VARCHAR" property="serverNameCn" />
+    <result column="return_type" jdbcType="VARCHAR" property="returnType" />
+    <result column="query_sql" jdbcType="LONGVARCHAR" property="querySql" />
+  </resultMap>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from data_server
+  </select>
+  <select id="getDataServerPage" resultMap="BaseResultMap">
+    SELECT
+    id,
+    server_name,
+    server_desc,
+    server_name_cn,
+    return_type,
+    query_sql,
+    datasource_id
+    FROM data_server
+    <where>
+      <if test="dataServer.id != null and dataServer.id.trim() != ''">
+        AND id = #{dataServer.id}
+      </if>
+      <if test="dataServer.serverName != null and dataServer.serverName.trim() != ''">
+        AND server_name = #{dataServer.serverName}
+      </if>
+      <if test="dataServer.serverNameCn != null and dataServer.serverNameCn.trim() != ''">
+        AND server_name_cn = #{dataServer.serverNameCn}
+      </if>
+      <if test="dataServer.serverDesc != null and dataServer.serverDesc.trim() != ''">
+        AND server_desc = #{dataServer.serverDesc}
+      </if>
+      <if test="dataServer.returnType != null and dataServer.returnType.trim() != ''">
+        AND return_type = #{dataServer.returnType}
+      </if>
+      <if test="dataServer.querySql != null and dataServer.querySql.trim() != ''">
+        AND query_sql = #{dataServer.querySql}
+      </if>
+    </where>
+  </select>
+</mapper>

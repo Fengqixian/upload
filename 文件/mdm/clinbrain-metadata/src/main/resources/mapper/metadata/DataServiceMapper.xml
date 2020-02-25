@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.DataServiceMapper">
+  <select id="selectOneByCondition" resultType="com.clinbrain.bd.mdm.MetadataManage.dto.DataService">
+    select
+      p.id project_id,
+      p.resource_id project_res_id,
+      p.project_cname,
+      p.project_ename,
+      s.id service_id,
+      s.resource_id service_res_id,
+      s.model_code,
+      s.version,
+      s.service_cname,
+      s.service_ename,
+      s.`status`,
+      s.service_type,
+      s.service_url,
+      s.request_type,
+      s.return_type,
+      s.doc_url
+    from mdm_api_project p left join mdm_api_service s on p.resource_id = s.project_id
+    where p.project_ename = #{projectName}
+    and s.model_code = #{modelName}
+    and s.service_ename = #{serviceName}
+    <if test="version !=null and version !=''">
+      and s.version = #{version}
+    </if>
+    order by version desc limit 0,1
+  </select>
+</mapper>

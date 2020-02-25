@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.MetaDataLineageMapper">
+
+    <select id="transferColumn2MetadataColumn" parameterType="com.clinbrain.parser.common.entity.Column" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageNode">
+        select  resource_id id,parent_id parentId,IFNULL(name_cn, name_en) name,model_id moduleId from mdm_metadata_value
+        where UPPER(name_en) = #{fName} and parent_id in(
+        select resource_id from mdm_metadata_value where UPPER(name_en) in (
+        <foreach collection="sourceTable" index="index" item="item" separator=",">
+            UPPER(#{item})
+        </foreach>
+        )
+        ) limit 0 ,1
+    </select>
+    <select id="transferColumn2MetadataIndex" parameterType="com.clinbrain.parser.common.entity.Column" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageNode">
+    select resource_id id,parent_id parentId,IFNULL(name_cn, name_en) name,model_id moduleId from mdm_metadata_value  where UPPER(name_cn)=UPPER(#{fName}) or UPPER(name_en)=UPPER(#{fName}) limit 0,1
+  </select>
+    <select id="getLineageTableNode" parameterType="java.util.Set" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageNode">
+        select resource_id id,parent_id parentId,IFNULL(name_cn, name_en) name,true isGroup,model_id moduleId from mdm_metadata_value  where resource_id in
+        (
+        <foreach collection="collection" index="index" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+    <select id="getColumnSourceItems" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+   select id,resource_id,name_en,name_cn,'element_item' as data_type from mdm_data_element element
+    join (SELECT element_id FROM mdm_element_column_ref
+   where column_id = ${id}) ref on element.id = ref.element_id
+  </select>
+
+    <select id="getColumnSourceTables" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+    select id,resource_id,name_en,name_cn,'table' as data_type,db_name from (select * from (select * from mdm_technology_table t join (
+  select table_id from mdm_technology_column where id = ${id}) ref on t.id = ref.table_id) tt
+	join (select id as databaseId, IFNULL(name_cn, name_en) as db_name from  mdm_technology_database) db on tt.database_id = db.databaseId) st
+  </select>
+
+    <select id="getItemSourceColumns" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+   select id,resource_id,name_en,name_cn,'column' as data_type from mdm_technology_column tcolumn
+   join (SELECT column_id FROM mdm_element_column_ref
+   where element_id = ${id}) ref   on tcolumn.id = ref.column_id order by id
+  </select>
+
+    <select id="getItemDataSets" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+   select id,resource_id,name_en,name_cn,'element_set' as data_type from mdm_dataset_category dataset
+    join ( select dataset_id from mdm_dataset_element_ref
+    where element_id = ${id}) ref on dataset.id = ref.dataset_id  order by id
+  </select>
+
+    <select id ="getTableEtlSourceTables" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+      select st.id,st.resource_id,st.name_en,st.name_cn,'table' as data_type,st.db_name from (select * from (
+select * from mdm_technology_table t join(
+      select etl_id,source_table_id from mdm_technology_etl_source etlSource join (
+      SELECT id as etlid FROM mdm_technology_etl where target_table_id = ${id}) etl
+      on etlSource.etl_id = etl.etlid) etlTable on t.id = etlTable.source_table_id) tt
+			join (select id as databaseId, IFNULL(name_cn, name_en) as db_name from mdm_technology_database) db on tt.database_id = db.databaseId ) st
+  </select>
+
+    <select id="getTableETLInfo" resultType="java.util.Map">
+        select * from mdm_technology_etl
+        <where>
+            <if test="lineage.id != null">
+                AND target_table_id = ${lineage.id}
+            </if>
+            <if test ="lineage.nameEn!=null and lineage.nameEn.trim()!=''">
+                AND  target_table= #{lineage.nameEn}
+            </if>
+        </where>
+    </select>
+
+    <select id="getTableETLSource" resultType="java.util.Map">
+      select * from mdm_technology_etl_source where etl_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+      order by id
+    </select>
+
+    <select id="getTableInDatabaseIndex" resultType="java.util.Map">
+    select id tableId,database_id databaseId from mdm_technology_table order by databaseId asc
+  </select>
+
+    <select id = "getDataLineageETLDetail" resultType="java.util.Map">
+     select * from (select * from mdm_technology_etl_detail where target_table_id =
+     (select id from mdm_technology_table where resource_id = #{targetTableResourceId})) detail
+      join (select id,resource_id target_table_resource_id,IFNULL(name_cn, name_en) as target_tableName
+      from mdm_technology_table) t on detail.target_table_id = t.id
+      join (select id,resource_id source_table_resource_id,IFNULL(name_cn, name_en) as source_tableName
+      from mdm_technology_table) t1 on detail.source_table_id = t1.id
+      join (select id,resource_id target_column_resource_id,IFNULL(name_cn, name_en) as target_columnName
+      from mdm_technology_column) t2 on detail.target_column_id = t2.id
+      join (select id,resource_id source_column_resource_id,IFNULL(name_cn, name_en) as source_columnName
+      from mdm_technology_column) t3 on detail.source_column_id = t3.id
+    </select>
+
+    <select id="getDataLineageETLDetailDirect" resultType="java.util.Map">
+      select * from mdm_technology_etl_detail where target_table_name = #{targetTableName}
+        <if test ="etlId!=null">
+            AND  etl_id= #{etlId}
+        </if>
+       order by source_table_name
+    </select>
+
+    <select id="getColumnEtlSourceColumns" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+      select id,table_id,resource_id,name_en,name_cn,'column' as data_type from mdm_technology_column c join (
+        select source_table_id,source_column_id from mdm_technology_etl_detail where target_column_id in (${columnIds})) d
+          on c.id = d.source_column_id
+    </select>
+
+    <select id="getElementProjectList" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageMetaValue">
+      select id,resource_id,name_en,name_cn,'element_set' as data_type from mdm_project_category dataset
+    join ( select dataset_id from mdm_project_element_ref
+    where element_id = ${id}) ref on dataset.id = ref.dataset_id  order by id
+    </select>
+
+    <select id="getETLDetailInfoByColumn" resultType="java.util.Map">
+      select * from mdm_technology_etl_detail where target_column_id = ${lineage.id}
+    </select>
+</mapper>

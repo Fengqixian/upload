@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.clinbrain.bd.mdm.common.core.config.JacksonConfig,\
+  com.clinbrain.bd.mdm.common.core.config.RedisConfig,\
+  com.clinbrain.bd.mdm.common.core.config.RestTemplateConfig,\
+  com.clinbrain.bd.mdm.common.core.config.FilterIgnorePropertiesConfig,\
+  com.clinbrain.bd.mdm.common.core.exception.GlobalExceptionHandler,\
+  com.clinbrain.bd.mdm.common.core.util.SpringContextHolder

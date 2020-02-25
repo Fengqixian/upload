@@ -1,0 +1,47 @@
+server:
+  port: 8751
+
+spring:
+  application:
+    name: clinbrain-MetadataManage-${spring.profiles.active}
+  # 配置中心
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+#      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: clinbrain-config
+  profiles:
+    active: stg
+  main:
+    allow-bean-definition-overriding: true
+# 注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://pig:pig@localhost:8761/eureka/
+metavalue:
+  # 字段模型ID
+  column:
+    modelId: c22d1da2-afbb-4604-9f0e-54b2a1bd829a
+  # 数据项模型ID
+  elementItem:
+    modelId: d64ce09e-4e71-40d7-b8e5-8b7bdcdefdee
+  # 表模型ID
+  table:
+    modelId: 05b4147d-b997-40c4-8069-317cd7a52f30
+  # 库模型ID
+  database:
+    modelId: 3ff0f0dd-8ac8-45e5-a543-308d93c06d6f
+  # 数据集
+  elementSet:
+    modelId: MDM190807ELEMENT_ITEM00000000000000000000000000003
+
+
+#字段常量固定配置查询值标识
+dict:
+  selectId: 18

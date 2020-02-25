@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.MetadataManage.mapper.DataLineageMapper">
+
+  <select id="transferColumn2MetadataColumn" parameterType="com.clinbrain.parser.common.entity.Column" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageNode">
+    select  resource_id id,parent_id parentId,IFNULL(name_cn, name_en) name,model_id moduleId from mdm_metadata_value
+    where UPPER(name_en) = #{fName} and parent_id in(
+        select resource_id from mdm_metadata_value where UPPER(name_en) in (
+        <foreach collection="sourceTable" index="index" item="item" separator=",">
+          UPPER(#{item})
+        </foreach>
+      )
+    ) limit 0 ,1
+  </select>
+  <select id="transferColumn2MetadataIndex" parameterType="com.clinbrain.parser.common.entity.Column" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageNode">
+    select resource_id id,parent_id parentId,IFNULL(name_cn, name_en) name,model_id moduleId from mdm_metadata_value  where UPPER(name_cn)=UPPER(#{fName}) or UPPER(name_en)=UPPER(#{fName}) limit 0,1
+  </select>
+  <select id="getLineageTableNode" parameterType="java.util.Set" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.LineageNode">
+    select resource_id id,parent_id parentId,IFNULL(name_cn, name_en) name,true isGroup,model_id moduleId from mdm_metadata_value  where resource_id in
+    (
+    <foreach collection="collection" index="index" item="item" separator=",">
+      #{item}
+    </foreach>
+    )
+  </select>
+  <select id="getColumnSourceItems" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue">
+    select * from mdm_metadata_value where resource_id in(
+	  SELECT source_id FROM mdm_resource_reference where ref_type=#{modelType} and target_id = #{resourceId}
+    )
+  </select>
+  <select id="getParentItems" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue">
+    select * from mdm_metadata_value where resource_id in(
+	  SELECT target_id FROM mdm_resource_reference where ref_type=#{modelType} and source_id = #{resourceId}
+    )
+  </select>
+  <select id="getColumnTransferEtl" parameterType="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue" resultType="com.clinbrain.bd.mdm.MetadataManage.entity.MetadataValue">
+
+  </select>
+  <select id="getTableInDatabaseIndex" resultType="java.util.Map">
+    select resource_id tableId,parent_id databaseId from mdm_metadata_value where model_type =#{modelType} order by databaseId asc
+  </select>
+</mapper>

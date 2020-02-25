@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~  Copyright (c) 2019-2020, 冷冷 (wangiegie@gmail.com).
+  ~  <p>
+  ~  Licensed under the GNU Lesser General Public License 3.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~  <p>
+  ~ https://www.gnu.org/licenses/lgpl.html
+  ~  <p>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clinbrain.bd.mdm.strategy.mapper.LabelLabelpoolMapper">
+    <resultMap id="BaseResultMap" type="com.clinbrain.bd.mdm.strategy.entity.LabelLabelpool">
+        <id property="id" column="id"/>
+        <result property="tlabelPoolId" column="tlabel_pool_id"/>
+        <result property="tlabelParentId" column="tlabel_parent_id"/>
+        <result property="tlabelName" column="tlabel_name"/>
+        <result property="tlabelValue" column="tlabel_value"/>
+        <result property="tlabelType" column="tlabel_type"/>
+        <result property="tlabelTagType" column="tlabel_tag_type"/>
+        <result property="tlabelTagValue" column="tlabel_tag_value"/>
+        <result property="tlabelOperator" column="tlabel_operator"/>
+        <result property="tlabelOperatorAccount" column="tlabel_operator_account"/>
+        <result property="tlabelOperatorRole" column="tlabel_operator_role"/>
+        <result property="tlabelOperatorTime" column="tlabel_operator_time"/>
+        <result property="tlabelStatus" column="tlabel_status"/>
+        <result property="tlabelorClass" column="tlabelor_class"/>
+        <result property="tlabelClassName" column="tlabel_class_name"/>
+        <result property="tlabelPoolType" column="tlabel_pool_type"/>
+        <result property="tlabelCount" column="tlabel_count"/>
+        <result property="tlabelAllowRemove" column="tlabel_allow_remove"/>
+        <result property="tlabelRemark" column="tlabel_remark"/>
+    </resultMap>
+
+
+    <!--根据规则查询对应值分页-->
+    <select id="listLabelPoolPage" resultMap="BaseResultMap">
+        SELECT * from label_labelpool where tlabel_status = 0
+        <choose>
+            <when test="labelPool!= null and labelPool.tlabelParentId !=null">
+                and tlabel_parent_id = #{labelPool.tlabelParentId}
+            </when>
+            <otherwise>
+                and tlabel_parent_id = 0
+            </otherwise>
+        </choose>
+        <!--<if test="labelPool!= null and labelPool.tlabelParentID !=null and labelPool.tlabelParentID >=0">-->
+            <!--and tlabel_parent_id = #{labelPool.tlabelParentID}-->
+        <!--</if>-->
+        <if test="labelPool!= null and labelPool.tlabelPoolId != null">
+            and tlabel_pool_id = #{labelPool.tlabelPoolId}
+        </if>
+        <if test="labelPool!= null and labelPool.tlabelName != null">
+            and tlabel_name like concat('%',#{labelPool.tlabelName},'%')
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,113 @@
+@import "_variables";
+// 菜单样式
+.layout-menu {
+  transition: all 0.35s;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  // 菜单背景颜色
+  background-color: var(--WEB-MENU-BG-COLOR); // 左侧菜单背景颜色
+  color: var(--WEB-MENU-FONT-COLOR); // 菜单字体颜色
+  border-right: 1px solid var(--WEB-MENU-BORDER-RIGHT-COLOR);
+
+  .btn {
+    display: inline-block;
+    text-align: left;
+    margin-left: 18px;
+    height: 30px;
+    padding-top: 10px;
+
+    & > .iconfont {
+      font-size: 20px;
+      cursor: pointer;
+    }
+  }
+
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+  }
+}
+
+
+.el-submenu__title, .el-menu-item {
+  height: 46px;
+  line-height: 46px;
+}
+
+
+.el-menu {
+  .menu-active-bg(@bg) {
+    & {
+      background-color: @bg;
+    }
+  }
+  .menu-active-font(@font) {
+    & {
+      i, span {
+        color: @font; // 菜单字体颜色
+      }
+    }
+  }
+  .menu-primary-bg(@bg) {
+    & {
+      background-color: @bg;
+    }
+  }
+  .menu-primary-font(@font) {
+    & {
+      i, span {
+        color: @font; // 菜单字体颜色
+      }
+    }
+  }
+  .menu-hover-bg(@bg) {
+    & {
+      background-color: @bg;
+    }
+  }
+  .menu-hover-font(@font) {
+    & {
+      i, span {
+        color: @font; // 菜单字体颜色
+      }
+    }
+  }
+
+  background-color: var(--WEB-MENU-BG-COLOR); // 左侧菜单背景颜色
+  border: none;
+
+  .el-menu-item {
+    .menu-primary-bg(var(--WEB-MENU-BG-COLOR));
+    .menu-primary-font(var(--WEB-MENU-FONT-COLOR));
+
+    &.is-active, & > .el-submenu__title {
+      .menu-active-bg(var(--WEB-MENU-ACTIVE-HOVER-BG-COLOR));
+      .menu-active-font(var(--WEB-MENU-ACTIVE-FONT-COLOR));
+    }
+
+    &:hover {
+      .menu-hover-bg(var(--WEB-MENU-ACTIVE-HOVER-BG-COLOR));
+      .menu-hover-font(var(--WEB-MENU-ACTIVE-FONT-COLOR));
+    }
+  }
+
+  .el-submenu {
+    .el-submenu__title {
+      .menu-primary-bg(var(--WEB-MENU-BG-COLOR));
+      .menu-primary-font(var(--WEB-MENU-FONT-COLOR));
+    }
+
+    &.is-active {
+      .el-submenu__title {
+        .menu-active-bg(var(--WEB-MENU-ACTIVE-HOVER-BG-COLOR));
+        .menu-active-font(var(--WEB-MENU-ACTIVE-FONT-COLOR));
+      }
+    }
+  }
+}
+
+

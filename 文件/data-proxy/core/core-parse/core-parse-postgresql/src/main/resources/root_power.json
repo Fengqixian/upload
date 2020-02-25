@@ -1,0 +1,6 @@
+{
+  "ab_op_feelist":{
+    "andfilters":["serialno = 'cf19946130'"],
+    "orfilters":["serialno = 'cf19946130'"]
+  }
+}

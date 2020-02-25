@@ -1,0 +1,206 @@
+@import "_variables";
+
+body {
+  overflow: hidden;
+}
+
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%
+}
+
+button, input, select, textarea {
+  font: 1.2rm/1.5tahoma, arial, \5b8b\4f53;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+}
+
+address, cite, dfn, em, var {
+  font-style: normal;
+}
+
+code, kbd, pre, samp {
+  font-family: couriernew, courier, monospace;
+}
+
+small {
+  font-size: 12px;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+i {
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// 禁止文字选择
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, button, p, blockquote, th, td {
+  user-select: none;
+}
+
+
+// 滚动条
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+}
+
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: var(--SCROLLBAR-THUMB-BG-COLOR);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--SCROLLBAR-THUMB-HOVER-BG-COLOR);
+  }
+}
+
+// css3 动画
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .3s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+// loading遮罩层
+.el-loading-mask {
+  z-index: 200008;
+  background-color: rgba(255, 255, 255, .1);
+  // cursor: not-allowed;
+  //cursor: wait;
+}
+
+
+/**
+左边是树 右边是空白区域展示区域操作区域
+ */
+.cb-tree-show-operation-wrapper {
+  position: relative;
+
+  .tree-wrapper {
+    width: 300px;
+    height: 100%;
+  }
+
+  .show-operation-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 300px;
+  }
+}
+
+
+.drag-relation {
+  svg {
+    background-color: #FFF;
+
+    path.link {
+      fill: none;
+      stroke: #888;
+      stroke-width: 3px;
+      cursor: default;
+    }
+
+    &:not(.active):not(.ctrl) path.link {
+      cursor: pointer;
+    }
+
+    path.link.selected {
+      stroke-dasharray: 10, 2;
+    }
+
+    path.link.dragline {
+      pointer-events: none;
+    }
+
+    path.link.hidden {
+      stroke-width: 0;
+    }
+
+    circle.node {
+      stroke-width: 0;
+      cursor: pointer;
+      fill: #fff;
+    }
+
+    /*circle.node.reflexive {
+      stroke: #000 !important;
+      stroke-width: 2.5px;
+    }*/
+
+    text {
+      font: 14px sans-serif;
+      pointer-events: none;
+    }
+
+    text.id {
+      text-anchor: middle;
+      font-weight: bold;
+    }
+  }
+}
+
+// 关系图
+.cb-relation-wrapper {
+  background-color: var(--RELATION-BG-COLOR);
+}
+
+.cb-blood-relation-wrapper {
+  background-color: var(--BLOOD-RELATION-BG-COLOR);
+}
+
+.cb-relation-info{
+  background-color: var(--RELATION-INFO-BG-COLOR);
+  box-shadow: 1px 1px 1px var(--RELATION-INFO-SHADOW-COLOR);
+  .info-title{
+    color: var(--RELATION-INFO-TITLE-COLOR);
+  }
+  .label{
+    color: var(--RELATION-INFO-LABEL-COLOR);
+  }
+  .value{
+    color: var(---RELATION-INFO-VALUE-COLOR);
+  }
+}
+
+// 侧边栏信息
+.cb-slide-side-info {
+  background-color: rgb(57, 67, 106, 0.7);
+  box-shadow: 1px 1px 1px rgb(57, 67, 106, 0.7);
+  color: #ffffff;
+}

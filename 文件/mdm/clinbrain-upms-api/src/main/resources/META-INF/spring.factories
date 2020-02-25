@@ -1,0 +1,9 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.clinbrain.bd.mdm.admin.api.feign.fallback.RemoteUserServiceFallbackImpl,\
+  com.clinbrain.bd.mdm.admin.api.feign.fallback.RemoteLogServiceFallbackImpl,\
+  com.clinbrain.bd.mdm.admin.api.feign.fallback.RemoteTokenServiceFallbackImpl,\
+  com.clinbrain.bd.mdm.admin.api.feign.fallback.RemoteMetadataServiceFallbackImpl,\
+  com.clinbrain.bd.mdm.admin.api.feign.factory.RemoteUserServiceFallbackFactory,\
+  com.clinbrain.bd.mdm.admin.api.feign.factory.RemoteLogServiceFallbackFactory,\
+  com.clinbrain.bd.mdm.admin.api.feign.factory.RemoteMetadataServiceFallbackFactory,\
+  com.clinbrain.bd.mdm.admin.api.feign.factory.RemoteTokenServiceFallbackFactory
